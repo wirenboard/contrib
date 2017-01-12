@@ -1,3 +1,9 @@
+nginx (1.6.2-5+deb8u2~bpo70+3) wheezy-backports; urgency=high
+
+  * Update version to overwrite upstream package
+
+ -- Yury Usishchev <y.usishchev@contactless.ru>  Thu, 22 Dec 2016 18:56:18 +0300
+
 nginx (1.6.2-5+deb8u2~bpo70+1) wheezy-backports; urgency=high
 
   [ Christos Trochalakis ]
