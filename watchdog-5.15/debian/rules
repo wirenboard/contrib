@@ -20,7 +20,7 @@ Makefile:
 clean:	Makefile
 	$(checkdir)
 	[ ! -f Makefile ] || $(MAKE) distclean
-	debconf-updatepo
+	#debconf-updatepo
 
 	dh_clean
 	rm -f $(find . -name "*.P")
