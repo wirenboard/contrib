@@ -1,0 +1,22 @@
+lirc (0.9.0~pre1-1) unstable; urgency=low
+
+    lirc_cmdir has been dropped upstream in favour of a userspace module 
+    (commandir). lirc_ene0100, lirc_imon, lirc_mceusb/ lirc_mceusb2 and
+    lirc_streamzap have been ported to the new RC_CORE input subsystem, which
+    requires different configuration methods and "ir-keytable" for keytable 
+    upload.
+
+    lirc-modules-source has been superseded by kernel >= 2.6.37, which has
+    merged lirc under staging. Conversion of traditional lirc modules to the
+    new RC_CORE subsystem is still ongoing and may require config adaptions for
+    newly ported modules.
+
+    The kernel/ userspace ABI between staging lirc modules in the upstream
+    kernel and those provided by previous lirc-modules-source packages is not
+    compatible, only >= 0.9~ userspace and staging kernel modules from 
+    >= 2.6.37 can cooperate.
+
+    lirc-svga (smode2) has been dropped in favour of lirc-x (xmode2) or mode2
+    from the main lirc binary.
+
+ -- Stefan Lippers-Hollmann <s.l-h@gmx.de>  Tue, 15 Feb 2011 20:34:31 +0100

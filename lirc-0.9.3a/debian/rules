@@ -1,0 +1,146 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+ifneq ($(findstring debug,$(DEB_BUILD_OPTIONS)),)
+CFLAGS += -g
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+INSTALL_PROGRAM += -s
+endif
+
+DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+UVERS := $(shell dpkg-parsechangelog | sed -n 's/^Version: \(.*\)-.*/\1/p' | cut -d\~ -f1)
+
+configure_flags := \
+		--prefix=/usr \
+		--mandir=\$${prefix}/share/man \
+		--infodir=\$${prefix}/share/info \
+		--libdir=\$${prefix}/lib \
+		--localstatedir=/var/ \
+		--sysconfdir=/etc/ \
+		--with-driver=userspace \
+		--with-syslog=LOG_DAEMON \
+		--enable-sandboxed \
+		--build=$(DEB_BUILD_GNU_TYPE)
+
+ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+	configure_flags += --host=$(DEB_HOST_GNU_TYPE)
+endif
+
+clean:
+	dh_testdir
+	dh_testroot
+	dh_autoreconf_clean
+	rm -f configure-stamp build-stamp
+	[ ! -f Makefile ] || $(MAKE) distclean
+	@if [ ! "$(UVERS)" = "$(shell sed -n 's/^Version: \(.*\)/\1/p' debian/liblircclient0.pc)" ]; then \
+		echo "ERROR: debian/liblircclient0.pc out of date."; \
+		false; \
+	fi
+	# avoid autofoo re-run
+	touch -r aclocal.m4 configure.ac
+	dh_clean
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	#dh_autoreconf
+	-test -r config.sub && test -r /usr/share/misc/config.sub && \
+		cp -f /usr/share/misc/config.sub config.sub
+	-test -r config.guess && test -r /usr/share/misc/config.guess && \
+		cp -f /usr/share/misc/config.guess config.guess
+	./configure $(configure_flags)
+	touch $@
+
+build: build-stamp
+build-stamp: configure
+	dh_testdir
+	$(MAKE)
+	touch $@
+
+install: build-stamp
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	install --mode=755 contrib/irman2lirc debian/tmp/usr/bin/
+
+	# allow building even if vgalib is not available
+	if [ -e tools/smode2 ]; then \
+		install --mode=755 tools/smode2 debian/tmp/usr/bin/ ; \
+	fi
+
+	mkdir -p debian/tmp/etc/lirc/
+	mkdir -p debian/tmp/usr/share/lirc/
+	install --mode=644 debian/conf.placeholder \
+		debian/tmp/etc/lirc/lircmd.conf
+	install --mode=644 debian/hardware.conf debian/tmp/etc/lirc/
+	
+	mkdir -p debian/liblircclient-dev/usr/share/aclocal
+	#cp contrib/lirc.m4 debian/liblircclient-dev/usr/share/aclocal/
+
+	# install logcheck files
+	install -d debian/tmp/etc/logcheck/ignore.d.paranoid
+	install -o root -g root -m 644 debian/logcheck.ignore \
+			debian/tmp/etc/logcheck/ignore.d.paranoid/lirc
+	install -d debian/tmp/etc/logcheck/ignore.d.server
+	install -o root -g root -m 644 debian/logcheck.ignore \
+			debian/tmp/etc/logcheck/ignore.d.server/lirc
+	install -d debian/tmp/etc/logcheck/ignore.d.workstation
+	install -o root -g root -m 644 debian/logcheck.ignore \
+			debian/tmp/etc/logcheck/ignore.d.workstation/lirc
+
+	# install pkg-config file
+	install -d debian/tmp/usr/lib/pkgconfig
+	install -o root -g root -m644 debian/liblircclient0.pc debian/tmp/usr/lib/pkgconfig/liblircclient0.pc
+
+# Build architecture-independent files here.
+binary-indep: build install
+	dh_installdocs -i
+	dh_installchangelogs -i
+	dh_installexamples -i
+	dh_install -i --sourcedir=debian/tmp --list-missing
+	dh_compress -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs -s
+	dh_installdocs -s
+	cp -dpR doc/html doc/irxevent.keys \
+		debian/lirc/usr/share/doc/lirc/
+	mkdir debian/lirc/usr/share/lirc
+	dh_installexamples -s
+	dh_install -s --sourcedir=debian/tmp --list-missing
+	dh_installmenu -s
+	dh_installinit -s --update-rcd-params="defaults 19"
+	dh_installcron -s
+	dh_installinfo -s
+	dh_installman -s
+	dh_link -s
+	dh_strip -s
+	dh_compress -s -X irxevent.keys
+	dh_fixperms -s
+	dh_makeshlibs -s
+	dh_installdeb -s
+	dh_shlibdeps -s
+	dh_gencontrol -s
+	dh_md5sums -s
+	dh_builddeb -s
+
+maintainerclean:
+	rm -rf $(filter-out debian .svk .svn, $(wildcard * .[^.]*))
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install autotools

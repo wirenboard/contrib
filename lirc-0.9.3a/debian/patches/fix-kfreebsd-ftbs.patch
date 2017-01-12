@@ -1,0 +1,51 @@
+fix FTBS on non-linux architectures, like Debian GNU/ kFreeBSD or hurd-i386
+
+* __s16 is not defined on kFreeBSD
+* __u16 is not defined on kFreeBSD
+* __u32 is not defined on kFreeBSD
+* __u64 is not defined on kFreeBSD
+
+Signed-off-by: Stefan Lippers-Hollmann <s.l-h@gmx.de>
+---
+ daemons/lircmd.c |    4 ++--
+ drivers/lirc.h   |    6 ++++++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+--- a/daemons/lircmd.c
++++ b/daemons/lircmd.c
+@@ -277,9 +277,9 @@ setup_error:
+ 	return -1;
+ }
+ 
++#ifdef __linux__
+ void write_uinput(__u16 type, __u16 code, __s32 value)
+ {
+-#ifdef __linux__
+ 	struct input_event event;
+ 
+ 	memset(&event, 0, sizeof(event));
+@@ -299,8 +299,8 @@ void write_uinput(__u16 type, __u16 code
+ 			syslog(LOG_ERR, "%m");
+ 		}
+ 	}
+-#endif
+ }
++#endif
+ 
+ void msend(int dx, int dy, int dz, int rep, int buttp, int buttr)
+ {
+--- a/drivers/lirc.h
++++ b/drivers/lirc.h
+@@ -22,6 +22,12 @@
+ #endif
+ #endif
+ 
++#ifndef __linux__
++#include <stdint.h>
++#define __u32 uint32_t
++#define __u64 uint64_t
++#endif
++
+ #define PULSE_BIT       0x01000000
+ #define PULSE_MASK      0x00FFFFFF
+ 

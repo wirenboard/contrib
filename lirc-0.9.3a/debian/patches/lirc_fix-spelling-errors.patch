@@ -1,0 +1,30 @@
+fix spelling errors regarding s/dont/don\'/
+
+Signed-off-by: Stefan Lippers-Hollmann <s.l-h@gmx.de>
+---
+ daemons/hw_audio_alsa.c       |    2 +-
+ drivers/lirc_gpio/lirc_gpio.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/daemons/hw_audio_alsa.c
++++ b/daemons/hw_audio_alsa.c
+@@ -225,7 +225,7 @@ error:		unlink(tmp_name);
+ 				alsa_hw.channel = 1;
+ 			} else {
+ 				logperror(LOG_WARNING,
+-					  "dont understand which channel to use - defaulting to left\n");
++					  "don\'t understand which channel to use - defaulting to left\n");
+ 			}
+ 		}
+ 
+--- a/drivers/lirc_gpio/lirc_gpio.c
++++ b/drivers/lirc_gpio/lirc_gpio.c
+@@ -549,7 +549,7 @@ void cleanup_module(void)
+ 	dprintk(LOGHEAD "module successfully unloaded\n", minor);
+ }
+ 
+-/* Dont try to use it as a static version !  */
++/* Don't try to use it as a static version !  */
+ MODULE_DESCRIPTION("Driver module for remote control (data "
+ 		   "from bt848 GPIO port)");
+ MODULE_AUTHOR("Artur Lipowski");

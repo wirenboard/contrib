@@ -1,0 +1,21 @@
+From 270aa61807be1be99f944874354d4f0d1a5883c9 Mon Sep 17 00:00:00 2001
+From: Jarod Wilson <jarod@redhat.com>
+Date: Tue, 26 Oct 2010 14:18:13 -0400
+Subject: [PATCH 1/6] Remove a few more CVS relics
+
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+---
+ Makefile.am |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -39,7 +39,7 @@ dist-hook:
+ 	(cd $(srcdir)/contrib/hal/ && ./gen-hal-fdi.pl)
+ 	for f in contrib remotes; do \
+ 		cp -pr $(srcdir)/$$f $(distdir)/$$f; done
+-	-rcs2log >$(distdir)/ChangeLog
++	git log >$(distdir)/ChangeLog
+ 
+ DISTCLEANFILES = configure.sh .setup.config
+ 

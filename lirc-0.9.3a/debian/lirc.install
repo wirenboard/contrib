@@ -1,0 +1,14 @@
+etc/lirc/{hardware.conf,lircd.conf,lircd.conf.d,lirc_options.conf,lircmd.conf}
+etc/logcheck/*
+usr/bin/{ircat,irexec,irman2lirc,irpty,irrecord,irsend,irw,lircrcd,mode2,irsimreceive,irsimsend,irtestcase,lirc-lsremotes}
+usr/sbin/*
+usr/lib/liblirc.so.*
+usr/lib/liblirc.la
+usr/lib/libirrecord.so.*
+usr/lib/libirrecord.la
+usr/lib/liblirc_driver.so.*
+usr/lib/liblirc_driver.la
+usr/lib/lirc/plugins/*
+usr/share/man/man8/*
+usr/share/man/man5/*
+usr/share/man/man1/{ircat.1,irexec.1,irpty.1,irrecord.1,irsend.1,irw.1,mode2.1,lirc-lsremotes.1,irsimreceive.1,irtestcase.1,irsimsend.1,lirc-lsplugins.1}

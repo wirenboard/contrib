@@ -1,0 +1,3 @@
+version=3
+http://lirc.org/ \
+	http://prdownloads.sourceforge.net/lirc/lirc-([\.0-9]+)\.tar\.bz2

@@ -1,0 +1,24 @@
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+
+define _IOT__IOTBASE___u32 if missing; fixes build failure on hurd
+thanks Samuel Thibault
+
+http://bugs.debian.org/436570
+
+Signed-off-by: Stefan Lippers-Hollmann <s.l-h@gmx.de>
+---
+ lirc.h |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/lirc.h
++++ b/drivers/lirc.h
+@@ -17,6 +17,9 @@
+ #elif defined(_CYGWIN_)
+ #define __USE_LINUX_IOCTL_DEFS
+ #include <sys/ioctl.h>
++#if defined(_IOT_SIMPLE) && !defined(_IOT__IOTBASE___u32)
++#define _IOT__IOTBASE___u32 _IOT_SIMPLE(__u32)
++#endif
+ #endif
+ 
+ #define PULSE_BIT       0x01000000

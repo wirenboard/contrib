@@ -1,0 +1,31 @@
+From 77c9429dde46f108ab4ba47791977abae3a6af3c Mon Sep 17 00:00:00 2001
+From: Jarod Wilson <jarod@redhat.com>
+Date: Tue, 18 Jan 2011 00:08:34 -0500
+Subject: [PATCH 11/11] lirc_serial: fix tx support (and a memory leak)
+
+Thanks to Jiri Fojtasek for pointing out my blunder.
+
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+---
+ drivers/lirc_serial/lirc_serial.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+--- a/drivers/lirc_serial/lirc_serial.c
++++ b/drivers/lirc_serial/lirc_serial.c
+@@ -976,7 +976,7 @@ static ssize_t lirc_write(struct file *f
+ 	if (n % sizeof(int) || count % 2 == 0)
+ 		return -EINVAL;
+ 	wbuf = memdup_user(buf, n);
+-	if (PTR_ERR(wbuf))
++	if (IS_ERR(wbuf))
+ 		return PTR_ERR(wbuf);
+ 	spin_lock_irqsave(&hardware[type].lock, flags);
+ 	if (type == LIRC_IRDEO) {
+@@ -991,6 +991,7 @@ static ssize_t lirc_write(struct file *f
+ 	}
+ 	off();
+ 	spin_unlock_irqrestore(&hardware[type].lock, flags);
++	kfree(wbuf);
+ 	return n;
+ }
+ 

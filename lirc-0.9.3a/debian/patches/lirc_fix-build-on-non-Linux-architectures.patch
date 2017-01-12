@@ -1,0 +1,37 @@
+From: Aurelien Jarno <aurel32@debian.org>
+
+make lirc buildable on non-Linux architectures using (E)GLIBC
+
+http://bugs.debian.org/540742
+
+Signed-off-by: Stefan Lippers-Hollmann <s.l-h@gmx.de>
+---
+ drivers/lirc.h |    3 +++
+ tools/irpty.c  |    4 ++++
+ 2 files changed, 7 insertions(+)#
+
+--- a/drivers/lirc.h
++++ b/drivers/lirc.h
+@@ -11,6 +11,9 @@
+ #include <linux/ioctl.h>
+ #elif defined(_NetBSD_)
+ #include <sys/ioctl.h>
++#elif defined (__GLIBC__)
++#include <features.h>
++#include <sys/ioctl.h>
+ #elif defined(_CYGWIN_)
+ #define __USE_LINUX_IOCTL_DEFS
+ #include <sys/ioctl.h>
+--- a/tools/irpty.c
++++ b/tools/irpty.c
+@@ -144,6 +144,10 @@ static void copy_loop(int ptym, int igno
+ 	return;
+ }
+ 
++#undef RESET
++#undef RAW
++#undef CBREAK
++
+ static struct termios save_termios;
+ static int ttysavefd = -1;
+ static enum {

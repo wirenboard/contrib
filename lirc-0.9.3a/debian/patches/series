@@ -1,0 +1,18 @@
+# upstream updates
+#upstream/0001-Remove-a-few-more-CVS-relics.patch
+#upstream/0002-add-release-process-notes-for-my-own-sanity.patch
+upstream/0003-add-lirc-encoder-decoder-regression-test.patch
+#upstream/0004-make-all-remote-names-unique.patch
+#upstream/0005-updated-firefly-remote-definition-from-Bastien-Nocer.patch
+#upstream/0006-try-to-standardize-remote-key-names-a-fair-bit.patch
+#upstream/0007-lirc_serial-fill-in-dev-pointer.patch
+#upstream/0008-Attempt-to-make-lirc_sir-behave-a-bit-better.patch
+#upstream/0009-lirc_serial-resync-with-in-kernel-bits.patch
+#upstream/0010-commandir-send_status-vs.-packetCounter-bug-fix.patch
+#upstream/0011-lirc_serial-fix-tx-support-and-a-memory-leak.patch
+
+#man-pages_syntax-fixes.patch
+#lirc_fix-build-on-non-Linux-architectures.patch
+#hurd_define-iotbase_u32.patch
+#lirc_fix-spelling-errors.patch
+#fix-kfreebsd-ftbs.patch

@@ -1,0 +1,35 @@
+From 94bc8116ccef1b260c3e622909f1d314bbd1abb6 Mon Sep 17 00:00:00 2001
+From: Matthew Bodkin <matthew.bodkin@innovationone.ca>
+Date: Tue, 21 Dec 2010 16:53:55 -0500
+Subject: [PATCH 10/11] commandir: send_status vs. packetCounter bug fix
+
+Always get send_status for any value of packetCounter when transmitting.
+
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+---
+ daemons/hw_commandir.c |   14 ++++++--------
+ 1 files changed, 6 insertions(+), 8 deletions(-)
+
+--- a/daemons/hw_commandir.c
++++ b/daemons/hw_commandir.c
+@@ -1560,14 +1560,12 @@ static void commandir_2_transmit_next(st
+ 				packet[packetCounter++] = (tx_value >> 8) | (pulse_toggle << 7);
+ 				pulse_toggle = !pulse_toggle;
+ 			}
+-			if (packetCounter > sizeof(struct commandir_3_tx_signal)) {
+-				send_status =
+-				    usb_bulk_write(pcd->cmdir_udev, 2, (char *)packet, packetCounter, USB_TIMEOUT_MS);
+-				packetCounter = 0;
+-				if (send_status < 0) {
+-					hardware_scan();
+-					return;
+-				}
++			send_status =
++			    usb_bulk_write(pcd->cmdir_udev, 2, (char *)packet, packetCounter, USB_TIMEOUT_MS);
++			packetCounter = 0;
++			if (send_status < 0) {
++				hardware_scan();
++				return;
+ 			}
+ 		}
+ 		break;

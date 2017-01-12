@@ -1,0 +1,4 @@
+usr/lib/liblirc_client.so
+usr/include/lirc
+usr/include/lirc_client.h
+usr/lib/pkgconfig
