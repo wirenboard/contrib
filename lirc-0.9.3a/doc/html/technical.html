@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<a name="overview"></a><hr>
+    <center><h1>Driver Model</h1></center>
+
+    <pre>
+  |  +---------------------------------------------------------------+
+S |  | 'gpm -t msc -m /var/run/lirc/lircm' or a well configured X    |
+O |  | (see section 'Configuring lircmd') for details                |
+F |  +--------------+------------------------------------------------+
+T |                 |
+W |   /var/run/lirc/lircm (named pipe (FIFO) ==&gt; one connection)
+A |                 |
+R |     +-----------+-----------+   +----------------------------------+
+E |     | mouse daemon (lircmd) |   | tools (irexec, irxevent, ...)    |
+  |     | configured with       |   | configured with ~/.config/lircrc |
+  |     | lircmd.conf           |   |                                  |
+  |     +-----------+-----------+   +-----------+----------------------+
+  |                 |                           |
+  |                 +-------------+-------------+
+  |                               |
+  |              /var/run/lirc/lircd (socket ==&gt; multiple connections)
+  |                               |
+S |              +----------------+--------------------------+
+O |              | decoder daemon (lircd), irrecord or mode2 |    TCP/IP
+F |              | lircd is configured through lircd.conf    +---  port
+T | User space   |                                           |     8765
+W |              +------------------+------------------------+
+A |                                 |            |
+R |                                 |            |
+E |                                 |            |
+  |                                 |   /dev/uinput (Linux input layer)
+  |                                 |
+  |                                 |
+  +---------------------------------+----------------------------------
+  | Kernel space                    |              (character device
+  |                                 |                  driver ==&gt;
+  |                    +------------+----------+    one connection)
+  |                    |                       |
+  |                /dev/lirc               /dev/ttySx
+  |                    |                       |
+  |       +------------+-------------+   +-----+---------------+
+  |       |  LIRC device driver      |   | Linux serial driver |
+  |       | (with ioctl-interface)   |   |                     |
+  |       +------------+-------------+   +----------+----------+
+  |                    |                            |
+--+--------------------+----------------------------+------------------
+  |                    |                            |
+  |         +----------+------------+               |
+  |         |                       |               |
+  | +-------+----------------+ +----+-----+ +-------+-----------------+
+H | | serial / parallel port | | TV cards | | Irman/RemoteMaster/etc. |
+W | +------------------------+ +----------+ +-------------------------+
+  |
+</pre>
+
+    <a name="formats"></a><hr>
+    <h1>Formats</h1>
+
+    <ul>
+      <li>
+<b>/dev/lirc:</b><br>
+        <p>
+          This is documented in the <a href="lirc.html">lirc(4)</a> manpage.
+        </p>
+      </li>
+      <li>
+<b>/var/run/lirc/lircd:</b><br>
+        <p>
+          outputs strings containing all information about the remote and the
+          pressed button.  This is documented in the
+          <a href="lircd.html">lircd(8)</a>manpage.
+        </p>
+      </li>
+      <li>
+<b>/var/run/lirc/lircm:</b><br>
+          This is documented in the <a href="lircmd.html">lircmd(8)</a> manpage.
+      </li>
+      <br><li>
+          The socket protocol used by lircrcd is documented in the
+          <a href="lircrcd.html">lircrcd manpage</a>.
+      </li>
+    </ul>
+
+    <!-- Writing LIRC Drivers ++++++++++++++++++++++++++++++++++++++++++++ -->
+    <hr>
+    <a name="drivers"></a>
+    <h1>Writing LIRC userspace drivers</h1>
+    <p>
+      Since 0.9.0 the lirc kernel drivers have been upstreamed to the
+      kernel. So, while developing kernel drivers might be important
+      from a LIRC perspective, it's no longer part of this project. </p>
+    <p>
+      Since 0.9.1, lirc user-space drivers (plugins) are loaded dynamically
+      and compiled out-of-tree. Refer to the <a href="driver-api.html">
+      Driver API</a>, the last chapter.
+    </p>
+
+    <!-- Writing LIRC Applications +++++++++++++++++++++++++++++++++++++++ -->
+    <hr>
+    <a name="applications"></a>
+    <h1>Writing Applications for LIRC</h1>
+    <p>
+      As LIRC is able to both receive and send IR commands there are
+      two possible types of applications: programs that send IR
+      commands liked <em>irsend</em> or programs that
+      receive commands like <em>irexec</em>. </p>
+    <p>
+      In both cases, the lirc_client api can be used, supporting both
+      sending and receiving of data. Refer to the <a href="api-docs">
+      API documentation</a> and the <a href="lirc_client.html">
+      lirc_client api</a>.</p>
+    <p>
+      Another way is to connect directly to lircd's output socket and
+      use the command interface. This is common in older code, often
+      to send data (the ability to send data was added to the API
+      0.9.2). The lircd socket interface is described in the
+      <a href="lircd.html">lircd manpage</a>. Note that the routines
+      in the client API can be used to send and receive arbitrary
+      commands, not just to send IR data.</p>
+
+    <a name="config"></a><hr>
+    <h1>Note for configuration application developers</h1>
+
+    <p>
+      If you want to make a configuration application, lirc provides
+      a  parseable database of the drivers in the configs/ directory.
+      See configs/README for documentation of the format. The lirc-setup
+      tool has example code for parsing the files in configs/.
+    </p>
+
+    <!-- New remotes++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <a name="new_remote"></a><hr>
+    <h1>Adding new remote controls</h1>
+    <p>
+      New remotes are added to the database according to the
+      <a href="http://sf.net/p/lirc-remotes/wiki">lirc-remotes wiki</a>.
+      </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

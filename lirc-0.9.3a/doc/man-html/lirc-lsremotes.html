@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>lirc-lsremotes</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+
+<p>
+
+<b>lirc-lsremotes</b> - parse lirc configuration files.
+<a name="lbAC"> </a>
+</p>
+<h2>SYNOPSIS</h2>
+
+<p>
+
+<b>lirc-lsremotes</b> [<i>options</i>] &lt;directory&gt;
+</p>
+<p>
+
+<b>lirc-lsremotes</b> [<i>options</i>] &lt;file&gt;
+</p>
+<p>
+</p>
+<p>
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+<p>
+
+lirc-lsremotes can parse lirc remote configuration files (i. e., lircd.conf)
+and display a condensed index line, the complete data and/or diagnostics.
+</p>
+<p>
+
+When given a directory (first form) it expects this to contain a number of
+vendor directories, each of which containing one or more configuration files.
+</p>
+<p>
+
+In the second form lirc-lsremotes displays remote configurations for a given
+config file.
+</p>
+<p>
+<a name="lbAE"> </a>
+</p>
+<h2>OPTIONS</h2>
+
+<dl>
+<div><dt>
+<b>-d, --dump</b>
+
+</dt></div>
+<dd>
+Dump the complete configuration data for listed configurations.
+</dd>
+<div><dt>
+<b>-s, --silent</b>
+
+</dt></div>
+<dd>
+Only print diagnostics.
+</dd>
+<div><dt>
+<b>-v --version</b>
+
+</dt></div>
+<dd>
+Print version info
+</dd>
+<div><dt>
+<b>-h, --help</b>
+
+</dt></div>
+<dd>
+Print help message.
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>EXAMPLES</h2>
+<p>
+
+Print a status line and possible diagnostics for a file:
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+<pre>
+$ lirc-lsremotes  remotes/hitachi/RM-466E.lircd.conf
+<br>
+lirc-lsremotes: Warning RM-466E: you should specify a valid gap value
+<br>
+hitachi;RM-466E.lircd.conf;no_lircmd;no_photo;RM-466E;timing;no_raw
+</pre>
+
+</dd>
+</dl>
+<p>
+
+List a status line for all remotes under remotes, saving diagnostics into
+a file:
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+<pre>
+$ lirc-lsremotes  remotes &gt; remotes.list 2&gt;warnings.txt
+</pre>
+
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAG"> </a>
+<h2>SEE ALSO</h2>
+
+<a href="http://sourceforge.net/projects/lirc-remotes">http://sourceforge.net/projects/lirc-remotes</a>
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">OPTIONS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">EXAMPLES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

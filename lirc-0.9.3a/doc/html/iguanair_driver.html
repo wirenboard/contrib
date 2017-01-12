@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<p>
+  This driver supports both receiving and sending (blasting) using
+  the IguanaIR devices from
+  <a href="http://iguanaworks.net/ir">http://iguanaworks.net/ir.</a></p>
+<p>
+  The LIRC driver works on top of the IguanaIR low-level userspace
+  driver which provides a socket interface. It is available from
+  the same source, and also packaged for many distributions
+  including Debian, Fedora and Arch Linux.
+</p>
+<p>
+  The --device argument to the driver is a socket designator created
+  by the low-level driveri. It defaults to '0' which implies
+  <em>/run/iguanair/0</em>.
+</p>
+<p>
+  The kernel has built-in support for these devices in the
+  iguanair module. This can be used instead of this driver in
+  many cases. If the userspace driver should be used, the
+  kernel driver must be blacklisted.</p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

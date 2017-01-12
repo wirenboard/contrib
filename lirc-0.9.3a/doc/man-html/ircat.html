@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>IRCAT</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+<p>
+
+ircat - print strings when pressing buttons
+</p>
+<a name="lbAC"> </a>
+<h2>SYNOPSIS</h2>
+
+<b>ircat</b>
+
+[<i>options</i>] &lt;<i>prog</i>&gt;
+<a name="lbAD"> </a>
+<h2>DESCRIPTION</h2>
+<p>
+
+This program prints config strings to standard output. It can be used
+to provide remote control input to scripts and to debug your .lircrc
+file.
+</p>
+<p>
+The argument to the program is the program name, as it
+appears in the prog entries in .lircrc.
+</p>
+<dl>
+<div><dt>
+<b>-h</b> <b>--help</b>
+</dt></div>
+<dd>
+Display usage summary.
+</dd>
+<div><dt>
+<b>-v</b> <b>--version</b>
+</dt></div>
+<dd>
+Display version.
+</dd>
+<div><dt>
+<b>-c</b> <b>--config=</b>&lt;<i>file</i>&gt;</dt></div>
+<dd>
+Set config file.
+</dd>
+</dl>
+<a name="lbAE"> </a>
+<h2>EXAMPLES</h2>
+<p>
+
+If .lircrc contains:
+</p>
+<p>
+</p>
+<pre>
+begin
+        prog = myprog
+        button = KEY_CHANNELUP
+        config = next_file
+end
+</pre>
+
+<p>
+then
+</p>
+<p>
+</p>
+<pre>
+$ ircat myprog
+</pre>
+
+<p>
+will print "next_file" (followed by newline) every time the
+button bound to KEY_CHANNELUP is pressed.
+<a name="lbAF"> </a>
+</p>
+<h2>SEE ALSO</h2>
+
+<p>
+
+The documentation for
+<b>lirc</b>
+
+is maintained as html pages. They are located under html/ in the
+documentation directory.
+</p>
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">EXAMPLES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

@@ -1,0 +1,48 @@
+#
+# Created by lirc-kerneldrivers at Wed Oct 14 18:16:07 2015
+#
+drivers:
+
+    lirc_parallel:
+        device_hint:        /dev/lirc*
+        type:               mode2
+        can_send:           True
+        modinit:            modprobe lirc_parallel
+
+    ati_remote:
+        device_hint:        /dev/lirc*
+        type:               code
+        can_send:           False
+        modinit:            modprobe ati_remote
+
+    lirc_sir:
+        device_hint:        /dev/lirc*
+        type:               mode2
+        can_send:           True
+        modinit:            modprobe lirc_sir
+        id:                 sir
+
+    lirc_serial:
+        device_hint:        /dev/lirc*
+        type:               mode2
+        can_send:           True
+        modinit:            modprobe lirc_serial
+
+    lirc_sasem:
+        device_hint:        /dev/lirc*
+        type:               mode2
+        can_send:           True
+        modinit:            modprobe lirc_sasem
+        id:                 sasem
+
+    lirc_bt829:
+        device_hint:        /dev/lirc*
+        type:               code
+        can_send:           False
+        modinit:            modprobe lirc_bt829
+
+    igorplugusb:
+        device_hint:        /dev/lirc*
+        type:               mode2
+        can_send:           True
+        modinit:            modprobe igorplugusb

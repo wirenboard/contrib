@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>LIRC-LSPLUGINS</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+
+<p>
+
+<b>lirc-lsplugins</b> - Print dynamic modules info
+<a name="lbAC"> </a>
+</p>
+<h2>SYNOPSIS</h2>
+
+<p>
+
+<b>lirc-lsplugins</b> [<i>-l</i>] [<i>-q</i>] [<i>-U plugindir</i>] [<i>drivers</i>]
+</p>
+<p>
+
+<b>lirc-lsplugins</b> -e [<i>-q</i>] [<i>-U plugindir</i>]
+</p>
+<p>
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+<p>
+
+Tool which writes a simple list with info for each driver found. In
+particular, it writes info if a plugin can't be loaded e. g., due to
+unresolved references.
+</p>
+<p>
+
+The
+<i>drivers</i>
+argument is an optional selector which limits the output to matching drivers.
+The match is a glob-type match as done by fnmatch()
+<a name="lbAE"> </a>
+</p>
+<h2>OPTIONS</h2>
+
+<dl>
+<div><dt>
+<b>-U</b> <b>--plugindir</b> &lt;<i>path</i>&gt;</dt></div>
+<dd>
+Use &lt;path&gt; to search for plugins. The path is a':'-separated search path
+similar to e. g., $PATH.
+</dd>
+<div><dt>
+<b>-q</b> <b>--quiet</b>
+</dt></div>
+<dd>
+Don't write headers and trailing legend.
+</dd>
+<div><dt>
+<b>-s</b> <b>--summary</b>
+</dt></div>
+<dd>
+Just write a summary over number of plugins, drivers and errors.
+</dd>
+<div><dt>
+<b>-e</b> <b>--errors</b>
+</dt></div>
+<dd>
+Only list plugins which can't be loaded, or does not contain any drivers.
+</dd>
+<div><dt>
+<b>-l</b> <b>--long</b>
+</dt></div>
+<dd>
+Add info on driver features.
+</dd>
+<div><dt>
+<b>-p</b> <b>--default-path</b>
+</dt></div>
+<dd>
+Print default search path and exit.
+</dd>
+<div><dt>
+<b>-h</b> <b>--help</b>
+</dt></div>
+<dd>
+Display usage summary.
+</dd>
+<div><dt>
+<b>-v</b> <b>--version</b>
+</dt></div>
+<dd>
+Display version info.
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>EXAMPLES</h2>
+
+<dl>
+<div><dt></dt></div>
+<dd>
+$ lirc-lsplugins -U ../lib/.libs:/usr/local/lib/lirc/plugins tira*
+</dd>
+</dl>
+<p>
+
+Lists all drivers with name matching 'tira*' found in plugins living
+in ../lib/.libs or /usr/local/lib/lirc/plugins.
+<a name="lbAG"> </a>
+</p>
+<h2>RETURN VALUE</h2>
+<p>
+
+lirc-lsplugins returns a non-zero error code if there is at least one plugin
+from which no driver can be loaded or options and parameters can't be
+parsed. Otherwise it returns zero.
+</p>
+<a name="lbAH"> </a>
+<h2>BUGS</h2>
+<p>
+
+Some drivers change their capabilities in runtime after inspecting the
+underlying hardware. These runtime capabilities can not be listed by
+lirc-lsplugins.
+</p>
+<a name="lbAI"> </a>
+<h2>STATUS</h2>
+<p>
+
+This tool is in an early alpha stage. Both the output format and the
+command line syntax are subject to change.
+</p>
+<a name="lbAJ"> </a>
+<h2>SEE ALSO</h2>
+
+<a href="fnmatch.html">fnmatch</a>(3)
+<br>
+
+<a href="lircd.html">lircd</a>(8)
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">OPTIONS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">EXAMPLES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">RETURN VALUE</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAH">BUGS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAI">STATUS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAJ">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

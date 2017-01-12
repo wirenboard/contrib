@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>IRPIPE</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+
+<p>
+
+<b>irpipe</b> - tool to send data to lircd over /dev/irpipe kernel device.
+<a name="lbAC"> </a>
+</p>
+<h2>SYNOPSIS</h2>
+
+<p>
+
+<b>irpipe</b> [<i>options</i>] &lt;file
+</p>
+<p>
+
+<b>irpipe</b> --read [<i>options</i>] &gt;file
+</p>
+<p>
+
+<b>irpipe</b> --filter [<i>options</i>] &lt;infile &gt;outfile
+</p>
+<p>
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+
+<p>
+
+irpipe is designed to feed data to <a href="lircd.html">lircd</a>(8) over a /dev/irpipe device. It's a tool
+to enter test data to lircd in a way which is identical to real data from /dev/lirc
+devices.
+</p>
+<p>
+
+irpipe uses two formats: text and binary. The binary format is documented in
+the <a href="mode2.html">mode2</a>(1).
+</p>
+<p>
+
+The irpipe driver allows user  to set the features returned by the
+<b>LIRC_GET_FEATURES</b>
+
+ioctl. These are documented in <a href="lirc.html">lirc</a>(4).
+</p>
+<p>
+
+The irpipe kernel device is often not built in packaged lirc versions. See
+[KERNEL DRIVER] below.
+</p>
+<p>
+<a name="lbAE"> </a>
+</p>
+<h2>OPTIONS</h2>
+
+<dl>
+<div><dt>
+<b>-d</b> <b>--device=driver</b>
+</dt></div>
+<dd>
+Set kernel device, default is /dev/irpipe0.
+</dd>
+<div><dt>
+<b>-b</b> <b>--bin2text</b>
+</dt></div>
+<dd>
+Convert binary data to text.
+</dd>
+<div><dt>
+<b>-t</b> <b>--text2bin</b>
+</dt></div>
+<dd>
+Convert text data to binary.
+</dd>
+<div><dt>
+<b>-s</b> <b>--add-sync</b>
+</dt></div>
+<dd>
+Add long initial sync on converted output. This is often required for lircd to
+be able to decode data, in particular if keys are not repeated.
+</dd>
+<div><dt>
+<b>-f</b> <b>--filter</b>
+</dt></div>
+<dd>
+Send data from stdin to stdout
+</dd>
+<div><dt>
+<b>-r</b> <b>--read</b>
+</dt></div>
+<dd>
+Send data from kernel device to stdout. This option is experimental and not
+tested.
+</dd>
+<div><dt>
+<b>-l--length</b>=<i>bits</i>
+</dt></div>
+<dd>
+Set kernel device signal length. This is only meaningful on LIRCCODE device
+emulation.
+</dd>
+<div><dt>
+<b>-F--features</b>=<i>bitmask</i>
+</dt></div>
+<dd>
+Set the features bitmask, as returned by the
+<b>LIRC_GET_FEATURES</b>
+
+ioctl. See <a href="lirc.html">lirc</a>(4) for more.
+</dd>
+<div><dt>
+<b>-h</b> <b>--help</b>
+</dt></div>
+<dd>
+Display usage summary.
+</dd>
+<div><dt>
+<b>-v</b> <b>--version</b>
+</dt></div>
+<dd>
+Display version.
+<p>
+</p>
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>KERNEL DRIVER</h2>
+
+<p>
+The irpipe tool is designed to work with the irpipe kernel driver, although
+the --filter option works without it. This driver is often not built
+in packaged versions. If this is the case, the driver can be built from
+sources in the drivers/irpipe directory. This requires kernel sources
+installed. The drivers/irpipe/README  provides information on building
+and installing the driver.
+</p>
+<p>
+<a name="lbAG"> </a>
+</p>
+<h2>SEE ALSO</h2>
+
+<b><a href="lircd.html">lircd</a>(8)</b>
+
+<br>
+
+<b><a href="lirc.html">lirc</a>(4)</b>
+
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">OPTIONS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">KERNEL DRIVER</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

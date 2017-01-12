@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>LIRCRCD</h1>
+<p>
+Section: System Manager Manual (8)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+
+<p>
+
+<b>lircrcd</b> - Synchronize lircrc state among client applications.
+<a name="lbAC"> </a>
+</p>
+<h2>SYNOPSIS</h2>
+
+<p>
+
+<b>lircrcd</b> [<i>options</i>] <i>config-file</i>
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+
+<p>
+
+<b>lircrcd</b>
+
+reads the given .lircrc config file and synchronises the mode
+that the LIRC clients such as <b><a href="irxevent.html">irxevent</a>(1)</b>,
+etc., are in. Using
+<b>lircrcd</b>
+
+has to be explicitly
+enabled in the lircrc config file by adding the following line at the
+beginning of the file:
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+lircrc_class default
+</dd>
+</dl>
+<p>
+
+This must be done at the top-level file, not an included one. The lircrc_class
+string (here "default") could actually be anything; clients using the same
+string in their lircrc will be synchronized.
+<a name="lbAE"> </a>
+</p>
+<h2>OPTIONS</h2>
+
+<dl>
+<div><dt>
+<b>-h</b> <b>--help</b>
+</dt></div>
+<dd>
+Display help message.
+</dd>
+<div><dt>
+<b>-v</b> <b>--version</b>
+</dt></div>
+<dd>
+Display version.
+</dd>
+<div><dt>
+<b>-p, --permission=</b><i>mode</i>
+
+</dt></div>
+<dd>
+The --permission option gives the file permission of the Unix domain
+socket lircrcd creates on startup in octal representation. Read the
+documentation for chmod for further details. If no --permission option
+is given when the socket is created the default is to give only the
+user owning the file read and write permissions (0600 in octal
+representation).
+</dd>
+<div><dt>
+<b>-o, --output=</b><i>socket</i>
+
+</dt></div>
+<dd>
+With the --output option you can select the Unix domain socket, which
+lircrcd will create. The default is to create a socket in VARRUNDIR
+(usually /var/run/lirc), see FILES.
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>SOCKET PROTOCOL</h2>
+
+<p>
+lircrcd syntactically uses the same protocol as lircd described in the
+<a href="lircd.html">lircd</a>(8) manpage. It supports the following commands:
+</p>
+<p>
+</p>
+<dl>
+<div><dt>
+<b>IDENT </b><i>ident</i>
+
+</dt></div>
+<dd>
+Each program connecting to lircrcd identifies itself using this program.
+<i>ident</i> is the string that is used in the <i>Prog = </i> token inside
+the .lircrc file.
+<p>
+</p>
+</dd>
+<div><dt>
+<b>CODE </b><i>code</i>
+
+</dt></div>
+<dd>
+When the client receives the code string from lircd it will send it to
+lircrcd and will receive back the applicable config string from the
+
+returned back which means that nothing (more) should happen in response
+to <i>code</i>. This command is used each time the lirc_code2char()
+function is called by a client.
+<p>
+</p>
+</dd>
+<div><dt>
+<b>GETMODE</b>
+
+</dt></div>
+<dd>
+lircrcd will return the current mode string.
+<p>
+</p>
+<p>
+</p>
+</dd>
+<div><dt>
+<b>SETMODE </b><i>mode</i>
+
+</dt></div>
+<dd>
+lircrcd will set the actual mode, reflecting a mode in the .lircrc
+file.
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAG"> </a>
+<h2>FILES</h2>
+<p>
+
+lircrcd creates its socket(s) in the VARRUNDIR directory, usually
+/var/run/lirc.  The socket basename includes the user UID and the
+string from the lircrc_class option.
+</p>
+<a name="lbAH"> </a>
+<h2>SEE ALSO</h2>
+
+<p>
+
+The documentation for
+<b>lirc</b>
+
+is maintained as html pages. They are located under html/ in the
+documentation directory.
+</p>
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">OPTIONS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">SOCKET PROTOCOL</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">FILES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAH">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

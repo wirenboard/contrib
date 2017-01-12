@@ -1,0 +1,917 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<table>
+    <tr>
+        <th>Hardware</th>
+        <th>Required LIRC kernel modules</th>
+        <th>lircd driver</th>
+        <th>Default lircd and lircmd config files</th>
+        <th>Supported remotes</th>
+   </tr>"
+<tr><th colspan="5"><a href="#usb">USB devices</a></th></tr>
+<tr><th colspan="5"><a href="#tv_card">TV cards</a></th></tr>
+<tr><th colspan="5"><a href="#other">Other (MIDI, Bluetooth, udp, etc.)</a></th></tr>
+<tr><th colspan="5"><a href="#soundcard">Home-brew (soundcard input)</a></th></tr>
+<tr><th colspan="5"><a href="#other_serial">Other serial port devices</a></th></tr>
+<tr><th colspan="5"><a href="#pda">PDAs</a></th></tr>
+<tr><th colspan="5"><a href="#home_brew">Home-brew serial and parallel devices</a></th></tr>
+<tr><th colspan="5"><a href="#irda">IRDA/Cir hardware</a></th></tr>
+<tr><th colspan="5"><hr></th></tr>
+<tr><th colspan="5"><a name="usb">
+USB devices</a></th></tr> 
+<tr>
+<td>ADSTech  USBX-707 USB IR Blaster</td>
+<td> </td>
+<td>usbx</td>
+<td>adstech/usbx-707.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>ATI Remote Wonder II</td>
+<td> </td>
+<td>atilibusb</td>
+<td>atiusb/atilibusb.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>ATI/NVidia/X10  I &amp; II RF Remote</td>
+<td>lirc_dev lirc_atiusb</td>
+<td>default</td>
+<td>atiusb/atiusb.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>ATI/NVidia/X10 RF Remote (userspace)</td>
+<td> </td>
+<td>atilibusb</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Apple  Mac mini USB IR Receiver</td>
+<td> </td>
+<td>macmini</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Asus DH USB Remote</td>
+<td> </td>
+<td>asusdh</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Aureal ATWF@83-W001 ESKY.CC remote</td>
+<td> </td>
+<td>atwf83</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Awox RF/IR Remote (userspace)</td>
+<td> </td>
+<td>awlibusb</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>CommandIR Multi-IR Transceiver (userspace)</td>
+<td> </td>
+<td>commandir</td>
+<td>hauppauge/hauppauge.lircd.conf hauppauge/hauppauge.lircmd.conf</td>
+<td>timing</td>
+</tr>
+<tr>
+<td>DFC  USB InfraRed Remote Control (userspace)</td>
+<td> </td>
+<td>dfclibusb</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>DViCO  USB Remote</td>
+<td> </td>
+<td>dvico</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Dangerous Prototypes irtoy device</td>
+<td> </td>
+<td>irtoy</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>FTDI  FT232-based IR Receiver</td>
+<td> </td>
+<td>ftdi</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Home  Electronics Tira USB device</td>
+<td> </td>
+<td>tira</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Home  Electronics Tira USB device (timing mode)</td>
+<td> </td>
+<td>tira_raw</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>IRLink VS USB IR Receiver.</td>
+<td> </td>
+<td>irlink</td>
+<td>any  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Igor Cesko's USB IR Receiver</td>
+<td>lirc_dev lirc_igorplugusb</td>
+<td> </td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Iguanaworks USB IR Transceiver</td>
+<td> </td>
+<td>iguanaIR</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Medion X10 devices</td>
+<td> </td>
+<td>atilibusb</td>
+<td>atiusb/atilibusb.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>NVidia X10 RF Remote (userspace)</td>
+<td> </td>
+<td>atilibusb</td>
+<td>atiusb/atilibusb.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>PCMAK  USB receiver</td>
+<td> </td>
+<td>pcmak</td>
+<td>pcmak/pcmak.lircd.conf pcmak/pcmak.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Philips  7500 RF remote</td>
+<td> </td>
+<td>srm7500libusb</td>
+<td>philips/srm7500libusb.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Samsung  USB IR Receiver</td>
+<td> </td>
+<td>samsung</td>
+<td>samsung/samsung.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Sasem  OnAir Remocon-V</td>
+<td>lirc_dev lirc_sasem</td>
+<td>default</td>
+<td>sasem/sasem.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Snapstream  Firefly</td>
+<td>lirc_dev lirc_atiusb</td>
+<td>default</td>
+<td>atiusb/atiusb.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Sound Blaster Extigy/Audigy 2 NX (ALSA snd-usb-audio)</td>
+<td> </td>
+<td>alsa_usb</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Soundgraph  iMON 2.4G DT &amp; LT</td>
+<td>lirc_dev lirc_imon</td>
+<td>default</td>
+<td>imon/imon-2.4g.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Soundgraph  iMON IR/LCD</td>
+<td>lirc_dev lirc_imon</td>
+<td>default</td>
+<td>imon/imon.lircd.conf  </td>
+<td>Usually only lirccode</td>
+</tr>
+<tr>
+<td>Soundgraph  iMON MultiMedian IR/VFD</td>
+<td>lirc_dev lirc_imon</td>
+<td>default</td>
+<td>imon/imon.lircd.conf  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Soundgraph  iMON RSC</td>
+<td>lirc_dev lirc_imon</td>
+<td>default</td>
+<td>imon/imon-rsc.lircd.conf  </td>
+<td>Usually only lirccode</td>
+</tr>
+<tr>
+<td>Soundgraph iMON PAD IR/VFD</td>
+<td>lirc_dev lirc_imon</td>
+<td>default</td>
+<td>imon/imon-pad.lircd.conf  </td>
+<td>Usually only lirccode</td>
+</tr>
+<tr>
+<td>TechnoTrend Trend USB IR receiver</td>
+<td>lirc_dev lirc_ttusbir</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>USB-UIRT</td>
+<td> </td>
+<td>usb_uirt_raw</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Undefined hardware</td>
+<td> </td>
+<td>none</td>
+<td>   </td>
+<td> </td>
+</tr>
+<tr>
+<td>VLSystem  MPlay Blast</td>
+<td> </td>
+<td>mplay</td>
+<td>vlsystem/mplay.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>VLSystem  MPlay Mini</td>
+<td> </td>
+<td>mplay</td>
+<td>vlsystem/mplay.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>X10  MP3 Anywhere USB RF Receiver</td>
+<td> </td>
+<td>atilibusb</td>
+<td>x10/mp3anywhere.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>X10 RF Remote (userspace)</td>
+<td> </td>
+<td>atilibusb</td>
+<td>atiusb/atilibusb.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>YARD2 USB IR Receiver</td>
+<td> </td>
+<td>yard2</td>
+<td>yard2/lircd.conf.yard2  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Zotac USB IR Receiver</td>
+<td> </td>
+<td>zotac</td>
+<td>zotac/zotac.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr><th colspan="5"><a name="tv_card">
+TV cards</a></th></tr> 
+<tr>
+<td>Adaptec AVC-2410</td>
+<td>lirc_dev lirc_i2c</td>
+<td>default</td>
+<td>adaptec/AVC-2410.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Askey  Magic TView CPH03x (card=1)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>cph03x/cph03x.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Askey/Typhoon/Anubis Magic TView CPH051/061 (bt878) (card=24)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>cph03x/cph03x.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Asus  TV-Box</td>
+<td>lirc_dev lirc_i2c</td>
+<td>default</td>
+<td>asus/asus.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>AverMedia TV card (TVCapture, TVPhone) (card=6)</td>
+<td>lirc_dev</td>
+<td>default</td>
+<td>avermedia/avermedia.lircd.conf avermedia/avermedia.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>AverMedia-98 TV card (TVCapture, TVPhone) (card=6)</td>
+<td>lirc_dev</td>
+<td>default</td>
+<td>avermedia/avermedia.lircd.conf avermedia/avermedia.lircd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>BestBuy Easy TV (BT848) (card=55)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>bestbuy/bestbuy.lircd.conf bestbuy/bestbuy.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>BestBuy Easy TV (BT878) (card=62)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>bestbuy/bestbuy2.lircd.conf bestbuy/bestbuy2.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Chronos  Video Shuttle II (card=35)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>chronos/chronos.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Creative BreakOut-Box</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>creative/breakoutbox.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Dign HV5 HTPC IR/VFD Module</td>
+<td>irc_dev lirc_sasem</td>
+<td>default</td>
+<td>sasem/sasem.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Dynalink  Magic TView (card=48)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>cph03x/cph03x.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>FlyVideo  98 (card=3</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>life-view/flyvideo.lircd.conf life-view/flyvideo.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>FlyVideo  II (card=8)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>life-view/flyvideo.lircd.conf life-view/flyvideo.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>FlyVideo 98/FM /2000S (card=56)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>life-view/flyvideo.lircd.conf life-view/flyvideo.lircmd.conf</td>
+<td> </td>
+</tr>
+<tr>
+<td>Flyvideo 98FM (LR50Q)/Typhoon TView TV/FM Tuner (card=36)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>life-view/flyvideo.lircd.conf life-view/flyvideo.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Hauppauge  HVR-1300</td>
+<td>lirc_dev lirc_i2c</td>
+<td>default</td>
+<td>hauppauge/hauppauge.lircd.conf hauppauge/hauppauge.lircmd.conf</td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Hauppauge  TV card</td>
+<td>lirc_dev lirc_i2c</td>
+<td>default</td>
+<td>hauppauge/hauppauge.lircd.conf hauppauge/hauppauge.lircmd.conf</td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Hauppauge DVB-s card (ver. 2.1)</td>
+<td>lirc_dev</td>
+<td>default</td>
+<td>hauppauge/hauppauge.lircd.conf hauppauge/hauppauge.lircmd.conf</td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Hercules Smart TV Stereo (card=100)</td>
+<td>lirc_dev</td>
+<td>default</td>
+<td>hercules/smarttv_stereo.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>I-O</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>iodata/gvbctv5pci.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Jetway TV/Capture JW-TV878-FBK, Kworld KW-TV878RF (card=78)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>kworld/kworld.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>KNC ONE TV Station (-/SE/PRO/RDS)</td>
+<td>lirc_dev lirc_i2c</td>
+<td>default</td>
+<td>knc_one/knc_one.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Lenco  MXTV-9578 CP (card=50)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>pixelview/playtv_pro.lircd.conf pixelview/playtv_pro.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Phoebe  Tv Master + FM (card=22)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>cph03x/cph93x.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Pinnacle  Systems PCTV Sat receiver</td>
+<td> </td>
+<td>pinsys</td>
+<td>pinnacle_systems/pctv.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Pinnacle Systems PCTV (pro) receiver</td>
+<td> </td>
+<td>pinsys</td>
+<td>pinnacle_systems/pctv.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Pixelview  PV-BT878P+4E (card=50)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>pixelview/playtv_pro.lircd.conf pixelview/playtv_pro.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Pixelview PlayTV MPEG2</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>pixelview/playtv_pro.lircd.conf pixelview/playtv_pro.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Pixelview PlayTV pro (card=37)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>pixelview/playtv_pro.lircd.conf pixelview/playtv_pro.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>ProVideo  PV951 (card=42)</td>
+<td>lirc_dev lirc_i2c</td>
+<td>default</td>
+<td>provideo/pv951.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Prolink  PV-BT878P+4E (card=50)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>pixelview/playtv_pro.lircd.conf pixelview/playtv_pro.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Prolink AProlink Pixelview PV-BT878P+ (Rev.4C,8E, card=70)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>pixelview/playtv_pro.lircd.conf pixelview/playtv_pro.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Sony PCVA-IR5U IR Receiver</td>
+<td> </td>
+<td>sonyir</td>
+<td>sonyir.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Sony PCVA-IR5U IR Receiver (OSX version)</td>
+<td> </td>
+<td>sonyir</td>
+<td>sonyir.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Soundgraph  iMON Knob</td>
+<td>lirc_dev lirc_imon</td>
+<td>default</td>
+<td>imon/imon-knob.lircd.conf  </td>
+<td>Usually only lirccode</td>
+</tr>
+<tr>
+<td>TV card (VDOMATE) (use card=13)</td>
+<td>lirc_dev</td>
+<td>default</td>
+<td>avermedia/vdomate.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>TView99  CPH063 (card=38)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>cph03x/cph03x.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Technisat MediaFocus I</td>
+<td> </td>
+<td>default</td>
+<td>technisat/mediafocus.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Tekram   M230 Mach64 (and others bt829 based)</td>
+<td>lirc_dev lirc_bt829</td>
+<td>default</td>
+<td>tekram/m230.lircd.conf tekram/m230.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>TriTan Technology TView95 CPH03x (card=1)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>cph03x/cph93x.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Typhoon  TView RDS / FM Stereo (card=53)</td>
+<td>lirc_dev lirc_i2c</td>
+<td>default</td>
+<td>knc_one/knc_one.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>WinView  601 (card=17)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>leadtek/RM-0007.lircd.conf leadtek/RM-0007.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Winfast  TV2000/XP (card=34)</td>
+<td>lirc_dev lirc_gpio</td>
+<td>default</td>
+<td>leadtek/RM-0010.lircd.conf leadtek/RM-0010.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Winfast PVR2000</td>
+<td>lirc_dev lirc_i2c</td>
+<td>default</td>
+<td>leadtek/PVR2000.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr><th colspan="5"><a name="other">
+Other (MIDI, Bluetooth, udp, etc.)</a></th></tr> 
+<tr>
+<td>AOpen XC Cube EA65, EA65-II</td>
+<td> </td>
+<td>ea65</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Creative  LiveDrive midi</td>
+<td> </td>
+<td>livedrive_midi</td>
+<td>creative/livedrive.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Creative  LiveDrive sequencer</td>
+<td> </td>
+<td>livedrive_seq</td>
+<td>creative/livedrive.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Creative  iNFRA CDROM</td>
+<td> </td>
+<td>creative_infracd</td>
+<td>creative/infracd.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Ericsson mobile phone via Bluetooth</td>
+<td> </td>
+<td>bte</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Generic device getting keypresses from network UDP port</td>
+<td> </td>
+<td>udp</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr><th colspan="5"><a name="soundcard">
+Home-brew (soundcard input)</a></th></tr> 
+<tr>
+<td>IR receiver IC connected to audio input using ALSA (EXPERIMENTAL)</td>
+<td> </td>
+<td>audio_alsa</td>
+<td>   </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Receiver/transmitter using PortAudio (EXPERIMENTAL)</td>
+<td> </td>
+<td>audio</td>
+<td>   </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Simple IR diode (EXPERIMENTAL)</td>
+<td> </td>
+<td>dsp</td>
+<td>   </td>
+<td>timing</td>
+</tr>
+<tr><th colspan="5"><a name="other_serial">
+Other serial port devices</a></th></tr> 
+<tr>
+<td>Anir Multimedia Magic</td>
+<td>lirc_dev lirc_serial</td>
+<td>default</td>
+<td>animax/animax.lircd.conf animax/animax.lircmd.conf</td>
+<td>timing</td>
+</tr>
+<tr>
+<td>CARACA</td>
+<td> </td>
+<td>caraca</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Creative  Infra Receiver/CIMR100</td>
+<td> </td>
+<td>creative</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>IRdeo</td>
+<td>lirc_dev lirc_serial</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>IRdeo Remote</td>
+<td>lirc_dev serial</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Irman/UIR</td>
+<td> </td>
+<td>irman</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Kanam  Accent</td>
+<td> </td>
+<td>accent</td>
+<td>   </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Linksys NSLU2 (CTS2+GreenLED)</td>
+<td>lirc_dev lirc_serial</td>
+<td>nslu2</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Logitech/AST</td>
+<td> </td>
+<td>logitech</td>
+<td>logitech/logitech.lircd.conf logitech/logitech.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Miro PCTV serial receiver</td>
+<td> </td>
+<td>pinsys</td>
+<td>pinnacle_systems/pctv.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>PCMAK serial receiver</td>
+<td> </td>
+<td>pcmak</td>
+<td>pcmak/pcmak.lircd.conf pcmak/pcmak.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Packard  Bell receiver</td>
+<td>lirc_dev lirc_serial</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Pinnacle Systems TV-card receiver</td>
+<td> </td>
+<td>pinsys</td>
+<td>pinnacle_systems/pctv.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>PixelView RemoteMaster RC2000/RC3000</td>
+<td> </td>
+<td>pixelview</td>
+<td>pixelview/remotemaster.lircd.conf pixelview/remotemaster.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>REALmagic (bundled with Hollywood Plus DVD card)</td>
+<td> </td>
+<td>pixelview</td>
+<td>sigma_designs/realmagic.lircd.conf  </td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Silitek  SM-1000</td>
+<td> </td>
+<td>silitek</td>
+<td>silitek/silitek.lircd.conf silitek/silitek.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>Tekram  Irmate 210 (16x50 UART compatible serial port)</td>
+<td>lirc_dev lirc_sir</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>UIRT2  (receive and transmit)</td>
+<td> </td>
+<td>uirt2_raw</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>UIRT2  (receive only, UIR mode)</td>
+<td> </td>
+<td>uirt2</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>X10  MP3 Anywhere Serial RF Receiver</td>
+<td> </td>
+<td>mp3anywhere</td>
+<td>x10/mp3anywhere.lircd.conf x10/mp3anywhere.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr>
+<td>X10  MouseRemote RF Receiver (Serial)</td>
+<td> </td>
+<td>mouseremote</td>
+<td>x10/mouseremote.lircd.conf x10/mouseremote.lircmd.conf</td>
+<td>lirccode</td>
+</tr>
+<tr><th colspan="5"><a name="pda">
+PDAs</a></th></tr> 
+<tr>
+<td>HP  iPAQ</td>
+<td>lirc_dev lirc_sir</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Sharp Zaurus</td>
+<td>lirc_dev lirc_sir</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr><th colspan="5"><a name="home_brew">
+Home-brew serial and parallel devices</a></th></tr> 
+<tr>
+<td>Home brew (16x50 compatible UART serial port)</td>
+<td>lirc_dev lirc_serial</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>home-brew (parallel port)</td>
+<td>lirc_dev lirc_parallel</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr><th colspan="5"><a name="irda">
+IRDA/Cir hardware</a></th></tr> 
+<tr>
+<td>Actisys  Act200L SIR driver support</td>
+<td>lirc_dev lirc_sir</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Actisys Act220L(+) SIR driver support</td>
+<td>lirc_dev lirc_sir</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>SIR  IrDA (built-in IR ports)</td>
+<td>lirc_dev lirc_sir</td>
+<td>default</td>
+<td>any  </td>
+<td>timing</td>
+</tr>
+<tr>
+<td>Winbond</td>
+<td>lirc_dev lirc_wpc87691</td>
+<td>default</td>
+<td>acer/Aspire_6530G.lircd.conf  </td>
+<td>timing</td>
+</tr>
+</table>
+
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

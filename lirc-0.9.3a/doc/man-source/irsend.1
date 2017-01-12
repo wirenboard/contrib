@@ -1,0 +1,114 @@
+.TH IRSEND "1" "Last change: Aug 2015" "irsend @version@" "User Commands"
+.SH NAME
+.P
+\fBirsend\fR - basic LIRC program to send infra-red commands
+.SH SYNOPSIS
+.P
+\fBirsend\fR [\fIoptions\fR] \fIDIRECTIVE REMOTE CODE \fR[\fICODE\fR...]
+.SH DESCRIPTION
+.P
+Asks the \fBlircd\fR daemon to send one or more CIR
+(Consumer Infra-Red) commands. This is intended for remote control
+of electronic devices such as TV boxes, HiFi sets, etc.
+.PP
+\fIDIRECTIVE\fR can be:
+.nf
+\fBSEND_ONCE\fR         - send \fICODE\fR [\fICODE\fR ...] once
+\fBSEND_START\fR        - start repeating \fICODE\fR
+\fBSEND_STOP\fR         - stop repeating \fICODE\fR
+\fBLIST\fR              - list configured remote items
+\fBSET_TRANSMITTERS\fR  - set transmitters \fINUM\fR [\fINUM\fR ...]
+\fBSIMULATE\fR          - simulate IR event
+.fi
+
+.PP
+\fIREMOTE\fR is the name of a remote, as described in the \fBlircd\fR
+configuration file.
+
+.PP
+\fICODE\fR is the name of a remote control key of \fIREMOTE\fR, as it
+appears in the \fBlircd\fR configuration file.
+
+.PP
+\fINUM\fR is the transmitter number of the hardware device.
+
+.PP
+For the \fBLIST\fR \fIDIRECTIVE\fR, \fIREMOTE\fR and/or \fICODE\fR
+can be empty:
+
+.nf
+\fBLIST\fR   ""    ""   - list all configured remote names
+\fBLIST\fR \fIREMOTE\fR  ""   - list all codes of \fIREMOTE\fR
+\fBLIST\fR \fIREMOTE\fR \fICODE\fR  - list only \fICODE\fR of \fIREMOTE\fR
+.fi
+
+.PP
+The \fBSIMULATE\fR command only works if it has been explicitly
+enabled in lircd using the --allow-simulate option.
+.SH OPTIONS
+.TP
+\fB\-h\fR \fB\-\-help\fR
+display usage summary
+.TP
+\fB\-v\fR \fB\-\-version\fR
+display version
+.TP
+\fB\-d\fR \fB\-\-device\fR
+use given lircd socket [/var/run/lirc/lircd]
+.TP
+\fB\-a\fR \fB\-\-address\fR=\fIhost[\fR:port]
+connect to lircd at this address
+.TP
+\-# \fB\-\-count\fR=\fIn\fR
+send command n times
+
+.SH ENVIRONMENT
+.TP 4
+LIRC_SOCKET_PATH
+The lircd socket to connect to, defaults to a hardcoded default value
+usually /var/run/lirc/lircd
+.SH FILES
+.TP
+.I /etc/lirc/lircd.conf
+Default \fBlircd\fR configuration file.  It should contain all the
+remotes, their infra-red codes and the corresponding timing and
+waveform details.
+
+.SH DIAGNOSTICS
+.P
+If \fBlircd\fR is not running (or /var/run/lirc/lircd lacks write
+permissions) \fBirsend\fR aborts with the following diagnostics:
+.nf
+"irsend: could not connect to socket"
+"irsend: Connection refused" (or "Permission denied").
+.fi
+.SH EXAMPLES
+.nf
+irsend LIST DenonTuner ""
+irsend SEND_ONCE  DenonTuner PROG\-SCAN
+irsend SEND_ONCE  OnkyoAmpli VOL\-UP VOL\-UP VOL\-UP VOL\-UP
+irsend SEND_START OnkyoAmpli VOL\-DOWN ; sleep 3
+irsend SEND_STOP  OnkyoAmpli VOL\-DOWN
+irsend SET_TRANSMITTERS 1
+irsend SET_TRANSMITTERS 1 3 4
+irsend SIMULATE "0000000000000476 00 OK TECHNISAT_ST3004S"
+.fi
+.SH "DRIVER LOADING"
+Drivers are loaded dynamically. The directory used for this is determined by (falling
+priority):
+.IP \- 2
+The 'plugindir' entry in  the [lircd] section of the lirc_options.conf file.
+.IP \- 2
+The environment variable LIRC_PLUGINDIR.
+.IP \- 2
+A hardcoded default (usually /usr/lib[64]/lirc/plugins).
+.SH "SEE ALSO"
+lircd(8),
+.br
+mode2(1),
+.br
+xmode2(1),
+.br
+irrecord(1),
+.br
+irw(1)

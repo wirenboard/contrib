@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>MODE2</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+
+<p>
+
+<b>mode2</b> - Show pulse/space length or decoded input from infrared drivers.
+</p>
+<p>
+<a name="lbAC"> </a>
+</p>
+<h2>SYNOPSIS</h2>
+
+<p>
+
+<b>mode2</b> --driver &lt;<i>driver</i>&gt; --device &lt;<i>device</i>&gt;
+[<i>other options</i>]
+</p>
+<p>
+
+<b>mode2</b> --raw --device &lt;<i>device</i>&gt; [<i>other options</i>]
+</p>
+<p>
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+
+<p>
+
+The main purpose of this program is to check operation of your
+home-brew LIRC receiver hardware and to see the IR waveform of the
+remote controller without an expensive oscilloscope. Very useful for
+debugging also in situations you just need to verify configuration.
+</p>
+<p>
+
+mode2 will simply print pulse and space lengths to stdout for drivers
+supporting LIRC_MODE_MODE2. For drivers supporting LIRC_MODE_LIRCCODE such
+as TV-cards and the irman driver writes the decoded, integer values.
+</p>
+<p>
+
+When given the correct driver mode2 should always work. Without a driver,
+the --raw option should always work for /dev/lirc* devices. At the time
+of writing, usb devices also work in most cases. However, since it is
+tricky to get the path to the usb device, such ones are normally best
+accessed using a driver.
+</p>
+<p>
+<a name="lbAE"> </a>
+</p>
+<h2>OPTIONS</h2>
+
+<p>
+</p>
+<dl>
+<div><dt>
+<b>-d</b> <b>--device</b>=<i>device</i>
+</dt></div>
+<dd>
+Read from given device.
+</dd>
+<div><dt>
+<b>-H</b> <b>--driver</b>=<i>driver</i>
+</dt></div>
+<dd>
+Use given driver.
+</dd>
+<div><dt>
+<b>-m</b> <b>--mode</b>=<i>mode</i>
+</dt></div>
+<dd>
+Write pulse/space data as raw config files. Does not affect
+LIRCCODE drivers.
+</dd>
+<div><dt>
+<b>-s</b> <b>--scope</b>=<i>time</i>
+</dt></div>
+<dd>
+Enable 'scope like display with time us per char. Does not
+affect lirccode drivers.
+</dd>
+<div><dt>
+<b>-k</b> <b>--keep-root</b>
+</dt></div>
+<dd>
+Don't drop root privileges after opening device. See RUNNING AS ROOT.
+</dd>
+<div><dt>
+<b>-g</b> <b>--gap</b>=<i>time</i>
+</dt></div>
+<dd>
+Treat spaces longer than time as the gap. Time is in microseconds.
+</dd>
+<div><dt>
+<b>-r</b> <b>--raw</b>
+</dt></div>
+<dd>
+Access device directly. This is primarely intended to be used with kernel
+drivers i.e., when accessing <i>/dev/lirc*</i> devices. Using other devices might
+work, but is in general undefined.
+</dd>
+<div><dt>
+<b>-A</b> <b>--driver-options</b>=<i>key:value[|key:value...]</i>
+</dt></div>
+<dd>
+Set driver-specific option named key to given value.
+</dd>
+<div><dt>
+<b>-U</b> <b>--plugindir</b>=<i>directory</i>
+</dt></div>
+<dd>
+Load drivers from directory. See DRIVER LOADING.
+</dd>
+<div><dt>
+<b>-h</b> <b>--help</b>
+</dt></div>
+<dd>
+Display usage summary.
+</dd>
+<div><dt>
+<b>-v</b> <b>--version</b>
+</dt></div>
+<dd>
+Display version.
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>RUNNING AS ROOT</h2>
+<p>
+
+In many cases mode2 needs to run as root to access devices not available
+to regular users. On the other hand, running as root creates problems
+such as log files owned by root, security concerns etc.
+</p>
+<p>
+
+In order to cope with this, mode2 by default drops root privileges
+after opening the input device. This support is based on that root
+permissions are accquired using <a href="sudo.html">sudo</a>(1) e. g., using
+</p>
+<pre>
+
+        $ sudo mode2 --raw /dev/lirc0
+
+</pre>
+<p>
+
+If not using sudo, the same behaviour could be accomplished using the
+SUDO_USER environment variable e. g.,
+</p>
+<pre>
+
+        # SUDO_USER=$LOGNAME mode2 --raw /dev/lirc0
+
+</pre>
+<p>
+
+The --keep-root option will make mode2 to keep root privileges for the
+complete run.
+</p>
+<p>
+</p>
+<p>
+<a name="lbAG"> </a>
+</p>
+<h2>DRIVER LOADING</h2>
+<p>
+
+Drivers are loaded dynamically. The search path used for this is determined
+by (falling priority):
+</p>
+<dl>
+<div><dt>-</dt></div>
+<dd>
+The --plugindir option.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+The 'plugindir' entry in  the [lircd] section of the lirc_options.conf file.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+The environment variable LIRC_PLUGINDIR.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+A hardcoded default (usually /usr/lib[64]/lirc/plugins).
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAH"> </a>
+<h2>ENVIRONMENT</h2>
+
+<dl>
+<div><dt>
+<b>LIRC_LOGLEVEL</b>
+
+</dt></div>
+<dd>
+Determines the amount of logging information. [level] can be a symbolic
+syslog level: 'error','warning, 'info', 'notice' or  'debug'. lirc
+also defines three additional levels 'trace', 'trace1' and 'trace2' which
+gives even more messages ('trace2' bringing the most). However, in the
+log these messages are marked as 'debug'.
+</dd>
+<div><dt></dt></div>
+<dd>
+The level can also be an integer in the range 3 (almost no messages) to
+10.
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAI"> </a>
+<h2>FILES</h2>
+
+<dl>
+<div><dt>
+<b>~/.cache/mode2.log</b>
+
+</dt></div>
+<dd>
+Debug output. Setting the XDG_CACHE_HOME environment variable relocates this
+file to $XDG_CACHE_HOME/mode2.log
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAJ"> </a>
+<h2>SEE ALSO</h2>
+
+<a href="xmode2.html">xmode2</a>(1)
+<br>
+
+<a href="lirc.html">lirc</a>(4)
+<p>
+The documentation for
+<b>lirc</b>
+
+is maintained as html pages. They are located under html/ in the
+documentation directory.
+</p>
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">OPTIONS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">RUNNING AS ROOT</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">DRIVER LOADING</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAH">ENVIRONMENT</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAI">FILES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAJ">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

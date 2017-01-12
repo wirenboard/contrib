@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>irdb-get</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+
+<p>
+
+<b>irdb-get</b> - list, search and download lirc configuration files.
+<a name="lbAC"> </a>
+</p>
+<h2>SYNOPSIS</h2>
+
+<b>irdb-get</b> update
+<p>
+
+<b>irdb-get</b> find  &lt;<i>string</i>&gt;
+</p>
+<p>
+
+<b>irdb-get</b> info  &lt;<i>id</i>&gt;
+</p>
+<p>
+
+<b>irdb-get</b> download &lt;<i>id</i>&gt;
+</p>
+<p>
+
+<b>irdb-get</b> list [<i>pattern</i>]
+</p>
+<p>
+
+<b>irdb-get</b> find-driver  &lt;<i>string</i>&gt;
+</p>
+<p>
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+
+<p>
+
+<b>irdb-get</b> can list, search and download lirc remote configuration
+files.  It works by downloading an index file, making all operations
+besides the actual download local.
+</p>
+<p>
+
+Entries in the index are identified by an <i>id</i>. Such an <i>id</i>
+is on the form
+<i>dir/remote</i>
+
+e. g.,
+<i>x10/ati_remote_wonder_III</i>
+
+</p>
+<p>
+<a name="lbAE"> </a>
+</p>
+<h2>COMMANDS</h2>
+
+<dl>
+<div><dt>
+<b>update</b>
+
+</dt></div>
+<dd>
+Download the index from the remote repository.
+</dd>
+<div><dt>
+<b>find</b> &lt;<i>string</i>&gt;</dt></div>
+<dd>
+List all entries in the index file matching &lt;string&gt;. Matching is done
+using regular shell match syntax (i. e., not regex).
+</dd>
+<div><dt>
+<b>find-driver</b> &lt;<i>string</i>&gt;</dt></div>
+<dd>
+List all entries in the index with a given driver. The matching is
+exact, no wildcards.
+</dd>
+<div><dt>
+<b>info</b> &lt;<i>id</i>&gt;</dt></div>
+<dd>
+Print some more info about a given entry.
+</dd>
+<div><dt>
+<b>download</b> &lt;<i>id</i>&gt;</dt></div>
+<dd>
+Download the configuration file for a given entry. The filename is printed
+on stdout.
+</dd>
+<div><dt>
+<b>list</b> &lt;<i>pattern</i>&gt;</dt></div>
+<dd>
+List entries matching &lt;pattern&gt;. &lt;pattern&gt; is on the form dir/remote e. g.,
+<i>x10/ati*</i>
+
+or
+<i>*/ati_remote_wonder* .</i>
+
+<p>
+The first word in the list is something like -RL- where the letters represent:
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+<dl>
+<div><dt>R</dt></div>
+<dd>
+raw configuration.
+</dd>
+<div><dt>T</dt></div>
+<dd>
+remote has timing information i. e., it can be used with generic
+capture devices.
+</dd>
+<div><dt>L</dt></div>
+<dd>
+remote has a lircmd config file.
+</dd>
+<div><dt>P</dt></div>
+<dd>
+remote has a photo
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+<div><dt>
+<b>
+-h</b> , <b>--help</b>
+</dt></div>
+<dd>
+Print help message.
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>FILES</h2>
+
+<dl>
+<div><dt>
+<b>~/.cache/remotes.list</b>
+
+</dt></div>
+<dd>
+The index file downloaded on demand or by the update command.
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAG"> </a>
+<h2>SEE ALSO</h2>
+
+<a href="http://sourceforge.net/projects/lirc-remotes">http://sourceforge.net/projects/lirc-remotes</a>
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">COMMANDS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">FILES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

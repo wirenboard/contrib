@@ -1,0 +1,78 @@
+LIRC release procedure (more or less)
+-------------------------------------
+
+Pre-requisites:
+- Compiles without warnings
+- Unit tests pass.
+- 'make distcheck' pass
+- Encoder/decoder regression tests all pass
+- liblirc_client: version number change required?
+        current:release:age
+        http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html#Libtool-versioning
+- git master branch is committed and pushed
+- Update NEWS.
+- Create a new git release branch:
+      git checkout -b <version>
+
+
+Steps for a new release (pre or final)
+
+1) Checkout the release branch.
+
+2) Update NEWS.
+
+3) Update version number in:
+        README, NEWS, configure.ac, doc/lirc.org/index.html
+   Update the news entry in README.
+
+4) Commit and push branch:
+        git commit -a -s -m "Update for lirc <version> release"
+
+5) Create tarball:
+	cd ..
+        git clone -b <release branch> lirc lirc-tmp
+        cd lirc-tmp
+        ./autogen.sh
+        ./configure
+        make distcheck
+
+6) Merge release branch into the 'release' branch:
+       git checkout release
+       git merge -X theirs <release branch>
+       git tag -a  lirc-<version> HEAD    # Using version like lirc-0_9_0
+       git push --tags origin <release-branch>
+   Check that the tags are present also in the release branch (no rebase
+   problems):
+       git log --oneline --decorate -25
+
+7) Merge release branch into master:
+       git checkout -b tmp <release-branch>
+       git rebase master
+       git checkout master
+       git merge tmp
+       git branch -d tmp
+
+8) Get tarballs to Christoph to post at http://lirc.org/software/snapshots/,
+   or publish it elsewhere.
+
+9) Announce on the list.
+
+For final release:
+
+1) Upload tarball to sourceforge
+
+2) Back in master, increment <version> in the files in step 3 for the next
+   version
+
+
+Send announcement email to lirc-list@lists.sourceforge.net
+
+----8<----
+Blah blah
+
+<url>
+
+Changes since last release:
+<latest release contents of NEWS>
+----8<----
+

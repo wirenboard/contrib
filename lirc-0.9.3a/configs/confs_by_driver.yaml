@@ -1,0 +1,194 @@
+#
+# Created by 'irdb-get yaml-config' at Wed Oct 14 18:16:07 2015
+#
+
+lircd_by_driver:
+
+    accent:
+        - kanam_accent/IR-100.lircd.conf 
+        - kanam_accent/kanam_accent.lircd.conf
+
+    alsa_usb:
+        - creative/alsa_usb.lircd.conf
+
+    asusdh:
+        - asus/asusdh.lircd.conf
+
+    atilibusb:
+        - atiusb/atilibusb.lircd.conf 
+        - q-sonic/Master_Remote_6in1.lircd.conf 
+        - x10/atilibusb.lircd.conf
+
+    atwf83:
+        - aureal/atwf83.lircd.conf
+
+    avermedia:
+        - avermedia/tvstudio.lircd.conf
+
+    awlibusb:
+        - awlibusb/awlibusb.lircd.conf
+
+    bestbuy2:
+        - bestbuy/bestbuy2.lircd.conf
+
+    bte:
+        - ericsson/bte.lircd.conf
+
+    caraca:
+        - caraca/caraca.lircd.conf
+
+    creative:
+        - creative/creative.lircd.conf
+
+    creative_infradc:
+        - creative/infracd.lircd.conf
+
+    devinput:
+        - devinput/devinput.lircd.conf 
+        - holtek/lircd.lircd.conf 
+        - pipi/PiPiPC.lircd.conf
+
+    dvico:
+        - dvico/fusionHDTV.lircd.conf
+
+    ea65:
+        - ea65/ea65.lircd.conf
+
+    irlink:
+        - irlink/irlink.vs.lircd.conf
+
+    irman:
+        - acer/RC-17DE0.irman.lircd.conf 
+        - ads/PTV-334.irman.lircd.conf 
+        - aiwa/RC-TZ650.irman.lircd.conf 
+        - akai/RC-V420E.irman.lircd.conf 
+        - akai/RC-X626E.irman.lircd.conf 
+        - att/RC1534801_00.irman.lircd.conf 
+        - bose/WaveRadioCD.irman.lircd.conf 
+        - creative/RM-900.irman.lircd.conf 
+        - denon/RC-543.irman.lircd.conf 
+        - directv/RC16.irman.lircd.conf 
+        - dream_multimedia/DM_7000.irman.lircd.conf 
+        - evation/RC.irman.lircd.conf 
+        - harman_kardon/AVR210.irman.lircd.conf 
+        - hauppauge/hauppauge.irman.lircd.conf 
+        - hitachi/VT-RM401E.irman.lircd.conf 
+        - jvc/LP20337-004.irman.lircd.conf 
+        - jvc/PQ11534.irman.lircd.conf 
+        - jvc/RM-C388.irman.lircd.conf 
+        - jvc/RM-C601.irman.lircd.conf 
+        - jvc/RM-SEMX-44U.irman.lircd.conf 
+        - kenwood/RC-601.irman.lircd.conf 
+        - kenwood/RC-6030.irman.lircd.conf 
+        - kodak/RC-201.irman.lircd.conf 
+        - l&s_electronic/HS-910.irman.lircd.conf 
+        - lg/6710V00070A.irman.lircd.conf 
+        - medion/2020.lircd.conf 
+        - motorola/DCT6200.irman.lircd.conf 
+        - octaltv/WebTV.irman.lircd.conf 
+        - palladium/RC-BM.irman.lircd.conf 
+        - panasonic/EUR511211.irman.lircd.conf 
+        - panasonic/EUR51169.irman.lircd.conf 
+        - panasonic/EUR7502XJO.irman.lircd.conf 
+        - panasonic/N2QAJB000051.irman.lircd.conf 
+        - panasonic/VEQ1141.irman.lircd.conf 
+        - panasonic/VEQ1475.irman.lircd.conf 
+        - panasonic/VEQ1944.irman.lircd.conf 
+        - panasonic/VEQ2224.irman.lircd.conf 
+        - philips/NO314UD.irman.lircd.conf 
+        - philips/RC380.irman.lircd.conf 
+        - philips/RC7535.irman.lircd.conf 
+        - philips/RT736.irman.lircd.conf 
+        - philips/TIVO.irman.lircd.conf 
+        - samsung/00093G.irman.lircd.conf 
+        - samsung/BN59-00937A.irman.lircd.conf 
+        - smoovietv/SMOOVIETV.irman.lircd.conf 
+        - sony/RM-AV2000.irman.lircd.conf 
+        - sony/RM-D420.irman.lircd.conf 
+        - sony/RM-SD80.irman.lircd.conf 
+        - sony/RM-SR210.irman.lircd.conf 
+        - sony/RM-U305C.irman.lircd.conf 
+        - sony/RM-Y116.irman.lircd.conf 
+        - sony/RM-Y139.irman.lircd.conf 
+        - sony/RMT-V256A.irman.lircd.conf 
+        - technics/RAK-CH426WH.irman.lircd.conf 
+        - tivo/TIVO.irman.lircd.conf 
+        - toshiba/RMV-329.irman.lircd.conf 
+        - universal/URC_R5.irman.lircd.conf
+
+    livedrive_seq:
+        - creative/livedrive.lircd.conf
+
+    logitech:
+        - logitech/logitech.lircd.conf
+
+    macmini:
+        - apple/macmini.lircd.conf
+
+    mouseremote:
+        - x10/mouseremote.lircd.conf
+
+    mp3anywhere:
+        - x10/mp3anywhere.lircd.conf
+
+    mplay:
+        - vlsystem/mplay.lircd.conf
+
+    mplay2:
+        - moneual/Moncaso_312.lircd.conf
+
+    pcmak:
+        - pcmak/pcmak.lircd.conf
+
+    pinsys:
+        - pinnacle_systems/mini.lircd.conf 
+        - pinnacle_systems/pctv.lircd.conf
+
+    pixelview:
+        - pixelview/playtv.lircd.conf 
+        - pixelview/playtv_bt878.lircd.conf
+
+    samsung:
+        - samsung/samsung.lircd.conf
+
+    sasem:
+        - sasem/sasem.lircd.conf
+
+    silitek:
+        - silitek/silitek.lircd.conf
+
+    sonyir:
+        - sonyir/sonyir.lircd.conf
+
+    srm7500libusb:
+        - philips/srm7500libusb.lircd.conf
+
+    tira:
+        - sony/RM-YD017.tira.lircd.conf 
+        - tivo/TIVO_Series_2.tira.lircd.conf
+
+    usbx:
+        - adstech/usbx-707.lircd.conf
+
+    yard2:
+        - philips/RCL9EA.lircd.conf
+
+    zotac:
+        - zotac/zotac.lircd.conf
+
+lircmd_by_driver:
+
+    bestbuy2:
+        - bestbuy/bestbuy2.lircmd.conf
+
+    logitech:
+        - logitech/logitech.lircmd.conf
+
+    mouseremote:
+        - x10/mouseremote.lircmd.conf
+
+    pcmak:
+        - pcmak/pcmak.lircmd.conf
+
+    silitek:
+        - silitek/silitek.lircmd.conf

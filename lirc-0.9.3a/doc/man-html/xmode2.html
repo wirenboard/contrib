@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>MODE2</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+<p>
+
+xmode2 - Show the pulse/space length of infrared signals
+</p>
+<a name="lbAC"> </a>
+<h2>SYNOPSIS</h2>
+
+<p>
+
+<b>xmode2</b> [<i>options</i>]
+</p>
+<p>
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+
+<p>
+
+The main purpose of <b>xmode2</b> is to check operation of your
+home-brew LIRC receiver hardware and to see the IR waveform of the
+remote controller without an expensive oscilloscope. Very useful for
+debugging. Of course this program won't work with hardware that decodes
+the signals itself like e.g. TV cards or the Irman i. e., it only
+works with LIRC_MODE_MODE2 type drivers.
+</p>
+<p>
+
+<b>xmode2</b> prints a simple graphics display of the pulse/space lengths. It
+accepts a few commands including time base changes; see the xmode2 -h output.
+</p>
+<p>
+
+<a href="lirc-lsplugins.html">lirc-lsplugins</a>(1) allows checking if a driver is a LIRC_MODE2 type one.
+</p>
+<p>
+</p>
+<p>
+<a name="lbAE"> </a>
+</p>
+<h2>OPTIONS</h2>
+
+<p>
+</p>
+<dl>
+<div><dt>
+<b>-h</b> <b>--help</b>
+</dt></div>
+<dd>
+display usage summary
+</dd>
+<div><dt>
+<b>-v</b> <b>--version</b>
+</dt></div>
+<dd>
+display version
+</dd>
+<div><dt>
+<b>-d</b> <b>--device</b>=<i>device</i>
+</dt></div>
+<dd>
+read from given device
+</dd>
+<div><dt>
+<b>-H</b> <b>--driver</b>=<i>driver</i>
+</dt></div>
+<dd>
+use given driver
+</dd>
+<div><dt>
+<b>-m</b> <b>--mode</b>
+</dt></div>
+<dd>
+enable alternative display mode
+</dd>
+<div><dt>
+<b>-r</b> <b>--raw</b>
+</dt></div>
+<dd>
+access device directly
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>RUNNING AS ROOT</h2>
+<p>
+
+In many cases xmode2 needs to run as root to access devices not available
+to regular users. On the other hand, running as root creates problems
+such as log files owned by root, security concerns etc.
+</p>
+<p>
+
+In order to cope with this, xmode2 by default drops root privileges
+after opening the input device. This support is based on that root
+permissions are acquired using <a href="sudo.html">sudo</a>(1) e. g., using
+</p>
+<pre>
+
+        $ sudo xmode2 --driver default --device /dev/lirc0
+
+</pre>
+<p>
+
+If not using sudo, the same behaviour could be accomplished using the
+SUDO_USER environment variable e. g.,
+</p>
+<pre>
+
+        # SUDO_USER=$LOGNAME xmode2 --raw /dev/lirc0
+
+</pre>
+<p>
+
+The --keep-root option will make xmode2 keep it's root privileges for the
+complete run.
+</p>
+<p>
+</p>
+<p>
+<a name="lbAG"> </a>
+</p>
+<h2>DRIVER LOADING</h2>
+<p>
+
+Drivers are loaded dynamically. The search path used for this is determined
+by (falling priority):
+</p>
+<dl>
+<div><dt>-</dt></div>
+<dd>
+The --plugindir option.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+The 'plugindir' entry in  the [lircd] section of the lirc_options.conf file.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+The environment variable LIRC_PLUGINDIR.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+A hardcoded default (usually /usr/lib[64]/lirc/plugins).
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAH"> </a>
+<h2>FILES</h2>
+
+<p>
+</p>
+<dl>
+<div><dt>
+<b>~/.cache/xmode2.log</b>
+
+</dt></div>
+<dd>
+Debug output. Setting the XDG_CACHE_HOME environment variable relocates this
+file to $XDG_CACHE_HOME/mode2.log
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAI"> </a>
+<h2>SEE ALSO</h2>
+
+<a href="mode2.html">mode2</a>(1)
+<br>
+
+<a href="lirc-lsplugins.html">lirc-lsplugins</a>(1)
+<p>
+The documentation for
+<b>lirc</b>
+
+is maintained as html pages. They are located under html/ in the
+documentation directory.
+</p>
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">OPTIONS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">RUNNING AS ROOT</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">DRIVER LOADING</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAH">FILES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAI">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

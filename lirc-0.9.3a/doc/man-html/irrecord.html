@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>IRRECORD</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+
+<p>
+
+<b>irrecord</b> - IR-codes recording tool for usage with LIRC
+<a name="lbAC"> </a>
+</p>
+<h2>SYNOPSIS</h2>
+
+<p>
+
+<b>irrecord</b> [<i>-f</i>] [<i>-n</i>] [<i>-H driver</i>] [<i>-d device</i>] [<i>file</i>]
+</p>
+<p>
+
+<b>irrecord</b> -a &lt;<i>file</i>&gt;
+</p>
+<p>
+
+<b>irrecord</b> -l
+</p>
+<p>
+
+<b>irrecord</b> --help | --version
+</p>
+<p>
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+<p>
+
+This program will record the signals from your remote control and create
+a config file for lircd. A proper config file for lircd is maybe the
+most vital part of this package, so you should invest some time to
+create a working config file. Although a good deal of effort is put in
+this program it is often not possible to automatically recognize all
+features of a remote control.
+</p>
+<p>
+
+If the program fails to recognize the protocol of the remote control you
+should use the --force option to at least create a config file in raw mode.
+</p>
+<p>
+
+If  <i>file</i> is not specified it defaults to "irrecord.conf"
+</p>
+<p>
+
+If <i>file</i> already exists and contains a valid config irrecord will use the
+protocol description found there and will only try to record the
+buttons. This is very useful if you want to learn a remote where config
+files of the same brand are already available. Of course this will only
+work if the remotes use the same protocol but it's worth a try.
+</p>
+<p>
+
+The <a href="irdb-get.html">irdb-get</a>(1) tool can be used to find common protocols template files
+using the command
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+$ irdb-get find generic
+</dd>
+</dl>
+<p>
+
+The tool can also download these files.
+<a name="lbAE"> </a>
+</p>
+<h2>OPTIONS</h2>
+
+<dl>
+<div><dt>
+<b>-a</b> <b>--analyse</b>
+</dt></div>
+<dd>
+Analyse a raw_codes config file, trying to convert it to a
+regular configuration.
+</dd>
+<div><dt>
+<b>-u</b> <b>--update</b>
+</dt></div>
+<dd>
+Add new buttons to an existing config file. No protocol information is
+updated.
+</dd>
+<div><dt>
+<b>-f</b> <b>--force</b>
+</dt></div>
+<dd>
+Force raw mode. Use this if recording fails otherwise. This
+creates a raw codes configuration file which can be used as-is
+or converted using the -a option.
+</dd>
+<div><dt>
+<b>-n</b> <b>--disable-namespace</b>
+</dt></div>
+<dd>
+Disable namespace checks.
+</dd>
+<div><dt>
+<b>-l</b> <b>--list-namespace</b>
+</dt></div>
+<dd>
+List valid button names.
+</dd>
+<div><dt>
+<b>-H</b> <b>--driver</b>=<i>driver</i>
+</dt></div>
+<dd>
+Use given driver. -H help lists available drivers.
+</dd>
+<div><dt>
+<b>-d</b> <b>--device</b>=<i>device</i>
+</dt></div>
+<dd>
+Read from given device.
+</dd>
+<div><dt>
+<b>-D</b> <b>--loglevel</b>=<i>level</i>
+</dt></div>
+<dd>
+Determine the amount of logging information. [level] can be a symbolic
+syslog level: 'error','warning, 'info', 'notice' or  'debug'. lirc
+also defines three additional levels 'trace', 'trace1' and 'trace2' which
+gives even more messages ('trace2' bringing the most). However, in the
+log these messages are marked as 'debug'.
+The level can also be an integer in the range 3 (almost no messages) to
+10.
+</dd>
+<div><dt>
+<b>-h</b> <b>--help</b>
+</dt></div>
+<dd>
+Display this message.
+</dd>
+<div><dt>
+<b>-v</b> <b>--version</b>
+</dt></div>
+<dd>
+Display version.
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>DRIVER LOAD PATH</h2>
+<p>
+
+Drivers are loaded dynamically. This is done from a traditional *ux
+':'-separated path where each component in the path is searched (leading
+part first, trailing last).
+</p>
+<p>
+
+The path used for this is determined by (falling
+priority):
+</p>
+<dl>
+<div><dt>-</dt></div>
+<dd>
+The --plugindir option.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+The 'plugindir' entry in  the [lircd] section of the lirc_options.conf file.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+The environment variable LIRC_PLUGINDIR.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+A hardcoded default (usually /usr/lib[64]/lirc/plugins).
+<p>
+</p>
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAG"> </a>
+<h2>FILES</h2>
+
+<dl>
+<div><dt>
+<b>/etc/lirc/lirc_options.conf</b>
+
+</dt></div>
+<dd>
+The options file. irrecord mostly handles the values under the [irrecord]
+section, but some values such as debug and plugindir are inherited from
+the [lircd] section.
+</dd>
+<div><dt>-</dt></div>
+<dd>
+The location of this file can be changed using the -O/--options-file
+command-line option or using the environment variable LIRC_OPTIONS_PATH.
+The values here are used as defaults for any option not present on
+command line.
+<p>
+</p>
+</dd>
+<div><dt>
+<b>~/.cache/irrecord.log</b>
+
+</dt></div>
+<dd>
+Debug output. Setting the XDG_CACHE_HOME environment variable relocates this
+file to $XDG_CACHE_HOME/irrecord.log
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAH"> </a>
+<h2>SEE ALSO</h2>
+
+<a href="https://sourceforge.net/p/lirc-remotes/wiki">https://sourceforge.net/p/lirc-remotes/wiki</a>
+<br>
+
+<a href="irdb-get.html">irdb-get</a>(1)
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">OPTIONS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">DRIVER LOAD PATH</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">FILES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAH">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

@@ -1,0 +1,2755 @@
+2015-10-10  Alec Leamas  <leamas.alec@gmail.com>
+
+	Revert walk-around kernel bug fixes (#119, #148)
+	Reverting  "default: Conditionalize kernel bug walk-around"
+	(68e49ce4a) and "plugins: default: Work around kernel bug (#119)."
+	(19b01d0fc). The fix is broken, and the upstream bug is fixed
+	from kernel 4.1.6.
+
+2015-10-04  Jon Bergli Heier  <snakebite@jvnv.net>
+
+	lib: receive: Return 0 on poll() timeout.
+
+	lib: receive: Fixed timeout value for poll().
+
+2015-10-02  Alec Leamas  <leamas.alec@gmail.com>
+
+	irrecord: Fix un-decodable buttons handling (#146).
+
+2015-10-01  Alec Leamas  <leamas.alec@gmail.com>
+
+	atilibusb: Fix crash for non-existing device (#145).
+
+	lirc-lsplugins: Fix --plugindir not being respected (#144).
+
+2015-09-29  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: Fix parsing of multiple files (#141).
+	In certain combinations of including multiple files which contains
+	concatened remotes the concatenated remotes were silently dropped.
+
+2015-09-25  Alec Leamas  <leamas.alec@gmail.com>
+
+	irrecord: Fix get_toggle_mask infinite loop (#139).
+
+2015-09-24  Alec Leamas  <leamas.alec@gmail.com>
+
+	irrecord: Fix insane driver default being devinput.
+
+2015-09-20  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: Use correct groups when dropping CLI privileges.
+
+	plugins: file.c: Fix off-by-one sscanf error (#138).
+
+2015-09-09  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: Fix missing --lirc flag.
+	This is not strictly required, the linker resolves the symbols anyway.
+	However, there is packaging noise without it.
+
+2015-09-07  Alec Leamas  <leamas.alec@gmail.com>
+
+	default: Conditionalize kernel bug walk-around
+	The fix introduced in "19b01d plugins: default: Work around kernel bug
+	(#119)" does not play with the regression tests.  Add a simple fix
+	which disables the fix if LIRC_REGRESSION_TEST is defined in the
+	environment for now, better long-term strategies are needed later,
+	and update the test script.
+
+2015-09-03  Alec Leamas  <leamas.alec@gmail.com>
+
+	Link a single large doc file to keep dist archives sane.
+	WHile it's good thing to have everything in the archive (and versioned)
+	this single seldom read PDF doubles the distribution size. Store
+	it on sourceforge outside the git repo and link to it.
+
+	gitignore
+
+	Documentation (README, NEWS; Install.txt, lirc.org/index.html) fixed.
+
+2015-09-02  Alec Leamas  <leamas.alec@gmail.com>
+
+	tests: Fix # plugins.
+
+	Update for 0.9.3
+
+2015-08-28  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Fix unloadable driver error message (#128).
+
+	lircd: Don't require unused arguments (#131).
+
+	build: Don't hardcode -j make flags (#130).
+
+2015-08-23  Alec Leamas  <leamas.alec@gmail.com>
+
+	configure.ac: Don't meddle with CFLAGS (again!) (#127).
+
+2015-08-20  Alec Leamas  <leamas.alec@gmail.com>
+
+	plugins: update version info.
+
+	doc: Update
+
+	doc: driver-api: Add permissions text.
+
+	configure.ac: Don't hardcode CFLAGS (#124).
+
+	irrecord-ui: Fix -k option parsing bug.
+
+	lib: Create log directory if missing (#125).
+
+2015-08-20  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: irrecord: Rewrite insane waitfordata loop.
+	It is just an insane piece of looping. Besides, it doesn't
+	work, and I don't care to finnd out exact why.
+
+	New code does not loop for poll() errors besides EINTR. Better to
+	break than to lock min such cases.
+
+2015-08-20  Alec Leamas  <leamas.alec@gmail.com>
+
+	lirc-setup: Fix missing item in lirc_options.
+
+	lirc-setup: Fix for compressed kernel modules, typos.
+
+	tools: Add -h/--help to pronto2lirc.
+
+2015-08-18  Alec Leamas  <leamas.alec@gmail.com>
+
+	lirc-lsplugins: Fix left-over log file.
+	lsplugins left logfile on current directory, fixed.
+
+2015-08-18  Alec Leamas  <leamas.elac@nospam.net>
+
+	Build: Add configdir and plugindocs pkg-config support.
+	Add configdir pkg-config variable so that plugins compiled
+	out-of-tree knows where to install configuration. Likewise
+	add a new plugindocs directory wheer plugins can install docs.
+	Having these available using pkg-config mean that drivers
+	don't need to be configured.
+
+2015-08-17  Alec Leamas  <leamas.alec@gmail.com>
+
+	tools: Fix bad typo creating lirc_lsremotes, not lirc-lsremotes.
+
+2015-08-16  Alec Leamas  <leamas.alec@gmail.com>
+
+	lirc-lsplugins: Use puts when applicable.
+
+	tests: Adjust # plugins.
+
+	Update for 0.9.3pre3
+
+	lircd: --effective-user: Set also gid (RH bz 1253907).
+
+	doc: Add missing files.
+	This should teach me to run distcheck from a fresh clone.
+
+	doc: Updates, bugfixes.
+	 - NEWS updated
+	 - Driver api: Refer to manpage instead of duplicate.
+	 - Bundle and link NEWS in docs,
+	 - All sorts of typos etc.
+	 - Clean up some links.
+	 - All sorts of updates & fixes.
+
+	tools: lirc-lsplugins: Patch legend info, fix irw formatting.
+
+2015-08-16  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Set supplementary groups (RH bz 1253907).
+	Setting effective user id isn't enough, we also need the supplementary
+	groups (e. g., to access /var/lock files).
+
+	Downstream: https://bugzilla.redhat.com/show_bug.cgi?id=1253907
+
+	This is perhaps no final solution, but definitely makes the semantics
+	better.
+
+2015-08-16  Alec Leamas  <leamas.alec@gmail.com>
+
+	Removing remotes.
+	Since the regression tests now uses the sf remotes database
+	the local remotes are not required any more.
+
+	plugins: default: Work around kernel bug (#119).
+
+	tools: pronto2lirc: Fix stoneage python syntax (#118).
+
+	irrecord-ui: More user feedback, formatting.
+
+	lib: irrecord: Fix debug output + formatting fixes.
+
+	lib: irrecord: poll() fix.
+
+	lircrcd: poll() bugfix.
+
+	lircd: poll() bugfixes.
+
+	irtestcase: LIRC_SOCKET_PATH handling bugfix.
+
+2015-08-14  Alec Leamas  <leamas.alec@gmail.com>
+
+	irsimreceive: Fix -U option parsing bug.
+
+2015-08-13  Alec Leamas  <leamas.alec@gmail.com>
+
+	plugins: Fix wrong driver configuring kernel (#99).
+
+	build: Warn if python3 link is missing, clean-up.
+
+2015-08-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	build: Let configure die without suitbale python (#112)
+
+2015-08-11  Alec Leamas  <leamas.alec@gmail.com>
+
+	Remove links on uninstall (#113).
+	Surprise: 'make distcheck' does not check for left-over links
+	after uninstall...
+
+	doc: bugfix.
+
+	doc: Yet another missing image.
+
+	doc: Move som stuff to configuration guide, more bugfix.
+
+	build: distcheck/VPATH fixes.
+
+	doc: Update, fix links, reorganize.
+	- Update install info.
+	- Configure -> Configuration reference, bugfixes.
+	- Make a separate Program Overview.
+	- Manpages macro usage cleanup.
+	- Add som info on drivers.
+	- New iguanair driver doc.
+	- Fix broken links and missing images (lot's of them).
+
+	configs: Make iguanaIR driver conflict kernel's.
+	Basically, this is up to the iguanaIR tools from
+	IguanaIR, Inc. However, lirc's igunanair driver clearly
+	cannot work with the kernel iguanair, so conflict: it.
+
+	doc: distcheck fix.
+
+2015-08-10  Alec Leamas  <leamas.alec@gmail.com>
+
+	No designated initializers in C++ (#111).
+
+2015-08-03  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Move things from install and configure, clean up.
+
+	doc: Add driver support files info to driver API.
+	Clean up some things in technical and index.
+
+	doc: Move protocol info to manpages (lircd, lircrcd, lircmd).
+	The protocol info in technical.html is not updated, many (most?)
+	commands are missing. Moving to manpage to create better chance
+	for folks updating the code to also update the docs. Update manpages
+	to current status.
+
+	doc: Remove duplicated config tools text.
+
+	doc: Add sending to client manual.
+
+	doc: Expand api-docs on install and link to them.
+
+	doc: Add irpipe manpage.
+
+	doc: index: Clean up manpage TOC, add programs overview.
+
+	doc: install, technical: refresh, remove obsolete text.
+
+	doc: Makefile.am: Mute some garbage, bugfixes.
+
+	lirc.org: Clean up intro text.
+
+	lirc.org: Update for 0.9.3.
+
+	doc: Really delete lirc_ioctl after merge.
+
+2015-08-01  Alec Leamas  <leamas.alec@gmail.com>
+
+	Merge branch 'release-0_9_3' into release
+
+	doc/Makefile.am: Mute some garbage.
+
+	doc: Configuration Guide: html bugfix.
+
+	tools/irpipe: Nuke some compiler warnings.
+
+	tools: Makefile.am distcheck fix.
+
+	NEWS: update.
+
+	Update to 0.9.3pre2
+
+	Merge lirc.4 and lirc_ioctl.4 manpages into lirc.4.
+	Also fix some review remarks fromm Michael Kerrick, Linux manpages
+	project.
+
+	doc: Add some missing manpage links.
+
+	doc: lircd manpage update.
+
+	doc: Remove bad links to lirc.org.
+
+	doc: Configuration Guide: Add tools and files appendixes.
+
+	doc: file-driver.html bugfix.
+
+	doc: Add table.html to lirc.org.
+
+	doc: Configuration Guide update.
+
+	NEWS: update.
+
+	Update lirc-codecs-regression-test to use irpipe.
+	New test does not use lircd.simsend or lircd.simreceive but are based
+	on the irpipe kernel driver.
+
+	tools: irpipe test tool added.
+	Userspace tool to handle the irpipe kernel driver.
+
+	Adding irpipe kernel test driver.
+
+	lircrcd: Use poll() instead of select().
+
+	lircd: Use poll() instead of select().
+
+	lib: serial: Use poll() instead of select().
+
+	lib: receive: Use poll() instead of select().
+
+2015-08-01  Bengt Martensson  <bulk  at bengt-martensson.de>
+
+	configure.ac: Typo fix (#110).
+
+2015-08-01  Bengt Martensson  <barf@bengt-martensson.de>
+
+	plugins: irtoy: Added support for debug LEDs (RA2,...,RA5), new docs.
+	Original blinking when IR received caused problems, removed.
+	Use receivePin when listening (compatiblity with IrScrutinizer).
+
+	Docs added (irtoy_driver.html).
+
+2015-07-30  Alec Leamas  <leamas.alec@gmail.com>
+
+	irw: Make a clean exit on SIGUSR1.
+
+	NEWS: update
+
+	lirc-lsplugins: Display log after parsing file(s).
+
+	Check for button duplicates when parsing (#107).
+	The ticket is about (rightfully) about duplicate key names. While
+	we're on it, also check for duplicate values/data.
+
+	lircrcd: Remove superfluos PACKET_SIZE definition (#108).
+
+	lirc-config-tool: Mute bogus BTN_ and MOUSE_ warnings (#105)
+
+2015-07-30  lotan_rm  <lotan_rm sf user>
+
+	irexec: Make lirc_init() before readconfig() (#102).
+
+2015-07-30  Alec Leamas  <leamas.alec@gmail.com>
+
+	irsimsend: Fix argument parsing -> -U/--pluginpath bugfix.
+
+	irsimsend: List all remote definitions, not just the first.
+
+	irsimsend: bugfix.
+
+	configs: Add irtoy item.
+
+	gitignore: Update.
+
+2015-06-30  Alec Leamas  <leamas.alec@gmail.com>
+
+	Merging release-0_9_3
+
+	Update for lirc-0.9.3pre1
+
+	Build: distcheck fixes.
+
+	NEWS:update
+
+2015-06-28  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircmd: Fix option parsing (#104, bz 1234155).
+
+2015-06-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	lirc-setup: Bugfix.
+
+	doc: Configuration Guide update (multiple remotes).
+
+	lirc-setup: Fix python 3.4 library name clash.
+
+2015-04-30  Alec Leamas  <leamas.alec@gmail.com>
+
+	irrecord: fix -l/list-namespace option parse bug (#101)
+
+2015-04-24  Alec Leamas  <leamas.alec@gmail.com>
+
+	irexec: Clean up assignment-as-expression mess.
+
+2015-04-23  Alec Leamas  <leamas.alec@gmail.com>
+
+	autoconf: Configure /bin/sh vs /usr/bin/sh.
+	See:
+	archives=http://sourceforge.net/p/lirc/mailman/lirc-list
+	$archives/thread/5534A591.8090102%40gmail.com/#msg33917242
+
+2015-02-14  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Add file driver and default driver document.
+
+2015-02-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	NEWS: Update.
+
+	lib: irrecord.c: Refactor som deep indents, reformat.
+
+	lib: ir_remote.c: Refactor some deep indents, reformat.
+
+	lib: Update doxygen comments.
+
+2015-02-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	Build: daemons + tools ->  C++  (#79).
+	This patch requires some brutal steps to build:
+	make distclean; ./autogen.sh; ./autogen.sh; ./configure; make
+
+	In the long term, it also breaks the checkpatch/checkfiles tool,
+	which is C only. Not solved here.
+
+2015-02-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	systemd/Makefile.am: Cleanup.
+
+	doc: irrecord manpage update
+
+	doc: tira_driver.html build  bugfix.
+
+	doc: lircd manpage cleanup.
+
+	doc: Fix some HTML and manpage syntax errors.
+
+2015-02-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	irrecord: Add an --update option to merge new buttons
+	Old code updated the pre/post data lengths even when using a template.
+	This is OK when creating new file unrelated to the template, but
+	does not allow merging of new buttons into an existing template file.
+
+	The new option does not re-compute pre/post data, but instead verifies
+	that the pre_data from the recorded buttons matches the recorded
+	pre_data in global remote. Updating an existing file also affects how
+	files are handled.
+
+2015-02-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	irrecord-ui: Remove annoying "progname" in messages.
+
+	irrecord-ui: Bugfix:  "Ask user for undefined remote name".
+
+	irrecord: Enhance error message for unparsable files.
+
+	irrecord, irrecord-ui: Use tmpfile as scratchpad, backup original file.
+	Don't open output file until there is valid data to fill it with,
+	and use a proper backup file. Use a temporary file for
+	preliminary data.
+
+2015-02-10  Alec Leamas  <leamas.alec@gmail.com>
+
+	tools: Refactor drop_root setuid wrapper.
+
+2015-02-10  Alec Leamas  <leamas.elac@nospam.net>
+
+	irrecord: Handle multiple definitions, revise irrecord API (#78).
+	To handle multiple definitions of the same key we need to
+	store the recorded buttons as data before we write the
+	file. Fixed, required a refresh of the irrecord lib
+	API.
+
+2015-02-10  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: ir_remote cornercase bugfix.
+
+	plugins: default: Remove unused forward definition.
+
+	plugins/zotac: Fix thread signature (C++ warning).
+
+	plugins/devinput: Array overrun fix.
+
+	plugins/iguanaIR: Add potential memory leak note.
+
+	plugins/ftdi: Dead code.
+
+	plugins/srm7500libusb: Note on dead code.
+
+	plugins/commandir: Make no-returncode commandir3_convert_RX void
+
+	plugins/tira: Check return codes.
+
+	plugins: Manual fixes to please checkpatch/checkfiles.
+
+	plugins: Doing uncrustify formatting.
+
+	plugins: Split variable definitions on separate lines.
+
+	tools/irrecord: Check for files with a single button (#77).
+	While we're on it, also warn for files without buttons.
+
+	tools/irrecord: Add check for ambient light (#76), fix sudo code.
+	Also fixes odd error message "Cannot change uid" when running
+	as regular user.
+
+	tools: Some C++ compiler fixes.
+
+2015-02-09  Alec Leamas  <leamas.alec@gmail.com>
+
+	tools: Update formatting rules.
+
+	tools: Syntactic fixes: func(void), macros, returns, ...
+
+	tools: Split variable definitions on separate lines.
+
+	tools: Formatted.
+
+	irxevent: Note on uninitialized argument.
+
+	lircmd: Bad free() fixes.
+
+	lircd: Dead code.
+
+	lircd: Use get_decoding(), nuke externals and some long lines
+
+	lircd: Use log_reopen, nuke some externals.
+
+	daemons: Some C++ compiler fixes.
+
+	daemons: Update formatting rules.
+
+	daemons: Split variable definitions on separate lines.
+
+	daemons: Remove useless external references.
+
+	lircd syntactic fix
+
+	daemons: func(void), needless else and assign-in-if fixes.
+
+	daemons: Formatted.
+
+	lib/lirc_options: Minor debugprint fix.
+
+	lib/ciniparser: Corner case line parsing bugfix.
+
+	lib/dump_config: dead code.
+
+	lib/irrecord: Dead code, check 0 divisor.
+
+	lib: ir_remote: Add get_decoding(), last assign-in-if fix.
+
+	lib/lirc_client: Array overrun fix.
+
+	lib/lirc_client: Double free() fix.
+
+	lib/lirc_client: Config file parsing bugfixes.
+	Pointed out by clang-analyze.
+
+	lib: Some C++ compiler fixes.
+
+	lib: Update formatting rules.
+
+	lib: Refactor some assign-in-if clauses.
+
+	lib: Remove useless else clauses.
+
+	lib, tools: Fix som bad externals.
+
+	lib: Split variable definitions on separate lines.
+
+	lib: Syntactic fixes: func(void), no summy return, complex macros.
+
+	lib: Formatted.
+	Running uncrustify on all sources + headers, manual fix of
+	missing lines, spaces etc flagged by checkpatch.
+
+	git-tools, build: Update formatting tools.
+	Remove all stuff in pre-commit which modifies sources, instead just
+	check them. Use checkpatch.pl to verify source formatting (through
+	checkfiles wrapper.
+
+	irrecord: Bugfix - using template was broken.
+
+	Build: Use parallel make by default.
+	We gain some speed speed, and will reveal parallel make
+	bugs that surfaces.
+
+2015-02-08  Alec Leamas  <leamas.alec@gmail.com>
+
+	Merge branch 'release-0_9_2' into release
+	Conflicts:
+		lirc.org/cir.html
+		lirc.org/cvs.html
+		lirc.org/improved_transmitter.html
+		lirc.org/irda.html
+		lirc.org/parallel.html
+		lirc.org/pictures.html
+		lirc.org/pictures1.html
+		lirc.org/pictures2.html
+		lirc.org/receivers.html
+		lirc.org/transmitters.html
+		lirc.org/tv_cards.html
+
+2015-02-06  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: lircd manpage cleanup.
+
+2015-02-05  Alec Leamas  <leamas.alec@gmail.com>
+
+	Build: ftdi configuration fix.
+
+	Build: setup for 0.9.2a
+
+	NEWS: 0.9.2a update
+
+	doc: Add srm7500atilibusb driver docs.
+
+2015-02-04  Alec Leamas  <leamas.alec@gmail.com>
+
+	Merge branch 'merge-13' i. e. merge request #13.
+	See http://sf.net/p/lirc/git/merge-requests/13.
+
+	This branch makes the udp clock rate adjustable to better match
+	modern hardware. It also includes fixes for the udp driver usage
+	in mode2 and xmode2 + some enhanced docs.
+
+	Kudos: Martin Tharby-Jones.
+
+2015-02-04  Alec Leamas  <leamas.elac@nospam.net>
+
+	doc: Add udp_driver page.
+
+2015-02-04  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc, xmode2: Update xmode2 manpage and some error messages.
+
+	xmode2: Bugfixes.
+	A strlen() should be sizeof(). Decoding of driver option required the
+	--plugindir option to precede --driver, fixed.
+
+2015-02-04  Martom Tharby Jones  <martin at brasskipper dot org.uk>
+
+	xmode2: Overhaul, fixes to use udp driver.
+
+2015-02-04  Martin Tharby Jones  <martin@brasskipper.org.uk>
+
+	xmode2: Add --driver-options switch.
+
+	mode2: Add handling of driver-options switch.
+
+	plugins/udp: Use driver-option  to specify data timing resolution.
+
+	lib/driver: Add error define for invalid values.
+
+	lib/driver: Return error values from the driver control function.
+
+2015-01-24  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Help message bugfix.
+
+	doc: Configuration  guide update.
+
+	mode2: Refactoring and clean up, update manpage.
+
+	mode2: Display also data from lirccode drivers (#94).
+
+	doc: Add srm7500atilibusb driver docs.
+
+	doc: Add  atilibusb driver doc.
+
+	plugins/pinsys: Don't use an automatic variable in drv interface.
+	Code assigned a local variabel which goes out of scope to drv.device.
+	Fixed by a simple static declaration.
+
+	plugins/dfclibusb: Update drv.device to reflect autoprobed device.
+
+	plugins/awlibusb: Report autodetected device in drv.device.
+
+	plugins/atilibusb: Report selected driver in drv.device.
+
+	lib/lirc_log: If SUDO_USER is set, create logs in it's home.
+
+	mode2: Remove annoying progname references.
+
+	mode2: Fix options order parsing error.
+	Existing coce required --plugindir option to precede --driver. Silly
+	bug, fixed.
+
+	irrecord-ui; Drop root privileges after opening device (#91).
+
+	xmode2: Drop privileges after opening port (#91).
+
+	mode2: Drop privileges after opening port (#91).
+
+	doc: Configuration  guide update.
+
+	lib/irrecord: Remove resethw() from public interface
+
+	lib/irrecord: Use/drop root privileges when resetting hw.
+
+	lib: Add utilities file and drop_privileges().
+
+	mode2: Refactor a function.
+
+	irrecord-ui: Ask user for undefined remote name (#93)
+
+	irexec: Code cleanup.
+
+2015-01-23  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Help message bugfix.
+
+2015-01-22  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Fix --connect multiple hosts regression (#85).
+
+	lircd: Fix --connect multiple hosts regression (#85).
+
+2015-01-18  Alec Leamas  <leamas.alec@gmail.com>
+
+	mode2: Fix options order parsing error.
+	Existing code required --plugindir option to precede --driver. Silly
+	bug, fixed.
+
+2015-01-16  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Bugfixes and some Configuration Guide updates.
+
+2015-01-15  Alec Leamas  <leamas.alec@gmail.com>
+
+	irexec: Yet another refactoring.
+	Also fixes some minor CLI parsing issues.
+
+	irexec: Run command in double-forked isolated process (#92).
+
+	irexec: Make the logging sane (#92).
+
+	irexec: Refactored to some functions.
+
+	lib: Bad bugfix for finding  ~/.lircrc
+	Basically, the common library code did not find ~/.lircrc, just
+	~/.config/lircrc. Fixed.
+
+	doc: Bugfixes and some Configuration Guide updates.
+
+	tools: Make make_rel_symlink.py use python3.
+
+	build: Clean up website sources, move to doc/.
+
+	lirc-setup: Fix remote config file display problems.
+
+	lib: Bad bugfix for finding  ~/.lircrc
+	Basically, the common library code did not find ~/.lircrc, just
+	~/.config/lircrc. Fixed.
+
+2015-01-14  Alec Leamas  <leamas.alec@gmail.com>
+
+	build: Clean up website sources, move to doc/.
+
+	lirc-setup: Fix remote config file display problems.
+
+	lib/lirc_log: Add priority labels (info, error...) to syslog msg (#89).
+
+2015-01-13  Alec Leamas  <leamas.alec@gmail.com>
+
+	Use driver default device (#90)
+	Also: clean up error reporting in mode2 a little.
+
+	lib/lirc_log: Add priority labels (info, error...) to syslog msg (#89).
+
+2015-01-10  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib, plugins: Packaging noise: FSF addresses, git files, 644 scripts,
+
+	lirc.org: Fix broken manpage links, missing images, merge release date.
+
+2015-01-09  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib, plugins: Packaging noise: FSF addresses, git files, 644 scripts,
+
+	lib: Remove offending exit() in libirrecord.
+
+	irrecord-ui: Handle recent gcc compiler warnings.
+
+	irrecord-ui: Truncate existing logfile on start.
+
+2015-01-09  Alec Leamas  <leamas.alec@gmail.com>
+
+	Merge branch 'irr': Refactor irrecord into ui + library (#36)
+	Splits the monolithic irrecord into a library (major part) + a
+	CLI-based UI. The interface is based on return codes rather than
+	callbacks, the usual solution for this kind of code. It's clumsy,
+	but should work better when making language bindings.
+
+	The library interface is experimental and not made visible in
+	pkg-config etc. The API is likely to change substantially before
+	0.9.3, and perhaps also after.
+
+2015-01-09  Alec Leamas  <leamas.alec@gmail.com>
+
+	NEWS: update.
+
+	irrecord: Split into libirrecord + irrecord-ui.
+
+	irrecord: Prepare split, misc fixes.
+	whitespace, analyse commandline, printf->puts, etc.
+
+	irrecord: Split out irrecord.h
+
+	irrecord: Remove exit() from lib part.
+
+	irrecord: Remove all stdout/stderr output in lib part.
+
+	irrecord: Reorganize single file to header-lib-ui layout.
+
+	irrecord: Cleanup: Re-format some long lines, add comments.
+
+	irrecord: Clean up main state, make most struct opts* constant.
+
+	irrecord: Refactor record_buttons into model/view.
+
+	irrecord: Reorganize config file writing in main().
+
+	irrecord: Refactor get_toggle_bit_mask() into model/view.
+
+	irrecord: Refactor get_gap() into view/model parts.
+
+	irrecord: Refactor: Split get_lengths() in view/model parts.
+
+	irrecord: Refactor recording of buttons to separare record_buttons().
+
+	irrecord: Refactor state while recording buttons (buttons_state).
+
+	irrecord: Refactor state in get_toggle_bit_mask() (toggle_state).
+
+	irrecord: Refactor state in get_lenghts (get_lengths_state).
+
+	irrecord: Refactoring state in get_gap_length() (gap_state).
+
+	irrecord: Reorganize some large printfs (MSG_* constants).
+
+	irrecord: Refactor the init code (enum init_status, init(), do_init()).
+
+	irrecord: Refactor the global main state (main_state).
+
+	irrecord: Refactor runtime options (opts).
+
+	irrecord: Reorganise and clean up.
+
+	lib: Fix duplicate // in drv_admin paths.
+
+	lirc-lsplugins: Bugfixes, list also default device (#90).
+	Since we should use the default device, it should also be
+	possible to check. Added to the -l output.
+
+	doc: Clean up irsend(1) manpage.
+
+	lirc_options.conf: Add effective-user to template.
+
+	lirc-lsplugins: Bugfix.
+
+2015-01-08  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Makefile.am: distcheck fixes (deps).
+
+2015-01-05  Alec Leamas  <leamas.alec@gmail.com>
+
+	configure.ac: Remove dead code.
+
+	configure.ac: ftdi copy-paste configuration bugfix.
+	Some distros has renamed current libftdi to libftdi1; checks
+	updated to handle this.
+
+	configure.ac: ftdi configuration bugfix
+	Some distros has renamed current libftdi to libftdi1. Make
+	necessary fixes.
+
+2015-01-02  Alec Leamas  <leamas.alec@gmail.com>
+
+	NEWS: update
+
+	doc: Link driver documentation + misc manpages.
+	Create  links to otherwise unlinked and hard to find html
+	documents. Driver documents have a dynamic table of contents
+	based on scanning for files with a _driver.html suffix.
+	Existing driver documents is renamed to mmatch this pattern.
+
+	doc: Use XSL to format pages instead of ad-hoc scripts (#14).
+
+	doc: Fix html syntax errors.
+
+	Contribute.md: Move new/removed drivers info to wiki.
+
+	build: Distcheck bugfix, clean-up.
+
+	contrib, doc: Remove outdated m4 lirc check macro.
+	This is now handled by pkg-config config file lirc.pc.
+
+2014-12-30  Alec Leamas  <leamas.alec@gmail.com>
+
+	lirc.org: Fix configuration corner-cases & missing files.
+
+2014-12-29  Inando  <inand0@users.sf.net>
+
+	lirc.pc: Fix bad variable reference/ordering (#86)
+
+	lirc.pc: Fix bad variable reference/ordering (#86)
+
+2014-12-25  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Add missing file bugfix.
+
+2014-12-19  Brian Moser  <moserb at users dot sf dot net>
+
+	plugins: mplay bugfixes and overhaul.
+	The mplay2 plugin for the Moneual MonCaso 312/320 pc cases does not work
+	correctly. Some keys (for example REC, code 0x11) are, as far as I
+	understand it, recognized as control characters and then ignored. Also
+	the volume knob is not supported.
+
+	There is a pretty old thread at ubuntuforums.org
+	(http://ubuntuforums.org/showthread.php?t=1536934&p=12120799#post12120799)
+	where the user Womiha provides a fix (which I tested and works), but it
+	was never added to lirc. This patch is basically the same, rebased to
+	0.9.2.
+
+2014-12-19  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Add lirc.4 and lirc_ioctl.4 manpages.
+	These pages describes kernel interfaces and should eventually
+	be upstreamed, but will linger here for the time being. First
+	we need to resolve the non-public header kernel bug 75751.
+
+	lirc.org: Fix broken manpage links, missing images, merge release date.
+
+	all: Fix mistaken puts() semantics in 85d4eb3.
+	Dammit. puts() adds a trailing newline. Fix up accordingly.
+
+2014-12-16  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Clean up irsend(1) manpage.
+
+	lirc.h: Update bundled kernel header.
+
+	configure.ac: Use pkg-config to locate ftdi.
+	This picks up changed locations e. g., in fedora-22.
+
+	all: Sanitize feature tests macros.
+
+	all: Use puts() instead of printf() when applicable.
+	Recent gcc compilers emits warnings when using printf() on
+	constant data where puts()/fputs() is a better choice.
+
+	lirc_options.conf: Add effective-user to template.
+
+	tools: Make make_rel_symlink.py use python3.
+
+	doc: Add Doxyfile to tarball.
+
+	NEWS: merge release version.
+
+2014-12-11  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Add Doxyfile to tarball.
+
+2014-12-09  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Add notes on sending supported in API.
+
+	Merge branch 'release-0_9_2' into release
+
+2014-12-08  Alec Leamas  <leamas.alec@gmail.com>
+
+	Setting up for release 0.9.2.
+
+	doc: Add notes on sending supported in API.
+
+	NEWS: update
+
+2014-12-05  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd.org: More links fixes, clean-up text for remotes db.
+
+	lircd.org: More links fixes, clean-up text for remotes db.
+
+2014-12-04  Alec Leamas  <leamas.alec@gmail.com>
+
+	lirc.org: Refresh some links, remove inactual generic ones.
+
+	lirc.org: Refresh some links, remove inactual generic ones.
+
+	irtoy: Don't implicitly probe for devices (#70)
+	This code is intended to only probe for devices if the device name
+	is given as "auto".  Regular device names are not probed, and will
+	generate an error if they doesn't exist or can't be opened correctly.
+
+	0.9.3pre3: Merge branch 'release-0_9_2' into release
+
+	Build: Update to 0.9.2pre3
+
+2014-11-30  Alec Leamas  <leamas.alec@gmail.com>
+
+	irtoy: Don't implicitly probe for devices (#70)
+	This code is intended to only probe for devices if the device name
+	is given as "auto".  Regular device names are not probed, and will
+	generate an error if they doesn't exist or can't be opened correctly.
+
+	lircd, irrecord: Document legal log levels (#75).
+
+	doc, lib: Document that decode_all possibly closes device.
+
+	doc: Update link to remotes database.
+
+	Merge branch 'release-0_9_2' into release
+
+	Build: Update to pre2.
+
+	lircd, irrecord: Document legal log levels (#75).
+
+2014-11-27  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc, lib: Document that decode_all possibly closes device.
+
+2014-11-25  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Update link to remotes database.
+
+2014-11-24  Alec Leamas  <leamas.alec@gmail.com>
+
+	lirc_log: Don't duplicate console output (#69).
+
+	lirc.org: Update link to remotes database.
+
+2014-11-24  Eric Anderson  <rico99 AT sbcglobal dot net>
+
+	yard2: Fix MacOSX compilation error (#73).
+
+2014-11-24  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: serial: Fix error message when scanning locks (#67).
+
+2014-11-24  Alec Leamas  <leamas.alec@gmail.com>
+
+	irrecord: Don't require driver when --analyse (#68), debug fix.
+	irrecord required --driver argument also inn --analyse mode,
+	a command line parsing regression.
+
+	Fixed a "Space canditates" printout to only print in debug mode.
+
+	Fixed garbage in command line printed in analyse mode.
+
+2014-11-24  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: serial.c: Fix whitespace.
+
+	NEWS: Fix typo.
+
+2014-11-24  Matthias Wächter  <matthias@wa>
+
+	lircd: Don't shutdown systemd's socket (#72).
+	Patch from mailing list:
+	https://sourceforge.net/p/lirc/mailman/message/33058462/
+
+	>From
+	>http://www.freedesktop.org/software/systemd/man/systemd.socket.html:
+
+	> [...]
+	> However, it must not unlink the socket from a file
+	> system. It should not invoke shutdown(2) on sockets
+	> it got with Accept=false, but it may do so for
+	> sockets it got with Accept=true set.
+	> [...]
+
+	lircd does always shutdown the socket, so when lircd.service is stopped,
+	lircd.socket enters failed state stating that the service unexpectedly
+	shutdown the socket.
+
+	Attached patches for 0.9.1 and 0.9.2 (master) fixes this problem for me.
+
+2014-11-24  Alec Leamas  <leamas.alec@gmail.com>
+
+	build: Update for version 0.9.2
+
+	lirc_log: Don't duplicate console output (#69).
+
+	lirc.org: Update link to remotes database.
+
+2014-11-24  Eric Anderson  <rico99 AT sbcglobal dot net>
+
+	yard2: Fix MacOSX compilation error (#73).
+
+2014-11-23  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: serial: Fix error message when scanning locks (#67).
+
+2014-11-23  Alec Leamas  <leamas.alec@gmail.com>
+
+	irrecord: Don't require driver when --analyse (#68), debug fix.
+	irrecord required --driver argument also inn --analyse mode,
+	a command line parsing regression.
+
+	Fixed a "Space canditates" printout to only print in debug mode.
+
+	Fixed garbage in command line printed in analyse mode.
+
+2014-11-23  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: serial.c: Fix whitespace.
+
+	NEWS: Fix typo.
+
+2014-11-23  Matthias Wächter  <matthias@wa>
+
+	lircd: Don't shutdown systemd's socket (#72).
+	Patch from mailing list:
+	https://sourceforge.net/p/lirc/mailman/message/33058462/
+
+	>From
+	>http://www.freedesktop.org/software/systemd/man/systemd.socket.html:
+
+	> [...]
+	> However, it must not unlink the socket from a file
+	> system. It should not invoke shutdown(2) on sockets
+	> it got with Accept=false, but it may do so for
+	> sockets it got with Accept=true set.
+	> [...]
+
+	lircd does always shutdown the socket, so when lircd.service is stopped,
+	lircd.socket enters failed state stating that the service unexpectedly
+	shutdown the socket.
+
+	Attached patches for 0.9.1 and 0.9.2 (master) fixes this problem for me.
+
+2014-11-21  Alec Leamas  <leamas.alec@gmail.com>
+
+	Updating for 0.9.3-devel.
+
+	Merge branch 'release-0_9_2' into release
+	Conflicts:
+		daemons/lirc_options.c
+		setup.sh
+
+	build: Update for version 0.9.2
+
+	lib: Update so-versions (0:0:0 for driver lib).
+
+	NEWS:update
+
+	configs: Add config for MacOSX sonyir driver.
+
+	plugins: Updating sonyir-osx driver info.
+
+2014-11-21  Eric Anderson  <rico9999@users.sourceforge.net>
+
+	plugins: Add support for sonyir-osx using MacOSX IOKit USB framework.
+
+2014-11-21  Alec Leamas  <leamas.alec@gmail.com>
+
+	build: Add option for python3 fix, bug walk-around for MacOSX
+	Installs a shell wrapper named python3 which calls $(PYTHON). This is
+	to handle the MacOS situation where the python3 link is missing.
+
+2014-11-21  Eric Anderson  <rico9999@users.sourceforge.net>
+
+	build: Darwin fixes
+	- as-needed linker flag does not compile under OSX, removed.
+	- Work around issue with sed seeing too many files.
+	- Remove driver.c from liblirc_driver_la_SOURCES to avoid duplicate
+	  symbol definition of 'drv'
+
+2014-11-21  Eric Anderson  <eta@arsenic.eta.duckdns.org>
+
+	lib: Set default state of dyncodes to 0.
+
+2014-11-21  Alec Leamas  <leamas.alec@gmail.com>
+
+	gitignore
+
+	contrib: Updating release-process.
+
+	lirc.org: Prepare release, fix some links.
+
+	lirc.org: Update to extern website, add download script.
+
+	build: Remove TODO from distribution (#24).
+
+	lirc-driver.pc: Add missing -fpic to compiler flags.
+
+2014-11-20  Alec Leamas  <leamas.alec@gmail.com>
+
+	lirc-setup: Fix loop when selecting corner-case configurations.
+	In some situations when selecting a preconfigured device there
+	was a messagebox which came back when dismissed, effectively
+	blocking the app.  Observed when selecting serial|Caraca.
+
+	doc: Don't patch manpages in hook (#66).
+
+	lib: Add repeat_mask from 8692c95 to dump_config (#8).
+
+	doc: Add repeat_mask from 8692c95 to manpage (#8).
+
+	tools: irsend compilation fix (#65)
+
+	irrecord: Bugfix, accept -v as required (#64).
+
+	irrecord: Print filename when writing config file (#63).
+
+	irrecord: Retab file, to many tab errors.
+
+	configs: atilibusb.conf bugfix.
+
+	gitignore: Update.
+
+	drivers: Update example code.
+
+	docs: Update CONTRIBUTE.md and configs/README.
+
+2014-11-17  Alec Leamas  <leamas.alec@gmail.com>
+
+	configs: Updating yard2 config file.
+	Mostly text from the original lircd.conf config file.
+
+	configs: Adding yard2.conf
+
+2014-11-17  Alec Leamas  <leamas.alec@gmail.com>
+
+	plugins: Fixing yard2 compilation errors + style issues, test fixes.
+	New interfaces to some decode, map_gap.
+	Bad daclarations of some funcs (e. g., yard2_send)
+	Fix style to match the kernel (see CONTRIBUTE.md)
+	Remove some commented cruft.
+	Convert some commented printf to LOGPRINTF
+
+	TODO: check the FIXME markers
+
+2014-11-17  Alec Leamas  <leamas.alec@gmail.com>
+
+	plugins: Adding yard2 driver
+
+	test: Bugfix
+
+2014-11-15  Christoph Bartelmus  <lirc@users.sourceforge.net>
+
+	added repeat_mask to lircd.conf to support Roku remote protocol
+
+2014-11-15  Age Bosma  <age.bosma at gmail.com>
+
+	configure.ac: Fix regressions in X11 and systemd availability checks.
+
+2014-11-14  Alec Leamas  <leamas.alec@gmail.com>
+
+	CONTRIBUTE.md: update.
+
+	irrecord: Bugfix.
+
+	lib: Fix some flaws in generated lircd.conf
+
+2014-11-13  Alec Leamas  <leamas.alec@gmail.com>
+
+	autogen: hal support bugfix.
+
+2014-11-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	NEWS:update
+
+	doc: Add missing irsimreceive manpage.
+
+	configs: Remove ancient script, don't install check_configs.py.
+
+	irrecord: Set remote driver name, patch "Contribute your remote" msg.
+	Set driver name in config for LIRCCODE drivers.
+	Add a reference to checklist in "contribute your config" messages.
+	Fix reference to devinput config file.
+
+2014-11-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib, lircrcd: Move lircrcd sockets to /var/run (#62).
+	This is not completely compatible with the old behaviour: previously, if
+	the files had the same paths but different basenames they got different
+	lircrd sockets. This patch makes all lircrc files with the same basename
+	use the same socket. Can't think of any usecase where this is a problem
+
+	As of now we also support lircrc_class which can be used to walk around
+	this limitation.
+
+	The old code actually allowed the use of other commands than lircrcd as
+	interpreter in the shebang. This was never documented or an official
+	interface. It's not supported with this patch.
+
+	Patch solves all sorts of problems related to using sockets in the same
+	directory as config files.
+
+2014-11-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	Makefile.am, lib: Make sure paths.h is installed and usable.
+
+	lib: Some more const char* cleanup.
+
+2014-11-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib: Add new lircrc_class global lircrc option (#61).
+	Adds a new global option lircrc_class to lircrc format. The
+	format is simple
+
+	    lircrc_class <string>
+
+	The string is used as argument when creating lircrc sockets. The
+	shebang is parsed as a lircrc_class <basename filename> i. e.,
+	it emulates the old behaviour to create a socket named after
+	the lircrc config file.
+
+	The shebang is deprecated and usage gives  a warning.
+
+	lirc_class can only be used in the toplevel config file, not
+	in included ones. If found in an included file it generates
+	a warning but is otherwise ignored. Same goes for bad syntax.
+
+	Fixing configure.html + some tests.
+
+2014-11-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Updating irexec with socket info (#60).
+
+	build: Install lirc.org as documents,
+
+	build: Shrink ChangeLog (500K), make sure the X11 progs are built.
+
+	Makefile.am, contrib: Remove outdated HAL support.
+	Get rid of perl dependency.
+
+	plugins: Fix some bad FSF addresses in license.
+
+2014-11-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib, clients: Fix bad library dependencies and a exit() call.
+	Add release.c to driver lib. Remove dependency on lirc_options in
+	driver lib. Remove bad call to exit() in lirc_options.
+
+	This makes it necessary for clients to initiate ir_remote using
+	ir_remote_init().
+
+2014-11-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib, configure.ac: Clean up some linkage problems.
+
+	doc: Fix parallel make dependency problem.
+
+	build: Kill bad copy of media/lirc.h
+
+2014-11-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib, lircd: Clean up lircd.conf include semantics.
+	Instead of scanning a magic directory lircd.conf.d we implement
+	glob'ing of the include directive. This gives a much cleaner
+	and flexible implementation. The shipped lircd.conf includes
+	lircd.conf.d with an explicit include.
+
+	Change some logging to improve included remotes visibility.
+
+2014-11-12  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Fix defaults for effective-user option.
+
+	doc: Fix parallel make dependency problem.
+
+2014-11-07  Alec Leamas  <leamas.alec@gmail.com>
+
+	contrib: Mark non-source files as such.
+
+	CONTRIBUTE.md: Update
+
+2014-11-06  Alec Leamas  <leamas.alec@gmail.com>
+
+	all: Add -D_FORTIFY_SOURCE=2 compiler flag, fix code.
+	This flag, already used downstream,  enables some compile-time and
+	also runtime overflow checks. Forces us to check some return values,
+	which is a Good Thing.
+
+	lirc-setup: pep8 and pylint fixes, some clean-up.
+
+	all: Use enhanced logperror().
+
+2014-11-06  Juan Manuel Santos  <vicariousdm@gmail.com>
+
+	srm7500: Fix remote not working on newer versions of libusb.
+	A couple of months ago I noticed, after a libusb update, that it
+	was no longer working, constantly outputting to /var/log/messages the
+	'could not detach kernel driver' error.
+
+	Upon further digging between lirc and libusb, I noticed that error codes
+	changed recently, and lirc was entering the if that triggers that error
+	due to libusb returning another type of error (EINVAL) instead of the
+	original one (ENODATA). The patch treats both of these the same way.
+
+2014-11-06  David Röthlisberger  <david@rothlis.net>
+
+	ftdi: Fix overflow of pulse/space values.
+	Values >= 8192 (2^13) were overflowing.
+
+	Tested with Humax DTR-T1000 (whose protocol uses a header pulse of
+	~9000) and the FTDI USB IR blaster from
+	http://www.irblaster.info/usb_blaster.html
+
+2014-11-05  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Update lircd.8.
+	Notably: Add info on the config file argument.
+
+	lircd: Fix bad message for "running as root".
+
+2014-11-04  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Enhance illegal effective uid message.
+
+	lib: Add printf-style fmt to logperror.
+
+2014-10-27  Alec Leamas  <leamas.alec@gmail.com>
+
+	Move lirc-codecs-regression-test.s -> test/
+
+2014-10-27  Alec Leamas  <alec@nowhere.net>
+
+	lirc-setup: Split into nice parts, enhance.
+	Pylint rightfully complains about a module being almost
+	2000 lines. Split while there is time, clean-up the control
+	FSM code, add support for note: messages, fix named
+	lircd.conf, bugfixes.
+
+	NEWS:update
+
+	remotes/: Mark directory as obsolete.
+
+2014-10-23  Alec Leamas  <alec@nowhere.net>
+
+	configure.ac: Check for pkg-config, fix double BUILD_ALSA_SB_RC report.
+	Kudos: Age Boosma for testing.
+
+2014-10-22  Alec Leamas  <alec@nowhere.net>
+
+	NEWS: Add missing build dependency, doc fixes.
+
+2014-10-22  Stas Sergeev  <stsp@users.sourceforge.net>
+
+	lib: Dont check for LIRC_EOF in the decoded data (#59).
+	IR protocols do not have any kind of the EOF.
+
+2014-10-22  Alec Leamas  <alec@nowhere.net>
+
+	lib: Fix missing deps revealed in a89436e (HEAD^).
+
+	doc: Document open_func and close_func [tickets:#58]
+
+	NEWS: update
+
+	remotes: README: This directory is no longer used.
+
+	lirc-setup: Move to an imported lib, installation fixes.
+
+	tools: Adding pylint/pep8 static checker hooks.
+
+2014-10-22  Alec Leamas  <leamas.elac@nospam.net>
+
+	tools:lirc_setup: Update for new configs, major refactoring.
+
+2014-10-22  Alec Leamas  <alec@nowhere.net>
+
+	doc: Move udp driver from usb -> Other menu.
+
+	configs: Update definitions of supported capture devices.
+	Changes:
+	  - Capture devices can have supports: = 'bundled' which means that it
+	    will use remotes with a driver attribute pointing to the capture
+	    device.
+	  - lircd_conf: run_select_any_config -> any
+	  - New note: config file attribute.
+	  - Update to new lircd_conf filenames.
+	  - Remove some configurations with missing driver
+	  - Make all configurations have the same filename as the 'id' attribute.
+	  - Add the new driver attribute here and there.
+
+	irdb-get: Add search for remotes with given driver, some polish.
+
+	config_file, lirc-lsremotes, doc: Add a "driver" attribute.
+
+2014-10-16  Alec Leamas  <alec@nowhere.net>
+
+	irdb-get: Bugfix.
+
+	tools, doc: New tool irdb-get.
+
+2014-10-16  Alec Leamas  <leamas.elac@nospam.net>
+
+	tools, doc: New tool lirc-lsremotes.
+
+2014-10-15  Alec Leamas  <alec@nowhere.net>
+
+	tools: irrecord analyse bugfix.
+
+	lib: Enhance some config_file warnings.
+
+2014-10-13  Alec Leamas  <leamas.elac@nospam.net>
+
+	lib: config_file parsing bugfixes.
+
+2014-10-12  Alec Leamas  <leamas.elac@nospam.net>
+
+	doc: lircd.conf.5 bugfix.
+
+2014-10-10  Alec Leamas  <alec@nowhere.net>
+
+	all: Fix generic spelling typo.
+
+	NEWS: update.
+
+	lircd: Add --effective-user option (#56).
+
+	contrib: Add a udev rule for /dev/lirc0 group access (#12).
+
+	doc: Document new manual_sort stuff (#56).
+
+	lib, test: Add manual sorting mechanisms (#56).
+
+	lib, test: Don't sort raw remotes ahead of non-raw (#28).
+
+	Install lircd.conf.d + a README, manual update (#56).
+
+	lib, test: Implicitly include files in lircd.conf.d (#56).
+	Compute a directory in the same directory as he config file named
+	lircd.conf.d. Parse  each *.conf file in this directory and add
+	the remotes to the main list, basically the same thing as if
+	they were included. Errors (unreadable/unparsable) are logged but
+	otherwise silently ignored.
+
+2014-10-09  Alec Leamas  <alec@nowhere.net>
+
+	doc: Use new ~/.config/lircrc, fix manpages. Also: lirc-config-tool (#52).
+
+	tools: Use log files in ~/.cache (#52)
+
+	lib, test: Add freedesktop hook for application logs, test it (#52).
+
+	lirc_client: Use ~/.config/lircrc if available (#52).
+
+	lib, doc, lircd, test: Use trace1, trace2 instead of peep, stalk loglevels.
+	Also: documentation bugfixes.
+
+	tools/lircrcd -> daemons/lircrcd.
+	lircrcd is a daemon and should thus be in daemons/. How did it end
+	up in tools?
+
+	irrecord: Option debug -> loglevel, help cleanup (#33).
+
+	lircd, lircmd: Use loglevel instead of debug, help msg cleanup (#33).
+
+	tools: Handle plugin path correct, help msg cleanup, long lines (#33).
+
+	test: Some cleanup.
+
+	configure.ac,doc/Makefile.am: Make python3-yaml optional.
+
+	irsend: Relax parsing of simulate option, fix help message (#32).
+
+	lirc_client: Bugfix.
+
+	contrib, tools, doc: contrib/generate-lircrc -> tools/lirc-config-tool.
+
+	lircd.conf.5: Document "include" directive.
+
+	lib: Nasty bugfix in lirc_config.h, updating drv_admin comments.
+
+2014-10-08  Alec Leamas  <alec@nowhere.net>
+
+	lib: Update comments.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	lircd, tools: Improve message for missing driver.
+
+	doc: Add irtestcase manpage.
+
+	lib: default_drvctl bugfix in driver + drv-admin.
+
+	xmode2: Yet Another Segfault Bugfix.
+
+2014-10-07  Stas Sergeev  <stsp@users.sourceforge.net>
+
+	fix compilation under uclibc
+	uclibc is more strict about standards.
+	We need to define _XOPEN_SOURCE and _BSD_SOURCE to make it happy.
+
+2014-10-07  Alec Leamas  <leamas@nowhere.net>
+
+	NEWS: update.
+
+2014-10-07  Alec Leamas  <leamas.elac@nospam.net>
+
+	test: Add more decoding tests (part of #11).
+	Conflicts:
+		test/ClientTest.h
+		test/DecodeTest.h
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	test: Add longpress test.
+
+2014-10-07  Stas Sergeev  <stsp@users.sourceforge.net>
+
+	doc: Document the new longpress feature.
+
+2014-10-07  Stas Sergeev  <stsp@users.sourceforge.net>
+
+	lib: lirc_client: Add ignore_first_events i. e., longpress option (#50).
+	This option controls the amount of repeats before delay period activates.
+	Default value is 0, which makes it what it was before: delay period was
+	starting after 1 event. If set to 1 (true) the first event is suppressed
+	which makes it is possible to define the reaction to long key-presses.
+
+	Ignore "ignore_first_event" parameter if "delay" is not set
+	and warn the user about that misconfiguration.
+
+	Also make rep_filter() much more readable.
+
+2014-10-07  Stas Sergeev  <stsp@users.sourceforge.net>
+
+	lib: lirc_client: Handle new delay option.
+	if repeat is not set but delay is set, generate 2 events
+	 separated by delay
+
+	lib: lirc_client: Introduce rep_filter() function.
+	It handles "repeat" and "delay" options.
+
+2014-10-07  Alec Leamas  <leamas.elac@nospam.net>
+
+	tools: Add new tool irtestcase.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	tools/irsimreceive: New test tool.
+
+2014-10-07  Alec Leamas  <leamas@nowhere.net>
+
+	tools/irsimsend: Adding new test tool.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	doc: Create doxygen api-docs if available.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	doc: Make client_api.html  and driver-api.html doxygen-compatible.
+	Mostly about leading blanks: 4 leading on preformatted text,
+	not four leading on other text to please the markdown parser.
+	Some other blank  & formatting fixes, no semantic changes.
+
+	doc: doxygen...
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	doc: configuration-guide: Bugfixes.
+
+2014-10-07  Alec Leamas  <leamas@nowhere.net>
+
+	doc: Add driver info update.
+
+	doc: Reorganizing API info.
+
+	doc: Help update (FAQ, bug reporting).
+
+	doc: Installation.html update.
+
+	test: Test and use new send capabilities, add decoding test (#35).
+
+	irsend: Use new send library (#35).
+
+2014-10-07  Alec Leamas  <leamas.elac@nospam.net>
+
+	lircd: Add support for SET_INPUTLOG and DRV_OPTION commands.
+
+2014-10-07  Alec Leamas  <leamas@nowhere.net>
+
+	lircd: Add/modify some debug messages.
+
+	lircd: Close driver on exit (#40).
+
+2014-10-07  Alec Leamas  <leamas.elac@nospam.net>
+
+	lib: Add logging hook to receive.c/h.
+
+2014-10-07  Alec Leamas  <leamas@nowhere.net>
+
+	lib: Sort drivers in hw_print_drivers().
+	Checking the output from -H help is a pain. Sort the output,
+	and also define the overall MAX_PLUGINS.
+
+	lib: Updating doxygen comments.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	lib, lircd: Don't hardcode delay using #ifdef.
+
+2014-10-07  Alec Leamas  <leamas@nowhere.net>
+
+	lib: lirc_client: Refactor communications.
+	Merging the irsend functions was duplicated code and state,
+	Rip away the state and use common functions to run a
+	command (but not common state...)
+
+	lib: lirc_client: Adding functions to send data (#35).
+
+	lirc-lsplugins: Display driver info and version, new --long layout.
+
+	plugins: Add default, empty driver info.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	plugins: Compile with -pthreads.
+	Only the zotac driver uses this for now, but let's take he chance to
+	establish the thread library to use so we don't get incompatible things later
+	on.
+
+2014-10-07  Alec Leamas  <leamas@nowhere.net>
+
+	plugins: Add  file driver (test tool) + LIRC_EOF definition.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	API: transmit: Normalize some function names.
+	Partly this is a OO interface and better named so.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	API: recieve: Normalize some function names.
+	Part of this is a clean OO interface and is better named
+	in this fashion.
+
+	rewind_rec_buffer -> rec_buffer_rewind
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	API: Merge lirc_dyndriver.h and lirc_driver.h.
+	These two files have evolved indepentenly but are doing the same thing.
+	Merge into  lirc_driver, build changes and bugfixes. Some fixes also
+	to lirc_driver.html.
+
+	API: Update drvctl() description.
+
+2014-10-07  Alec Leamas  <leamas@nowhere.net>
+
+	API: Add --driver-options and DRV_SET_OPTION drvctl.
+
+	API: Use const- pointer to access drv from client code.
+	Client code now use the const driver* curr_driver to provide som
+	encapsulation. Drivers still access the raw drv variable.
+	This is governed by the IN_DRIVER conditional which is set in
+	lirc_driver.h (included by all drivers).
+
+2014-10-07  Alec Leamas  <leamas.alec@gmail.com>
+
+	API: Using decode_ctx_t to simplify interfaces in lib and drivers.
+
+	API: Add open_func/close_func to drivers, some default function stubs.
+
+	Revert "Temporary fix for --device handling (#41)."
+	This reverts commit 252a8386aecbdfaf41dfb338d7a119b47d1e5e1c.
+
+2014-10-07  Alec Leamas  <leamas@nowhere.net>
+
+	API: driver-api.html: Update to match new API, some clean-up.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	NEWS: Update.
+
+2014-10-07  Stas Sergeev  <stsp@users.sourceforge.net>
+
+	configure.html: Add description of delay_start parameter.
+
+2014-10-07  Alec Leamas  <leamas.elac@nospam.net>
+
+	configure: Make python3-yaml mandatory.
+
+2014-10-07  Alec Leamas  <alec@nowhere.net>
+
+	generate-lircrc: Also check for duplicates.
+
+2014-09-25  Mario Domenech Goulart  <mario@ossystems.com.br>
+
+	lirc.org/git.html: update git clone URI
+
+2014-09-24  Alec Leamas  <alec@nowhere.net>
+
+	contrib/irexec.service: WantedBy -> [Install] section (#29).
+
+2014-09-23  Alec Leamas  <alec@nowhere.net>
+
+	lib: Bugfix: Yet another option processing fix.
+
+2014-09-22  Alec Leamas  <leamas@nowhere.net>
+
+	build: daemons, main: Don't create lircd et. al. fifos (#46).
+	Creating the application socket files at install time means
+	multiple, conflicting permissions on the sockets. Stick to the
+	fact that these are created in runtime using default or user-
+	specified permission, don't mess with installation. Still respect
+	existing socket  so packagers can set default if required.
+
+	doc: configuration-guide/configure: Merge lircd.conf parts, update.
+
+	doc: lirc-lsplugins.1 bugfix.
+
+	doc: Bugfixes.
+
+2014-09-20  Alec Leamas  <leamas@nowhere.net>
+
+	build: Fix "use systemd.m4" and "man2html optional"
+
+2014-09-20  Andreas Oberritter  <obi@opendreambox.org>
+
+	build: use systemd.m4 [https://bitbucket.org/mgorny/systemd-m4.git]
+	This enables the defacto standard option --with-systemdsystemunitdir.
+
+	build: make man2html optional
+
+2014-09-20  Alec Leamas  <leamas@nowhere.net>
+
+	doc: Makefile.am:  Fix failing make distcheck.
+	Remove last traces of the 0.8.7 scripts which has caused all sorts
+	of trouble here...
+
+2014-09-17  Eric Andersson  <rico9999@users.sf.net>
+
+	plugins/irtoy, doc/Makefile.am: OSX build fixes.
+
+2014-09-16  Eric Andersson  <rico99@sbcglobal.net>
+
+	lib, daemons: Darwin fixes
+
+	configure.ac et. al.: Darwin build fixes.
+
+	remotes: lircd.conf.sonyir bugfix
+
+2014-09-16  Alec Leamas  <leamas@nowhere.net>
+
+	irrecord: Bugfix.
+
+2014-09-12  Alec Leamas  <leamas@nowhere.net>
+
+	doc: Technical: Removing some old stuff.
+
+2014-09-10  Alec Leamas  <leamas@nowhere.net>
+
+	test: Cleanup + add missing files.
+
+	test: Add echoserver.c (new test tool).
+
+2014-09-10  Alec Leamas  <leamas.alec@gmail.com>
+
+	mode2: Hookup standard options handling, add --plugindir.
+
+	mode2: Hookup standard options handling, add --plugindir.
+
+2014-09-09  Alec Leamas  <leamas@nowhere.net>
+
+	CONTRIBUTE: fixes.
+
+	lircd.c: Fix lircdfile cli option parsing (also: #19).
+
+	lirc_opt: Improve -O processing.
+
+	release.c: Fix cornercase segfault.
+
+	driver-api.html: Some clean-up, rectifying  in-tree build info.
+
+	smode2: Retiring, moving to contrib/.
+
+	xmode2: sanitize basic options handling (#43).
+
+	Configure and use correct lock directory (#44).
+
+2014-09-09  Alec Leamas  <leamas@nowhere.net>
+
+	Revert "Remove unnecessary and silly sorting of remotes (#28)."
+	This reverts commit db6f6fe5cfec65dd2f82591b7244ef33f244704d.
+
+	According to discussion in bug, this sorting is actually useful
+	and should not be removed. So, reverting.
+
+2014-09-09  Bengt Martensson  <bulk@bengt-martensson.de>
+
+	irtoy: Handle failed init() segfault, cleanup (#20).
+
+2014-09-09  Alec Leamas  <leamas@nowhere.net>
+
+	options: Use SYSCONFONFDIR to locate lirc_options.conf (#45).
+	Also: nuke it from configure. To have it there without a user visible
+	--with option makes no sense, and a --with option is not motivated.
+	Editing lib/lirc_config.h is good enough.
+
+2014-09-09  Eric Anderson  <rico99ATsbcglobal.net>
+
+	lircd: Fix compiler warning  without HAVE_SYSTEMD (#47)
+
+2014-09-05  Alec Leamas  <leamas@nowhere.net>
+
+	lirc-plugincheck: Major update, new name lirc-lsplugins.
+	Added code to display capabilities (including a --long option),
+	sorted output, limit plugins displayed search path
+	management  and summary output (for builds).
+
+2014-09-03  Bengt Martensson  <bulk@bengt-martensson.de>
+
+	driver-api.html: 2.0 driver api, first draft.
+
+2014-09-03  Alec Leamas  <leamas.alec@gmail.com>
+
+	Temporary fix for --device handling (#41).
+
+2014-09-03  Alec Leamas  <leamas@nowhere.net>
+
+	lircd: Close driver on exit (#40).
+	We still don't have any real lifecycle management in lircd, once
+	loaded a driver basically stays so. So this is really what could
+	be done for now.
+
+2014-09-02  Alec Leamas  <leamas@nowhere.net>
+
+	API: Adding some module comments.
+
+	lirc_log: Add a space in output.
+
+2014-09-02  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Improve debug level error message and help.
+
+	lircd: Fix default logfile -> syslog.
+	lircd was trying to open the default logfile even though it's
+	heading to using syslog in that case. There is no default
+	logfile path anymore, since a file must be given to enable
+	file logging. Nuke it.
+
+	include/media/lirc.h: Remove PACKETSIZE, align with upstream
+
+	lirc-plugincheck: Update, revert to plain C.
+
+	gitignore: update
+
+2014-09-02  Alec Leamas  <leamas@nowhere.net>
+
+	irrecord, autogen: Non-optimized FTBS fix (#42), autogen bugfix.
+
+2014-09-01  Alec Leamas  <leamas@nowhere.net>
+
+	lircd. lircmd: Don't stop scanning for more options after 'O'.
+
+	irrecord: Parse -d correctly (#34).
+
+2014-08-27  Alec Leamas  <leamas.alec@gmail.com>
+
+	irrecord: FTBS bugfix.
+
+	irrecord: Update driver info to current standard.
+
+2014-08-26  Alec Leamas  <leamas.alec@gmail.com>
+
+	drv_admin: Fix compiler warning.
+
+	Merge lirc_config1.h + lirc_config2.h -> lirc_config.h.
+
+	drv_admin: Misleading name drv_default -> drv_null (not visible).
+
+2014-08-26  Alec Leamas  <leamas@nowhere.net>
+
+	irtoy: Bugfix (rebase errors...)
+
+	lirc-plugincheck: Adding new tool (#27).
+	Writes a simple list of plugins. The primary purpose is to locate
+	plugins which can't be loaded.
+
+2014-08-26  Alec Leamas  <leamas.alec@gmail.com>
+
+	drv_admin: Create new interface to list all plugins  (part of #27).
+	Refactor current code and provide ahook also to visit each plugin,
+	not just each driver.
+
+	lirc-setup, NEWS: Try to handle python-yaml dependency.
+
+	lib: Remove lirc_options from driver lib.
+	We don't use options from the drivers, they are note included and
+	thus we don't need the libraries linked. Nuke and proceed.
+
+	logging: Enable symbolic constants in UI, clean up.
+	Users should be able to set the loglevel using the familiar
+	'info', 'warning' etc. Add interfaces in lirc_log to parse
+	loglevels and in options to store them. New code in client's
+	option parsing + various cleanup of leftovers from the time
+	debug was a boolean, not a level. Adding some tests.
+
+	logging: Converting debug to a loglevel.
+	The global debug variable has since long been used as a level.
+	This has not been reflected in code. Change name on
+	debug ->loglevel, and make the possible values for loglevel an
+	enum. Lot's of changes in clients using logprintf/LOGPRINTF.
+	Some plugins's use of LOGPRINTF sanitized.
+
+	plugins: Add linker flags for iguanaIR
+
+	plugins: constantness fixes.
+
+2014-08-25  Alec Leamas  <leamas.alec@gmail.com>
+
+	autogen.sh: bugfix.
+
+	contrib: irexec.service bugfix (#29).
+
+2014-08-25  Alec Leamas  <leamas@nowhere.net>
+
+	plugins: Rebasing irtoy to current master, build update.
+
+2014-08-25  Matt Ward  <mward@wtmi.net>
+
+	plugins: Add irtoy driver (#20).
+	Adds the plugins/irtoy.c driver for the Dangerous
+	Prototypes USB Infrared Toy 2.  Original patch information created
+	by Peter Kooiman.  I have read references that it might not be as
+	up-to-date as desired due to "robustness" changes in the transmit
+	command protocol.  This current set works to transmit and receive.
+	It even works with the irrecord utility.
+
+	This has been tested with the "latest" v22 firmware images on the
+	IRToy2 as well as with a "beta" (?) v23 one that no one seems to
+	be supporting, other than to make it available.
+
+2014-08-25  Bengt Martensson  <bulk@bengt-martensson.de>
+
+	Remove unnecessary and silly sorting of remotes (#28).
+	The idea is probably to make the program faster in that remotes with
+	"shorter" codes comes at the beginning, and thus (?) leads to faster
+	decoding. However, this idea is both badly implemented (raw remotes
+	comes out with a bit length of 0, so they will always be at the
+	beginning), and is also counter productive, because the only sensible
+	performance related optimization of lircd.conf is when the user manually
+	reorders the file with more commonly used remotes first. The (for the
+	user invisible!) re-ordering undoes his careful work!
+
+	Fix in code consists of just removing the sorting.
+
+2014-08-25  Alec Leamas  <leamas@nowhere.net>
+
+	Add some (very) basic unit tests (part of #11).
+
+2014-08-25  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	Adding test directory (part of #11).
+
+2014-08-25  Alec Leamas  <leamas@nowhere.net>
+
+	options: Add an unload() function.
+
+	lirc_client: Allow LIRC_SOCKET_PATH to specify socket (#31).
+
+	lirc_log, config_file: Improve debug messages.
+
+	Driver API: Fix inconsistent naming.
+
+	DRiver API: Add C++ snippets, const- fixes. Clients updated.
+
+2014-08-25  Alec Leamas  <leamas.alec@gmail.com>
+
+	Driver API: Make send_buffer and receive buffer private, cleanup.
+	More strict conformance to kernel formatting rules in headers.
+	Shrink the config_file public interface.  We'll get there, but
+	slowly...
+
+2014-08-24  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: Add bugtracker info.
+
+	receive.c: Bugfix.
+
+2014-08-23  Bengt Martensson  <bulk@bengt-martensson.de>
+
+	configure: Add report on what's built (#23).
+
+2014-08-22  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Make a clean exit on SIGUSR1.
+	The test code uses SIGUSR1 to terminate lird. The actual return
+	code might have to be something else, but otherwise this nasty
+	hack does it's job.
+
+	drv-api: Make send_buffer and receive buffer private, cleanup.
+	More strict conformance to kernel formatting rules in headers.
+	Shrink the config_file public interface. Some const- and other
+	fixes.
+
+2014-08-21  Alec Leamas  <leamas.alec@gmail.com>
+
+	drv_admin: Expose e little more in public header.
+
+2014-08-21  Alec Leamas  <leamas@nowhere.net>
+
+	hardware.h -> driver.h
+
+	doc: driver-api: Update.
+
+2014-08-21  Alec Leamas  <leamas.alec@gmail.com>
+
+	hw-types.* -> drv_admin
+
+	Global hw -> drv
+
+	struct hardware -> struct driver (part 2)
+
+	extern struct driver hw -> struct driver drv
+
+	hw-types: makes name more driverish.
+
+	struct hardware -> struct driver
+
+2014-08-20  Alec Leamas  <leamas.alec@gmail.com>
+
+	lib/hw-types.c: Align hw_defauilt with plugins.
+
+	configure: Test for man2html (#25).
+
+	doc update: README, CONTRIBUTE, lircd.conf.5 updated, TODO removed.
+	TODO filed as ticket #24.
+
+	plugins, lircmd: Kill some compiler warnings.
+
+	lirc_options: Use environment to enable early debug.
+
+	lib: Add const to  exported function args (#16).
+
+	doc: Makefile.am fix for empty $(sourcedir).
+
+	autogen.sh: Bugfix.
+
+	cleanup: Manpages update, gitignore, remove cruft.
+
+2014-08-20  Pete Beardmore  <pete.beardmore@msn.com>
+
+	main: Fix automake install hook for lirc_option.conf plugindir.
+	-replace based on libdir to support lib dir suffixes
+
+2014-08-20  Alec Leamas  <leamas.alec@gmail.com>
+
+	configure: Handle missing ALSA properly.
+
+	configure: Don't require kernel sources.
+	We only build user-space tools and should thus never require
+	kernel sources. The thing we actually need (lirc.h) is a kernel
+	bug, and we bundle it until the kernel exports is as it should.
+
+2014-08-20  Alec Leamas  <leamas.alec@gmail.com>
+
+	configure, lircd: Still more config cruft.
+	The --devdir option to configure makes no sense, it's where
+	kernel devices are installed. We have no such devices after
+	removing the kernel modules, the named pipes we use lives
+	in $(varrundir) i. e., /var/run.
+
+	The device dir is till a hardcoded default in many drivers,
+	but after all we normally doesn't use these defaults, we
+	set the device as a runtime option.
+
+2014-08-19  Andreas Bader  <andreasbader at badersystems.de>
+
+	lircd: Fix for segfault parsing --connect in config file (#21).
+
+2014-08-19  Alec Leamas  <leamas.alec@gmail.com>
+
+	drivers: Update example code (again!).
+
+	Make DYNCODES a runtime option (#18).
+
+	doc: Manpages update.
+
+	hw-types: Make plugindir a load path(#13, final).
+
+	configure.ac et. el.: Remove --enable-maintainer-mode configuration, cleanup.
+	Still more cruft to remove. configure.ac now < 400 lines!
+
+	all: Whitespace fixes (bad pre-commit hook, sigh...)
+
+	irrecord: Plugindir option and command line parsing (part of #13)
+
+2014-08-18  Alec Leamas  <leamas.alec@gmail.com>
+
+	drivers: Update example code.
+
+	tools/Makefile.am: Temporary installation bugfix.
+
+2014-08-18  Alec Leamas  <leamas.alec@gmail.com>
+
+	Makefile.am: Remove m4 cruft, add bundled kernel header.
+	We should not carry the file include/media/lirc.h, it's the kernels
+	task. But until this bug is fixed, lets install the file so that
+	drivers kan be compiled without kernel sources.
+
+	The m4 definitions are redundant, automake distributes (of course)
+	it's own include directory.
+
+2014-08-18  Alec Leamas  <leamas.alec@gmail.com>
+
+	plugins: Remove some silly headers.
+
+	daemons: Move irrecord and slinke elsewhere (#15).
+	As stated in issue 15 irrecord belongs to tools/ whereas slinke
+	is an old, outdated program; it's moved to contrib.
+
+	lircd, devinput: Move code for setting rc device from lircd -> driver.
+
+	doc: Update manpages on driver loading and FILES, bugfixes.
+
+2014-08-18  Alec Leamas  <leamas@nowhere.net>
+
+	configure.ac: Nuke last path definitions.
+	Defining paths in configure.c is generally  a Bad Idea, since these
+	are unknown at the time of autoconf/automake. And there is really
+	no need to configure default device names and plugindir,
+	they might as well be hardcoded.
+
+	doc/Makefile.am: Cornercase bugfix.
+
+2014-08-15  Martin Tharby Jones  <https://sourceforge.net/u/emteejay/profile>
+
+	mode2: Add a gap parameter and 'scope' like display mode.
+	The gap parameter is needed so that the column display mode can display
+	each IR transmission burst separately for any remote. The default  value
+	has been set to a lower value than the original hard-coded one to better
+	match the timings from existing configuration files.
+
+	The 'scope display mode draws a simple ASCII trace of the IR signal.
+
+2014-08-15  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	doc: install.html: Remove old update info, refer to NEWS.
+
+	NEWS: update.
+
+2014-08-14  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	Main: remove old configuration cruft.
+
+	Makefile.am: Create a common style.
+	Makefile.am have deteriorated into a erall message of formatting
+	styles makeing them hard to read. Go for a common style. This is
+	thus basically just a layout patch.
+
+	Makefile.am: fix insane ChangeLog handling.
+
+	doc: Makefile.am bugfix.
+
+	configure, dox: Drop --enable-sandboxed/SANDBOXED option
+	Drop the option, just try to make the fifo or device ignoring errors.
+
+	doc: Makefile.am: Generate table.html and lirc.hwdb, cleanup.
+	And parallell builds now work! Whitespace mess. NEWS update.
+
+2014-08-14  Alec Leamas  <leamas.alec@gmail.com>
+
+	data2table: Updated for new config files.
+
+	data2hwdb: Updated for new configuration files.
+
+	lirc_options: Bugfix (typo), some clean-up.
+
+	build, pronto2lirc: Make python3 the python used.
+	From now on configure checks for and requires python. Move the
+	last python2 script to python3, simplify deployment.
+
+2014-08-14  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	doc: Adding lirc-setup mangape, bugfixes, use extern man2html
+	The doc generation had various problems, notably the data files was
+	not installed. The bundled man2html was buggy and dropped in favor of
+	using an external man2html dependency.
+
+	lirc-setup: Add new configuration tool
+
+2014-08-14  Alec Leamas  <leamas.alec@gmail.com>
+
+	Makefile.am: Fix for 333047d install hook patch.
+
+2014-08-14  Alec Leamas  <leamas@nowhere.net>
+
+	configs: Adding resurrected configuration files.
+
+2014-08-13  Alec Leamas  <leamas.alec@gmail.com>
+
+	lircd: Silly bugfix in -v
+
+	hardware.h: Removing not defined api function.
+
+2014-08-13  Pete Beardmore  <pete.beardmore@msn.com>
+
+	main: automake install hook for lirc_option.conf prefix
+	-ensure pluginsdir option is inline with configured prefix
+
+2014-08-13  Alec Leamas  <leamas.alec@gmail.com>
+
+	configure.ac: Bugfix.
+
+2014-08-13  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	configure: Remove some old left-overs, including a help2man dep.
+
+2014-08-13  Alec Leamas  <leamas.alec@gmail.com>
+
+	configure.ac: Split out local configuraton files.
+
+2014-08-13  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	plugins: Remove unused ioctl headers.
+
+	docs: NEWS update, adding CONTRIBUTE
+
+	all: Remove some silly inline declarations.
+
+	lib, plugins: Review lirc_driver.h interface
+	Remove lirc_options and deps from lirc-driver.h; it's not used.
+	Remove also  serial.h and let those who needs it use it
+	directly instead.
+
+2014-08-13  Alec Leamas  <leamas.alec@gmail.com>
+
+	plugins: Use new-style initializations with version data.
+
+2014-08-13  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	plugins: Remove useless headers, part 1.
+	Remove header solely with function prototypes which makes no sense for
+	a driver which does not export anything.
+
+	hardware.h: Define version 2, cleanup.
+
+	plugins: Make struct hardware const.
+
+	lirc_log: Beautify output a little (bugfix, really).
+
+2014-08-13  Bengt Martensson  <bulk@bengt-martensson.de>
+
+	plugins, libs, daemons: Add doxygen comments, clean-up.
+
+2014-08-13  Alec Leamas  <leamas.alec@gmail.com>
+
+	USE_SYSLOG: remove unneeded conditional compilation.
+	To test two different versions using syslog or not is
+	too much. Remove the #ifdef, use runtime tests instead.
+
+2014-08-13  Alec Leamas  <leamas@nowhere.net>
+
+	drivers/default: Updating out-of-tree example w new default driver.
+
+2014-08-13  Alec Leamas  <leamas@nowhere.net>
+
+	DEBUG: Remove unneeded configuration option.
+	All debug output is now governed by run-time options. Having #ifdef DEBUG
+	creates many problems when users needs to recompile lirc whne running
+	into bugs. There is a performance hit, but it's basically just an integer
+	comparison when output is disabled.
+
+	Builds not defining DEBUG are also likely to be untested sine most devs
+	always have it on. On the contrary, many distros have it disabled, so
+	mosgt users have it disabled. This is not a reasonable situation.
+
+2014-08-13  Alec Leamas  <leamas@nowhere.net>
+
+	DAEMONIZE: Purge unneeded configuration option.
+	Building lirc without daemon()/daemonize() support just makes no sense,
+	and builds with DAEMONIZE unset is likely to be completely untested.
+	Remove the DAEMONIZE/--disable daemonize option completely.
+
+2014-08-13  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	lirc-codecs-regression-test.sh: Bugfix.
+
+2014-08-13  Bengt Martensson  <bulk@bengt-martensson.de>
+
+	Add driver-api.html doc.
+	Adding new driver API doc.
+
+2014-08-11  Alec Leamas  <leamas@nowhere.net>
+
+	pre-commit hook: Update manpage \Last change: date.
+
+2014-08-11  Alec Leamas  <leamas@nowhere.net>
+
+	doc: Ditch help2man, use traditional manpage sources.
+	The current manpage generation is a mess. The dependencies are unclear,
+	and the generated files are not flexible enough to create descent
+	manpages. Also, creating manpages for non-commands e. g., config files
+	requires wrappers. All in all, a mess.
+
+	Remove release-html and release-man scripts, do everything in the
+	Makefile.am. Check in current generated manpages as source and fix them
+	up.
+
+	This also opens up for traditional keyword substitution in the generated
+	files. Currently only version is patched, but this is easily expanded.
+
+2014-08-11  Pete Beardmore  <pete.beardmore@msn.com>
+
+	lircd: Fix option typos.
+
+2014-08-11  Alec Leamas  <leamas@nowhere.net>
+
+	README: Bugfix.
+
+	doc: Update dependencies with python3 et. al.
+
+2014-08-10  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	plugins: Split default into default + simsend and simreceive.
+	Using dynamic drivers it's possible to compile the default driver
+	to different version depending on preprocessor constants. Instead,
+	create three different drivers (which anyway is much cleaner).
+
+	lircd: Allow drivers to terminate lircd using SIGUSR1.
+	Used when doing regression tests. Clean up signal handling.
+
+	contrib: Updating lirc-codecs-regression-test.sh for plugins.
+
+2014-08-09  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	daemons: lircd bugfix: restore accidentally removed SIM_SEND code.
+
+2014-08-07  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: configuration guide update.
+
+2014-08-07  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	drivers: Adding example of userspace out-of-tree driver.
+
+2014-08-07  Alec Leamas  <leamas@nowhere.net>
+
+	build: Add pkgconfig .pc files.
+
+2014-08-07  Alec Leamas  <leamas.alec@gmail.com>
+
+	remotes/sonyir: Rename and revise key symbols.
+	The vendor name is sony, not sonyir. Renaming to conform with
+	the others.
+
+	Revising symbols using lirc-config-tool, renaming keys starting
+	with KEY_ to X_KEY_.... The basic contract is that a symbol
+	starting with KEY_ is an official symbol.
+
+2014-08-07  Eric Anderson  <eta@arsenic.local>
+
+	remotes/sonyir: Added
+
+	plugins: hw_hiddev.c: Add sonyir support
+
+2014-08-07  Alec Leamas  <leamas.alec@gmail.com>
+
+	zotac: Adapting patch for new version.
+
+2014-08-07  xbmc  <fernetmenta@online.de>
+
+	zotac: Adding new zotac driver from FermetMenta.
+	Applying tip commit from https://github.com/FernetMenta/lirc.
+
+2014-08-07  Alec Leamas  <leamas@nowhere.net>
+
+	doc: Ditch help2man, use traditional manpage sources.
+	The current manpage generation is a mess. The dependencies are unclear,
+	and the generated files are not flexible enough to create descent
+	manpages. Also, creating manpages for non-commands e. g., config files
+	requires wrappers. All in all, a mess.
+
+	Remove release-html and release-man scripts, do everything in the
+	Makefile.am. Check in current generated manpages as source and fix them
+	up.
+
+	This also opens up for traditional keyword substitution in the generated
+	files. Currently only version is patched, but this is easily expanded.
+
+	Removing generation of table.html and lirc.hwdb for now, to be
+	re-enabled later when there is new configuration system in place.
+
+2014-08-07  Alec Leamas  <leamas@nowhere.net>
+
+	configure.ac: Bugfix and cleanup.
+	Fix missed else clause for some AM_CONDITIONL leading to undefined
+	automake variables in some situations. Remove the "possible_drivers"
+	variable, a left-over from configuring lirc with specific a specific
+	driver.
+
+	autogen.sh: Bugfix.
+
+	lircd: Fix --output option parsing bug.
+
+	contrib: ...regression-test.sh: Update list of ignored files.
+
+2014-08-04  Alec Leamas  <leamas@nowhere.net>
+
+	lirc_options: fix logfile reading (#10).
+
+	lircd: --output option bugfix.
+
+	Setup 0.9.1a branch
+
+	NEWS, README: 0.9.1 info.
+
+2014-08-03  Bengt Martensson  <bulk@bengt-martensson.de>
+
+	daemons, lirc_log: Fix logfile handling.
+
+2014-07-31  Alec Leamas  <leamas.alec@gmail.com>
+
+	doc: html updates
+
+	doc: manpages update.
+
+	doc: manpage(s) fix.
+
+	setup.sh: obsolete setup script, removed.
+
+2014-07-31  Alec Leamas  <leamas.alec@gmail.com>
+
+	build: Don't try to install a configuration time decided config file.
+	We don't really support building a single driver anymore, so just
+	drop installation af specific config files. These should be selected
+	at installation time, not configuration.
+
+	Split some excessively long lines.
+
+2014-07-31  Alec Leamas  <leamas.alec@gmail.com>
+
+	main: Makefile.am: Fix "make distcheck" errors.
+
+2014-07-31  Alec Leamas  <leamas@nowhere.net>
+
+	configure et. al.: bugfix (bad)
+	Old code tried to evaluate installation paths at configure time,
+	which never works using autotools.
+
+2014-07-31  Alec Leamas  <leamas.alec@gmail.com>
+
+	autotools: Don't allow configuring a single driver.
+	With drivers loaded dynamically, it makes no sense to configure
+	just one. User can just build one driver later on, by using
+	the Makefile in plugins dir. Or she can build all but just
+	use a subset at  installation time. Simplifies configure.ac a lot.
+
+	Clean up last directory fixes in configure.ac, those are now
+	in plugins/Makefile.am in a simplified form.
+
+2014-07-31  Alec Leamas  <leamas.alec@gmail.com>
+
+	configure: Update hardware heuristics.
+
+	configure: Remove odd messages for drivers now in kernel.
+
+	autotools: Remove hw_module_libs.
+
+	configure: Remove some unused constants.
+
+2014-07-31  Alec Leamas  <leamas@nowhere.net>
+
+	plugins: Disable debug output in runtime, not configure time.
+
+2014-07-31  Alec Leamas  <leamas@nowhere.net>
+
+	irrecord, lircd, lirc_log, : more logging fixes.
+	irrecord contains some code which unconditionally outputs debug
+	messages if #DEBUG is enabled at configuration time. This
+	makes it hard to ship builds with debug  functions enabled, which
+	is  Bad Thing.
+
+	Replace staic #ifdef's with runtime tests based on debug variable.
+	New interface in lirc_log.h
+
+2014-07-31  Alec Leamas  <leamas@nowhere.net>
+
+	daemons-lib: fix logging.
+	Current logging has problems with the combination nodaemon and
+	running as a server - the stderr logging does not work (perhaps
+	systemd screws up the LOG_PERROR syslog option). Furthermore,
+	these routines used to filter calls to syslog using the value of
+	the global debug variable. This makes just no sense, the syslog
+	priority system works well as-is.
+
+	Also, the LOGPRINTF macro simply ignored the priority argument,
+	logging everything as LOG_DEBUG.
+
+	Patch ensures that logging to stderr always takes place when
+	running as nodaemon, making interactive users and systemd happy.
+	syslog messages are  unfiltered, syslog decides whether to log
+	or not. Other messages (logfile, stderr) are filtered using global
+	debug; priority arguments are always respected.
+
+2014-07-31  Alec Leamas  <leamas.alec@gmail.com>
+
+	plugins: Update include headers, use "lirc_driver.h".
+	Just include the official "lirc_driver.h" header in drivers, part
+	of disconnecting them from the erst of the source.
+
+	Revert "main: Makefile: temporary fix for drivers/lirc.h"
+	Reverts commit fed9c64bb (to be rebased). It's no longer needed,
+	there are no references to drivers/lirc.h left.
+
+2014-07-31  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	doc: Add section on dynamic loading to manpages.
+
+2014-07-31  Alec Leamas  <leamas@nowhere.net>
+
+	tools: Don't build or document unbuildable tools.
+	Disable build of xmode2/smode2 in cases they can't be built.
+
+2014-07-31  Alec Leamas  <leamas.alec@gmail.com>
+
+	tools: Build against new library.
+	Remove all references to the daemons dir, everything common
+	is in lib/.  The static driver library is no longer needed.
+	slinke needs to rename progname after a name clash.
+
+	daemons: Don't build static drivers lib, cleanup.
+	Since hw-types don't link to the drivers anymore, we don't need
+	this. Skip the static lib, link dynamically against --lirc and
+	remove the source compatibility symlinks which was needed to
+	build the static lib.
+
+	plugins: hw_default: fix name clash + includes
+
+	plugins: Add an entrypoint for loader.
+	Each plugin contains one or more driver definitions. The loader
+	looks for list called "hardwares"; let's add this to each plugin.
+
+	plugins: Remove hw_ prefix.
+
+	plugins: Update autotools to build separate .so files.
+
+	Moving userspace drivers to separate directory.
+
+	lib: Adding a driver library.
+
+	daemons, tools: Build against new library.
+	There are at least four more or less copy-pasted waitfordata()
+	functions out there. The one in lircd i more elaborated, though.
+	Picking the one in irrecord, which looks the same as the ones
+	in mode2 and xmode2. Placing function in receive, which looks
+	natural. Moving stuff from daemons and tools to library.
+
+2014-07-31  Alec Leamas  <leamas@nowhere.net>
+
+	ac-path-kernel-source: Fixes for bundled lirc.h
+
+2014-07-31  Alec Leamas  <leamas.alec@gmail.com>
+
+	Handle the bundled lirc.h header.
+	The lirc.h header in the package is a bundled kernel header. Add
+	code which uses the kernel header if it exists, defaulting to
+	the bundled copy in the source tree.
+
+	lib: Make it buildable.
+
+	lib: Moving files from daemons to new lib directory.
+
+2014-07-31  Alec Leamas  <alec@tests.notat.diaspora.com>
+
+	lib: bugfix loading config file.
+
+2014-07-31  Alec Leamas  <leamas.alec@gmail.com>
+
+	autogen.sh: Updated.
+
+	doc: Adding lircd.conf manpage.
+
+	doc: distcheck fix.
+
+	Revert "Update for lirc 0.9.0 release"
+	Reverts commit 3f950093b856ef22c6f971374110b7b304ea3243 a. k. a.
+	0.9.0 which not was merged into master.
+
+	doc:  Configuration Guide update.
+
+	contrib: remotes-checklist update.
+
+2014-06-11  Alec Leamas  <leamas.alec@gmail.com>
+
+	NEWS: update.
+
+	main: Makefile: temporary fix for drivers/lirc.h
+
+	gitignore: Update.
+
+2014-06-11  Alec Leamas  <leamas@nowhere.net>
+
+	build: Ripping out last kernel module wpc87691
+	This leaves the drivers directory detached from the main
+	build setup. Not being part of lirc but rather the kernel
+	this is the most reasonable approach.
+
+	wpc8769l: Add separated kernel Makefile, detach from lirc build system.
+
+	wpc8769l: updating to new kernel macros, fix includes, updates.
+	Mke the driver compile against current kernel, drop support
+	for old 2.6- kernels.
+
+2014-06-11  Alec Leamas  <leamas.alec@gmail.com>
+
+	Removing lirc_igorplugusb
+	Conflicts:
+		configure.ac
+		drivers/Makefile.am
+
+	Removing lirc_i2c.
+	Conflicts:
+		configure.ac
+		drivers/Makefile.am
+
+	Removing lirc_gpio.
+
+	Removing lirc_sasem.
+	Conflicts:
+		configure.ac
+		drivers/Makefile.am
+
+	Removing lirc_imon.
+	Conflicts:
+		configure.ac
+		drivers/Makefile.am
+
+	Removing lirc_sir
+
+	Removing lirc_parallel
+
+	Removing atiusb
+
+	Remove serial driver
+
+	Removing ttusbir.
+	Conflicts:
+		configure.ac
+
+	Removing bt_829
+
+2014-06-10  Alec Leamas  <leamas.alec@gmail.com>
+
+	lirc.org: Adding website sources to repository.
+
+	Setting up 0.9.2 development.

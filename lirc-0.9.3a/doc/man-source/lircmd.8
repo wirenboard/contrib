@@ -1,0 +1,99 @@
+.TH LIRCMD "8" "Last change: Aug 2015" "lircmd @version@" "System Administration Utilities"
+.SH NAME
+.P
+\fBlircmd\fR - Translate infrared signals into mouse events.
+.SH SYNOPSIS
+.P
+\fBlircmd\fR [\fIoptions\fR] [\fIconfig-file\fR]
+.SH DESCRIPTION
+This daemon can simulate a MouseSystems, IntelliMouse or IMPS/2 type mouse. It
+gets the received buttons from lircd and converts them to mouse events. To
+make this possible, lircmd needs a config file located
+in /etc/lirc/lircmd.conf. In this file you have to determine which
+button from which remote causes a mouse move or a mouse button click.
+You can also specify a special button which activates or deactivates the mouse
+mode.
+
+.SH OPTIONS
+.TP
+\fB\-h\fR \fB\-\-help\fR
+Display help  message.
+.TP
+\fB\-v\fR \fB\-\-version\fR
+Display version.
+.TP
+\fB\-n\fR \fB\-\-nodaemon\fR
+Don't fork to background.
+.TP
+\fB\-s\fR \fB\-\-socket\fR <\fIsocket path\fR>
+Use alternate lircd socket path.
+.TP
+\fB\-O\fR \fB\-\-options\-file\fR=\fIfile\fR
+Alternative default options file, usually defaults to
+/etc/lirc/lirc_options.conf.
+.TP
+\fB\-u\fR \fB\-\-uinput\fR
+On Linux systems the \-\-uinput option will enable automatic generation
+of Linux input events. lircmd will open /dev/input/uinput and inject
+the simulated mouse events into the Linux kernel rather than creating
+the /dev/lircm device.
+.TP
+\fB\-D\fR \fB\-\-loglevel\fR=[\fIlevel\fR]
+Determine the amount of logging information. [level] can be a symbolic
+syslog level: 'error','warning, 'info', 'notice' or  'debug'. lircd
+also defines three additional levels 'trace', 'trace1' and 'trace2' which
+gives even more messages ('trace2' bringing the most). However, in the
+log these messages are marked as 'debug'.
+
+.SH SOCKET PROTOCOL
+The socket protocol contains undocumented parts. The data on the output
+socket is
+.TP 4
+.B MouseSystems
+5 byte packets:
+.RS 4
+.IP \(bu 4
+Byte 1: Button information.
+.IP \(bu 4
+Byte 2: X-axis change.
+.IP \(bu 4
+Byte 3: Y-axis change.
+.IP \(bu 4
+Byte 4 and 5: 0.
+.RE
+.TP
+.B IMPS/2
+4 byte packets. Please refer to the lircmd source code for details.
+.TP 4
+.B IntelliMouse
+4 byte packets. Please refer to the lircmd source code for details.
+
+
+.SH FILES
+\fBlircmd\fR will use syslogd to output error messages. It depends on your
+system configuration where they will show up.
+.P
+The options file is by default /etc/lirc/lirc_options.conf; lircmd handles
+the values under the [lircmd] section in this file. The location can
+be changed using the -O/--options-file command-line option or using the
+environment variable LIRC_OPTIONS_PATH. The values here are used as
+defaults for any option not present on command line.
+.P
+
+.SH DAEMONS
+\fBlircmd\fR is a  daemon. You should start it in some init script
+depending on your system. Besides the systemd setup which is
+installed by default there are also example scripts for other distros
+and init systems in the contrib directory. lircmd has to be started after
+lircd as it connects to the socket lircd provides.
+
+.P
+If you start lircd or lircmd from your shell prompt you will usually get
+back immediately to the prompt. This is not an error, daemons always run
+in background.
+
+.SH "SEE ALSO"
+.P
+The documentation for \fBlirc\fR
+is also maintained as html pages. They are located under html/ in the
+documentation directory.

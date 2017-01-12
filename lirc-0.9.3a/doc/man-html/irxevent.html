@@ -1,0 +1,421 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>IRXEVENT</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+
+<p>
+
+<b>irxevent</b> - infrared X-event sender
+<a name="lbAC"> </a>
+</p>
+<h2>SYNOPSIS</h2>
+
+<p>
+
+<b>irxevent</b> [<i>option</i>]... [<i>config file</i>]
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+
+<p>
+
+Irxevent is a program to send button clicks and key presses to X
+applications triggered by a LIRC driven remote control. You can control your
+favorite CD/MP3 player, your TV tuner program or any other X application
+that responds to keyboard or mouse input. If you like to you can send emacs
+^X^S from your armchair.
+</p>
+<p>
+Irxevent is a complement to <a href="irpty.html">irpty</a>(1).
+<a name="lbAE"> </a>
+</p>
+<h2>OPTIONS</h2>
+
+<dl>
+<div><dt>
+<b>-d</b> <b>--daemon</b>
+</dt></div>
+<dd>
+Fork and run in background
+</dd>
+<div><dt>
+<b>-h</b> <b>--help</b>
+</dt></div>
+<dd>
+Display usage summary
+</dd>
+<div><dt>
+<b>-V</b> <b>--version</b>
+</dt></div>
+<dd>
+Display version
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>FILES</h2>
+
+<p>
+
+Irxevent works with the same config file as irexec and irpty
+(~/.config/lircrc). For a complete sample lircrc look at examples/lircrc.
+</p>
+<p>
+
+Part of your .lircrc could look like this:
+</p>
+<p>
+</p>
+<pre>
+begin
+        prog = irxevent
+        button = VIDEO_UP
+        config = Key SHIFT-KP_Add CurrentWindow
+end
+begin
+        prog = irxevent
+        button = VIDEO_DOWN
+        config = Key SHIFT-KP_Subtract CurrentWindow
+end
+begin
+        prog = irxevent
+        button = STOP
+        config = Key ctrl-c CurrentWindow
+end
+begin
+        prog = irxevent
+        button = 0
+        config = Key f xawtv
+        config = Key f xawtv
+end
+begin
+        prog = irxevent
+        button = POWER
+        config = Key q xawtv
+end
+begin
+        prog = irxevent
+        button = CH_DOWN
+        config = Button 1 329 92 kscd
+end
+begin
+        prog = irxevent
+        button = UP
+        config = Button 1 110 80 GQmpeg
+end
+begin
+        prog = irxevent
+        button = DOWN
+        config = Button 1 130 80 GQmpeg
+end
+</pre>
+
+<p>
+Simply said <i>config</i> =  lines may look like this:
+</p>
+<p>
+</p>
+<pre>
+config = Key [shift-][ctrl-][alt-]&lt;key&gt; [Focus] &lt;windowname&gt;
+        | WindowID &lt;id&gt; | CurrentWindow | RootWindow
+config = Button &lt;button&gt; &lt;x&gt; &lt;y&gt; [Focus] &lt;windowname&gt; | WindowID &lt;id&gt;
+        | CurrentWindow | RootWindow
+config = xy_Key &lt;x&gt; &lt;y&gt; [shift-][ctrl-][alt-]&lt;key&gt; [Focus]
+        &lt;windowname&gt; | WindowID id | CurrentWindow | RootWindow
+</pre>
+
+<p>
+Some more examples:
+</p>
+<p>
+</p>
+<pre>
+config = Key Up xawtv
+config = Key Down xawtv
+config = Button 1 50 110 xclickme
+config = Key q xawtv
+config = Key ctrl-c mpg123
+config = Key shift-Page_Up rxvt
+</pre>
+
+<p>
+In BNF this looks like:
+</p>
+<p>
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+<pre>
+LINE    = "config =" &lt;KEY|BUTTON|XYKEY&gt; &lt;TARGET&gt; |
+          "config =" &lt;KEY|BUTTON|XYKEY&gt; "Focus" &lt;TARGET&gt;
+XYKEY   = "xy_Key" &lt;x_position&gt; &lt;y_position&gt; &lt;MOD&gt;&lt;KEYSPEC&gt;
+KEY     = "Key" &lt;MOD&gt;&lt;KEYSPEC&gt;
+MOD     = ["shift-"]["numlock-"]["ctrl-"]["alt-"]["meta-"]
+          ["numlock-"]["mod3-"]["mod4-"]["mod5-"]["altgr-"]["scrlock-"]
+KEYSPEC = Keyname | "KeySym:"KeySym | "KeyCode:"KeyCode
+BUTTON  = "Button" &lt;1..5&gt; &lt;x_position&gt; &lt;y_position&gt;
+TARGET  = Windowname | "WindowID" id | "CurrentWindow" | "RootWindow"
+</pre>
+
+<p>
+<i>Keyname:</i>
+
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+is the key symbol that is declared in X windows. E.g. "Up" refers to the
+cursor arrow pointing up. "KP_Add" is the plus sign on the key pad. Just take
+a look at irxevent.keys (in the documentation directory) if you are not sure
+about a symbol's name.
+</dd>
+</dl>
+
+<i>KeySym:</i>
+
+<dl>
+<div><dt></dt></div>
+<dd>
+number as returned by <a href="../man3x/XStringToKeysym.3x.html">XStringToKeysym</a>(3x).
+</dd>
+</dl>
+
+<i>KeyCode:</i>
+
+<dl>
+<div><dt></dt></div>
+<dd>
+number as returned by <a href="../man3x/XKeysymToKeycode.3x.html">XKeysymToKeycode</a>(3x).
+</dd>
+</dl>
+
+<i>Windowname:</i>
+
+<dl>
+<div><dt></dt></div>
+<dd>
+can be the first characters of the window name displayed by the window manager
+or the name that is displayed below the icon. Some programs use the name
+displayed by the window manager to show a lot of status information but don't
+change the icon name (like xawtv). Others append information to the window
+name ("GQmpeg - kill_windooz.mp3"). If neither window name nor icon name match
+the given Windowname information from <a href="../man3x/XClassHint.3x.html">XClassHint</a>(3x) will be checked.
+</dd>
+</dl>
+
+<i>CurrentWindow:</i>
+
+<dl>
+<div><dt></dt></div>
+<dd>
+refers to the active window as returned by <a href="../man3x/XGetInputFocus.3x.html">XGetInputFocus</a>(3x). Most times this
+is the window with your mouse pointer in it.
+</dd>
+</dl>
+
+<i>RootWindow:</i>
+
+<dl>
+<div><dt></dt></div>
+<dd>
+refers to the <i>root</i> window as returned by <a href="../man3x/RootWindow.3x.html">RootWindow</a>(3x). You may need
+this to send events to the window manager.
+</dd>
+</dl>
+
+<i>WindowID id:</i>
+
+<dl>
+<div><dt></dt></div>
+<dd>
+refers to the window with window identifier <i>id</i>. <i>id</i> should be a
+decimal number. It is useful when irxevent can't find the desired window by
+other means.
+</dd>
+</dl>
+
+<i>Focus:</i>
+
+<dl>
+<div><dt></dt></div>
+<dd>
+will send the specified event to the given window only if it currently has the
+input focus. This of course does not make much sense when combined with
+CurrentWindow.
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<a name="lbAG"> </a>
+<h2>TROUBLESHOOTING</h2>
+
+<p>
+If you have problems finding the coordinates for a button click you can try
+xev -id &lt;window_id&gt;. The window_id can be found using xwininfo.
+</p>
+<p>
+There are programs that do not accept any synthetic X-events by default
+because they can cause security problems. Currently xterm and xemacs are known
+to ignore events simulated by irxevent.
+</p>
+<p>
+You can however make xterm accept external events by enabling "Allow
+SendEvents" in the "Main Options" (hold down the Ctrl button and press the
+left mouse button inside the xterm window). You can as well place this line
+into your .Xresources file to change this permanently:
+</p>
+<p>
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+XTerm.vt100.allowSendEvents: true
+</dd>
+</dl>
+
+<p>
+Yet another possibility is to start xterm like this:
+</p>
+<p>
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+xterm -xrm "XTerm.vt100.allowSendEvents: true"
+</dd>
+</dl>
+
+<p>
+xemacs will accept events if you set a built-in variable. The following was
+taken from the online help:
+</p>
+<p>
+</p>
+<dl>
+<div><dt></dt></div>
+<dd>
+`x-allow-sendevents' is a built-in boolean variable.
+<p>
+Value: t
+</p>
+<p>
+Documentation:
+</p>
+<p>
+*Non-nil means to allow synthetic events.  Nil means they are ignored.
+</p>
+<p>
+Beware: allowing emacs to process SendEvents opens a big security hole.
+</p>
+<p>
+In order to allow events you have to evaluate this lisp code (press Meta-x and
+enter the following expression):
+</p>
+<p>
+<br>         (setq x-allow-sendevents t)
+</p>
+<p>
+Placing this line into your .xemacs-options file should have the same result.
+</p>
+</dd>
+</dl>
+
+<p>
+If you have problems sending events please drop me an email.
+<a name="lbAH"> </a>
+</p>
+<h2>AUTHOR</h2>
+
+<p>
+
+Written by Heinrich Langos &lt;<a href="mailto:heinrich@mad.scientist.com">heinrich@mad.scientist.com</a>&gt;.
+<a name="lbAI"> </a>
+</p>
+<h2>SEE ALSO</h2>
+
+<p>
+</p>
+<dl>
+<div><dt>
+<b><a href="xdotool.html">xdotool</a>(1)</b>
+
+</dt></div>
+<dd>
+invoked from <a href="irexec.html">irexec</a>(1), xdotool provides a more flexible alternative
+to irxevent.
+</dd>
+</dl>
+<p>
+
+The documentation for <b>lirc</b>
+is maintained as html pages. They are located under html/ in the
+documentation directory.
+</p>
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">OPTIONS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">FILES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">TROUBLESHOOTING</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAH">AUTHOR</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAI">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

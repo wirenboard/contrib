@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<h1>irsimsend</h1>
+<p>
+Section: User Commands (1)</p>
+<br><p>Updated: Last change: Aug 2015</p>
+<br><a href="#index">Index</a>
+<a href="index.html">Return to Main Contents</a><hr>
+
+<a name="lbAB"> </a>
+<h2>NAME</h2>
+
+<p>
+
+<b>irsimsend</b> - Send simulated IR data.
+<a name="lbAC"> </a>
+</p>
+<h2>SYNOPSIS</h2>
+
+<p>
+
+<b>irsimsend</b> [-k <i>keysym</i> |-l <i>listfile</i> ] [other options] &lt;<i>file</i>&gt;
+</p>
+<p>
+
+<b>irsimsend</b> [<i>-v</i> |<i>-h</i>]
+</p>
+<p>
+
+<b>irsimsend</b> &lt;<i>configfile</i>&gt;
+</p>
+<p>
+<a name="lbAD"> </a>
+</p>
+<h2>DESCRIPTION</h2>
+
+<p>
+
+<b>irsimsend</b> is a simple test tool which given a lircd configuration
+file will send all keys defined in that file, the keys listed in
+another file or a symbol defined on the command line.
+</p>
+<p>
+
+The program uses the file driver to log all sent data (pulses/spaces
+durations) into a file 'simsend.out'. The symbols sent are printed on
+stdout.
+</p>
+<p>
+<a name="lbAE"> </a>
+</p>
+<h2>OPTIONS</h2>
+
+<p>
+</p>
+<dl>
+<div><dt>
+<b>-c, --count</b>  &lt;<i>count</i>&gt;</dt></div>
+<dd>
+Repeat each sent signal &lt;count&gt; times.
+<p>
+</p>
+</dd>
+<div><dt>
+<b>-U, --plugindir &lt;</b><i>path</i>&gt;</dt></div>
+<dd>
+Load drivers from <i>path</i>, a ':' separated search path similar to $PATH.
+<p>
+</p>
+</dd>
+<div><dt>
+<b>-l,--listfile</b>  &lt;<i>path</i>&gt;</dt></div>
+<dd>
+Send symbols listed in file instead of just the symbols in the config
+file. The file could either be listing a single key symbol per line,
+or have a complete code string like
+<i>000000000000a123 01 KEY_POWER brand</i> on each line.
+<p>
+</p>
+</dd>
+<div><dt>
+<b>-k</b>, <b>--keysym</b>
+</dt></div>
+<dd>
+Send a single key symbol defined in <i>file</i>.
+<p>
+</p>
+</dd>
+<div><dt>
+<b>-s</b>, <b>--start-space</b> &lt;<i>useconds</i>&gt;</dt></div>
+<dd>
+Send an initial space before sending data.
+<p>
+</p>
+<p>
+</p>
+</dd>
+<div><dt>
+<b>-v</b> , <b>--version</b>
+</dt></div>
+<dd>
+Print version and exit.
+<p>
+</p>
+</dd>
+<div><dt>
+<b>-h</b> , <b>--help</b>
+</dt></div>
+<dd>
+Print help message.
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAF"> </a>
+<h2>FILES</h2>
+
+<p>
+</p>
+<dl>
+<div><dt>
+<b>~/.cache/irsimsend.log</b>
+
+</dt></div>
+<dd>
+Debug output. Setting the XDG_CACHE_HOME environment variable relocates this
+file to $XDG_CACHE_HOME/irsimsend.log
+<p>
+</p>
+</dd>
+</dl>
+<a name="lbAG"> </a>
+<h2>SEE ALSO</h2>
+
+<p>
+
+The documentation for <b>lirc</b>
+is maintained as html pages. They are located under html/ in the
+documentation directory.
+</p>
+<p>
+
+</p>
+<hr>
+<a name="index"> </a><h2>Index</h2>
+<dl>
+<div><dt><a href="#lbAB">NAME</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAC">SYNOPSIS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAD">DESCRIPTION</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAE">OPTIONS</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAF">FILES</a></dt></div>
+<dd>
+</dd>
+<div><dt><a href="#lbAG">SEE ALSO</a></dt></div>
+<dd>
+</dd>
+</dl>
+<hr>
+<p>
+                        </p>
+<p>
+This document was created by
+<a href="index.html">man2html</a>,
+using the manual pages.<br>
+Time: 16:33:12 GMT, October 14, 2015
+                        </p>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>

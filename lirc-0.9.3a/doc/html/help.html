@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- BUGS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --><html>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>LIRC - Linux Infrared Remote Control</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="lirc.css">
+<LINK REL="shortcut icon" HREF="../images/favicon.ico">
+<META NAME="description" CONTENT="LIRC - Linux Infrared Remote Control">
+<META NAME="keywords" CONTENT="linux remote control, multimedia">
+<META charset="UTF-8">
+</HEAD>
+<body>
+<TABLE CLASS="menu"><TR>
+<TD CLASS="menu"><IMG class="menuimg" SRC="../images/diode.gif" ALT="LIRC icon" ALIGN="LEFT"></TD>
+<TD><IMG class="menuimg" SRC="../images/lirc.gif" ALT="LIRC logo" ALIGN="RIGHT"></TD>
+</TR></TABLE>
+<a name="faq"></a>
+    <a name="bugs"></a><hr>
+    <h1>Reporting bugs and FAQ</h1>
+
+    <hr>
+     <p>
+      There are various sources of information you could check before
+      reporting a bug. Please read the <a href="http://www.lirc.org/">
+      LIRC homepage</a> carefully, have a look at the
+      <a href="lirc.org/faq.html">FAQ</a>, check the
+      <a href="https://sourceforge.net/p/lirc/tickets"> issue tracker</a>
+      and search the
+      <a href="https://sourceforge.net/p/lirc/mailman/lirc-list/">
+      mail archives</a>.</p>
+
+    <p>
+      If you believe that you have found a bug in LIRC please report it on
+      the  <a href="http://lists.sourceforge.net/mailman/listinfo/lirc-list">
+      LIRC mailing list</a> or the
+      <a href="https://sourceforge.net/p/lirc/tickets">issue tracker</a>.
+      Information which is valuable in this context includes:
+    </p>
+    <ul>
+      <li>LIRC version, versions of all other packages involved</li>
+      <li>Description of the IR hardware you are using</li>
+      <li>Output of <em>ls -l /dev/lirc*</em>
+</li>
+      <li>Output of <em>lsmod</em>
+</li>
+      <li>Relevant passages from <em>/var/log/messages</em> or journalctl(1)
+           </li>
+      <li>Contents of lircd's logfile if you are using a file (otherwise
+         the logs are  in syslog/journalctl). Use a high log level, at least
+         <em>--loglevel debug</em> </li>
+      <li>A description of the problem so it's possible to reproduce it</li>
+      <li>A patch that solves the problem (this one is optional)</li>
+      <li>The config files you are using (<em>lircd.conf</em>,
+         <em>lircmd.conf</em>, <em>lircrc</em>,  <em>lirc_options.conf</em>)
+         </li>
+      <li>If you have problems with a config file try to find the
+        shortest example that does not work as one would expect and
+        include it.</li>
+    </ul>
+<p class="footer">
+        [<A HREF="http://www.lirc.org/">LIRC homepage</A>]
+      </p>
+</body>
+</html>
