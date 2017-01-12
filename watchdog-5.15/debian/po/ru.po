@@ -44,17 +44,14 @@ msgstr "Запускать wd_keepalive после остановки watchdog?"
 #. Type: boolean
 #. Description
 #: ../templates:3001
-#| msgid ""
-#| "Please specify whether watchdog should be started as part of the boot "
-#| "process. This can be changed later by editing /etc/default/watchdog."
 msgid ""
 "Please specify whether stopping watchdog should start wd_keepalive to keep "
 "on triggering the watchdog device. This can be changed later by editing /etc/"
 "default/watchdog."
 msgstr ""
 "Укажите, нужно ли при остановке watchdog запускать wd_keepalive, чтобы "
-"оставить рабочим устройство watchdog. Это можно "
-"изменить позже отредактировав файл /etc/default/watchdog."
+"оставить рабочим устройство watchdog. Это можно изменить позже "
+"отредактировав файл /etc/default/watchdog."
 
 #. Type: boolean
 #. Description
@@ -91,4 +88,3 @@ msgstr ""
 "Укажите модули, которые нужно загрузить перед запуском watchdog. Модуль "
 "'softdog' обычно подходит для всех случаев. Введите 'none', если не хотите, "
 "чтобы сценарий загружал модуль."
-

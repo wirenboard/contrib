@@ -45,9 +45,6 @@ msgstr "Na het stoppen van watchdog wd_keepalive starten?"
 #. Type: boolean
 #. Description
 #: ../templates:3001
-#| msgid ""
-#| "Please specify whether watchdog should be started as part of the boot "
-#| "process. This can be changed later by editing /etc/default/watchdog."
 msgid ""
 "Please specify whether stopping watchdog should start wd_keepalive to keep "
 "on triggering the watchdog device. This can be changed later by editing /etc/"
