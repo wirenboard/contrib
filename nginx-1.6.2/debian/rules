@@ -110,6 +110,7 @@ extras_configure_flags := \
 			--add-module=$(MODULESDIR)/nginx-lua \
 			--add-module=$(MODULESDIR)/nginx-upload-progress \
 			--add-module=$(MODULESDIR)/nginx-upstream-fair \
+			--add-module=$(MODULESDIR)/nginx-upload-module \
 			--add-module=$(MODULESDIR)/ngx_http_substitutions_filter_module
 
 %:
