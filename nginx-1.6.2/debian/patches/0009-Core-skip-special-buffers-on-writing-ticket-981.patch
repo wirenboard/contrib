@@ -1,0 +1,39 @@
+From: Maxim Dounin <mdounin@mdounin.ru>
+Date: Tue, 31 May 2016 05:13:30 +0300
+Subject: Core: skip special buffers on writing (ticket #981).
+
+A special last buffer with cl->buf->pos set to NULL can be present in
+a chain when writing request body if chunked encoding was used.  This
+resulted in a NULL pointer dereference if it happened to be the only
+buffer left after a do...while loop iteration in ngx_write_chain_to_file().
+
+The problem originally appeared in nginx 1.3.9 with chunked encoding
+support.  Additionally, rev. 3832b608dc8d (nginx 1.9.13) changed the
+minimum number of buffers to trigger this from IOV_MAX (typically 1024)
+to NGX_IOVS_PREALLOCATE (typically 64).
+
+Fix is to skip such buffers in ngx_chain_to_iovec(), much like it is
+done in other places.
+
+Backported by 1.11.1 for debian.
+---
+ src/os/unix/ngx_files.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/os/unix/ngx_files.c b/src/os/unix/ngx_files.c
+index c3ae47f..1970184 100644
+--- a/src/os/unix/ngx_files.c
++++ b/src/os/unix/ngx_files.c
+@@ -183,6 +183,12 @@ ngx_write_chain_to_file(ngx_file_t *file, ngx_chain_t *cl, off_t offset,
+         /* create the iovec and coalesce the neighbouring bufs */
+ 
+         while (cl && vec.nelts < IOV_MAX) {
++
++            if (ngx_buf_special(cl->buf)) {
++                cl = cl->next;
++                continue;
++            }
++
+             if (prev == cl->buf->pos) {
+                 iov->iov_len += cl->buf->last - cl->buf->pos;
+ 

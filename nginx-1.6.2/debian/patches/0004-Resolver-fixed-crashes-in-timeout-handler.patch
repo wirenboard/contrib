@@ -1,0 +1,128 @@
+From: Ruslan Ermilov <ru@nginx.com>
+Date: Tue, 26 Jan 2016 16:46:31 +0300
+Subject: Resolver: fixed crashes in timeout handler.
+
+If one or more requests were waiting for a response, then after
+getting a CNAME response, the timeout event on the first request
+remained active, pointing to the wrong node with an empty
+rn->waiting list, and that could cause either null pointer
+dereference or use-after-free memory access if this timeout
+expired.
+
+If several requests were waiting for a response, and the first
+request terminated (e.g., due to client closing a connection),
+other requests were left without a timeout and could potentially
+wait indefinitely.
+
+This is fixed by introducing per-request independent timeouts.
+This change also reverts 954867a2f0a6 and 5004210e8c78.
+---
+ src/core/ngx_resolver.c | 50 +++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 34 insertions(+), 16 deletions(-)
+
+diff --git a/src/core/ngx_resolver.c b/src/core/ngx_resolver.c
+index 726de9b..8ebef6f 100644
+--- a/src/core/ngx_resolver.c
++++ b/src/core/ngx_resolver.c
+@@ -417,7 +417,7 @@ ngx_resolve_name_done(ngx_resolver_ctx_t *ctx)
+ 
+     /* lock name mutex */
+ 
+-    if (ctx->state == NGX_AGAIN) {
++    if (ctx->state == NGX_AGAIN || ctx->state == NGX_RESOLVE_TIMEDOUT) {
+ 
+         hash = ngx_crc32_short(ctx->name.data, ctx->name.len);
+ 
+@@ -571,6 +571,20 @@ ngx_resolve_name_locked(ngx_resolver_t *r, ngx_resolver_ctx_t *ctx)
+ 
+         if (rn->waiting) {
+ 
++            if (ctx->event == NULL) {
++                ctx->event = ngx_resolver_calloc(r, sizeof(ngx_event_t));
++                if (ctx->event == NULL) {
++                    return NGX_ERROR;
++                }
++
++                ctx->event->handler = ngx_resolver_timeout_handler;
++                ctx->event->data = ctx;
++                ctx->event->log = r->log;
++                ctx->ident = -1;
++
++                ngx_add_timer(ctx->event, ctx->timeout);
++            }
++
+             ctx->next = rn->waiting;
+             rn->waiting = ctx;
+             ctx->state = NGX_AGAIN;
+@@ -664,7 +678,7 @@ ngx_resolve_name_locked(ngx_resolver_t *r, ngx_resolver_ctx_t *ctx)
+         }
+ 
+         ctx->event->handler = ngx_resolver_timeout_handler;
+-        ctx->event->data = rn;
++        ctx->event->data = ctx;
+         ctx->event->log = r->log;
+         ctx->ident = -1;
+ 
+@@ -794,6 +808,18 @@ ngx_resolve_addr(ngx_resolver_ctx_t *ctx)
+ 
+         if (rn->waiting) {
+ 
++            ctx->event = ngx_resolver_calloc(r, sizeof(ngx_event_t));
++            if (ctx->event == NULL) {
++                return NGX_ERROR;
++            }
++
++            ctx->event->handler = ngx_resolver_timeout_handler;
++            ctx->event->data = ctx;
++            ctx->event->log = r->log;
++            ctx->ident = -1;
++
++            ngx_add_timer(ctx->event, ctx->timeout);
++
+             ctx->next = rn->waiting;
+             rn->waiting = ctx;
+             ctx->state = NGX_AGAIN;
+@@ -857,7 +883,7 @@ ngx_resolve_addr(ngx_resolver_ctx_t *ctx)
+     }
+ 
+     ctx->event->handler = ngx_resolver_timeout_handler;
+-    ctx->event->data = rn;
++    ctx->event->data = ctx;
+     ctx->event->log = r->log;
+     ctx->ident = -1;
+ 
+@@ -949,7 +975,7 @@ ngx_resolve_addr_done(ngx_resolver_ctx_t *ctx)
+ 
+     /* lock addr mutex */
+ 
+-    if (ctx->state == NGX_AGAIN) {
++    if (ctx->state == NGX_AGAIN || ctx->state == NGX_RESOLVE_TIMEDOUT) {
+ 
+         switch (ctx->addr.sockaddr->sa_family) {
+ 
+@@ -2791,21 +2817,13 @@ done:
+ static void
+ ngx_resolver_timeout_handler(ngx_event_t *ev)
+ {
+-    ngx_resolver_ctx_t   *ctx, *next;
+-    ngx_resolver_node_t  *rn;
++    ngx_resolver_ctx_t  *ctx;
+ 
+-    rn = ev->data;
+-    ctx = rn->waiting;
+-    rn->waiting = NULL;
++    ctx = ev->data;
+ 
+-    do {
+-        ctx->state = NGX_RESOLVE_TIMEDOUT;
+-        next = ctx->next;
+-
+-        ctx->handler(ctx);
++    ctx->state = NGX_RESOLVE_TIMEDOUT;
+ 
+-        ctx = next;
+-    } while (ctx);
++    ctx->handler(ctx);
+ }
+ 
+ 

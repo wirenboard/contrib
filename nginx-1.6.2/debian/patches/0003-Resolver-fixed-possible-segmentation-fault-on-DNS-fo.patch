@@ -1,0 +1,21 @@
+From: Roman Arutyunyan <arut@nginx.com>
+Date: Tue, 26 Jan 2016 16:46:18 +0300
+Subject: Resolver: fixed possible segmentation fault on DNS format error.
+
+---
+ src/core/ngx_resolver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/core/ngx_resolver.c b/src/core/ngx_resolver.c
+index 5a944fc..726de9b 100644
+--- a/src/core/ngx_resolver.c
++++ b/src/core/ngx_resolver.c
+@@ -1287,7 +1287,7 @@ ngx_resolver_process_response(ngx_resolver_t *r, u_char *buf, size_t n)
+         times = 0;
+ 
+         for (q = ngx_queue_head(&r->name_resend_queue);
+-             q != ngx_queue_sentinel(&r->name_resend_queue) || times++ < 100;
++             q != ngx_queue_sentinel(&r->name_resend_queue) && times++ < 100;
+              q = ngx_queue_next(q))
+         {
+             rn = ngx_queue_data(q, ngx_resolver_node_t, queue);

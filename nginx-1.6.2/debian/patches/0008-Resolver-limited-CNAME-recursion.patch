@@ -1,0 +1,60 @@
+From: Ruslan Ermilov <ru@nginx.com>
+Date: Tue, 26 Jan 2016 16:47:14 +0300
+Subject: Resolver: limited CNAME recursion.
+
+Previously, the recursion was only limited for cached responses.
+---
+ src/core/ngx_resolver.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
+
+diff --git a/src/core/ngx_resolver.c b/src/core/ngx_resolver.c
+index 2bd754c..25d643d 100644
+--- a/src/core/ngx_resolver.c
++++ b/src/core/ngx_resolver.c
+@@ -1976,11 +1976,33 @@ ngx_resolver_process_a(ngx_resolver_t *r, u_char *buf, size_t last,
+ 
+         ngx_queue_insert_head(&r->name_expire_queue, &rn->queue);
+ 
++        ngx_resolver_free(r, rn->query);
++        rn->query = NULL;
++#if (NGX_HAVE_INET6)
++        rn->query6 = NULL;
++#endif
++
+         ctx = rn->waiting;
+         rn->waiting = NULL;
+ 
+         if (ctx) {
+ 
++            if (ctx->recursion++ >= NGX_RESOLVER_MAX_RECURSION) {
++
++                /* unlock name mutex */
++
++                do {
++                    ctx->state = NGX_RESOLVE_NXDOMAIN;
++                    next = ctx->next;
++
++                    ctx->handler(ctx);
++
++                    ctx = next;
++                } while (ctx);
++
++                return;
++            }
++
+             for (next = ctx; next; next = next->next) {
+                 next->node = NULL;
+             }
+@@ -1988,12 +2010,6 @@ ngx_resolver_process_a(ngx_resolver_t *r, u_char *buf, size_t last,
+             (void) ngx_resolve_name_locked(r, ctx, &name);
+         }
+ 
+-        ngx_resolver_free(r, rn->query);
+-        rn->query = NULL;
+-#if (NGX_HAVE_INET6)
+-        rn->query6 = NULL;
+-#endif
+-
+         /* unlock name mutex */
+ 
+         return;
