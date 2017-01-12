@@ -1,0 +1,95 @@
+libirman (0.4.4-2) unstable; urgency=low
+
+  * Add myself to uploaders for some QA work.
+  * Cleanup changelog.
+  * Wrap build-deps and uploaders.
+  * Add ${misc:Depends}.
+  * Set Debhelper compatibility level via debian/compat instead of DH_COMPAT.
+  * Cleanup rules.
+  * Pass -s to dh_* calls in binary-arch.
+  * Cleanup watch file.
+  * Drop useless debian/dirs, preinst, postinst, prerm, postrm,
+    libirman-dev.dirs.
+  * Cleanup copyright, *.install files, *.links, and watch file.
+  * Only pass --host to configure if DEB_HOST_GNU_TYPE and DEB_BUILD_GNU_TYPE
+    differ.
+  * Only pass CFLAGS to ./configure.
+  * Honor make clean errors.
+  * Fix configure-stamp logic.
+  * Add a patch system based on quilt; build-dep on quilt; backup config.guess
+    and .sub after patching, overwrite with autotool-dev's versions, and
+    restore before unpatching; cleanup rules, in particular frop install
+    target.
+  * Drop useless debian/libirman-dev.install and .files.
+  * New patch, 60_sys-file, look for sys/file.h and include it in irio.c if
+    possible; fixes build failure on hurd; thanks Samuel Thibault;
+    closes: #436563.
+  * Avoid running autoheader on rebuilds.
+    - New patch, 61_maintainer-mode, adds a kind of "AM_MAINTAINER_MODE" to
+      the upstream Make.
+    - Pass MAINT="" to the upstream Makefile when building.
+    - Fixes build failure when built twice on a row where autoheader was being
+      run but wasn't available; closes: #424526.
+
+ -- Loic Minier <lool@dooz.org>  Fri, 10 Aug 2007 13:36:02 +0200
+
+libirman (0.4.4-1) unstable; urgency=low
+
+  * New upstream release.
+  * Repackaged from scratch.
+  * Changed Maintainer to the lirc alioth team.
+
+ -- Amaya Rodrigo Sastre <amaya@debian.org>  Fri, 28 Jul 2006 12:39:14 +0200
+
+libirman (0.4.3-5) unstable; urgency=low
+
+  * Added patch by Andreas Jochens <aj@andaco.de> so that this builds on
+    amd64 and gcc-4.0. (Closes: #287404)
+
+ -- Amaya Rodrigo Sastre <amaya@debian.org>  Tue, 28 Dec 2004 05:31:34 +0100
+
+libirman (0.4.3-4) unstable; urgency=low
+
+  * Removed Ian Murdock from Uploaders
+
+ -- Amaya Rodrigo Sastre <amaya@debian.org>  Sun, 19 Dec 2004 01:42:13 +0100
+
+libirman (0.4.3-3) unstable; urgency=low
+
+  * autotools-dev hack to update config.* files.
+
+ -- Amaya Rodrigo Sastre <amaya@debian.org>  Sat, 28 Aug 2004 01:34:10 +0200
+
+libirman (0.4.3-2) unstable; urgency=low
+
+  * Added Pierre Machard to the Uploaders: field. Welcome on board!
+  * Changed Section to libdevel. (Fixing override disparity).
+
+ -- Amaya Rodrigo Sastre <amaya@debian.org>  Fri, 27 Aug 2004 19:45:28 +0200
+
+libirman (0.4.3-1) unstable; urgency=low
+
+  * New Maintainers (Closes: #252153). Added Ian Murdock and Riku Voipio to
+    the Uploaders: field.
+  * Updated Standars Version and Debhelper Depends.
+  * Improved longer description.
+  * New upstream Release (Closes: #242106). In Ranty's loving memory.
+  * Added a watch file.
+  * Updated copyright file.
+  * Updated DH_COMPAT to 4.
+
+ -- Amaya Rodrigo Sastre <amaya@debian.org>  Fri, 27 Aug 2004 19:00:39 +0200
+
+libirman (0.4.2-2) unstable; urgency=low
+
+  * Rebuild with gcc-3.2.
+  * Made lintian happy again.
+
+ -- Manuel Estrada Sainz <ranty@debian.org>  Sat, 11 Jan 2003 17:16:14 +0100
+
+libirman (0.4.2-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Manuel Estrada Sainz <ranty@debian.org>  Tue, 11 Dec 2001 21:33:06 +0100
+

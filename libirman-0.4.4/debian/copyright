@@ -1,0 +1,37 @@
+This package was debianized by Manuel Estrada Sainz <ranty@debian.org> on Tue,
+11 Dec 2001 21:33:06 +0100.
+
+After he passed away in a tragic car accident at age 27, libirman was
+maintained for a while by his close friend Amaya Rodrigo <amaya@debian.org>. 
+He will be very much missed. Happy hacking in heaven, Ranty!
+
+It is now part of the Lirc packaging effort, hosted on alioth.debian.org.
+lirc Maintainer Team <pkg-lirc-maint@lists.alioth.debian.org>.
+
+It was downloaded from:
+   <http://www.lirc.org/software/snapshots/>
+
+Upstream Authors: Tom Wheeley <tomw@tsys.demon.co.uk>,
+                  Christoph Bartelmus <lirc@bartelmus.de>
+
+Copyright:
+libirman v0.4.4, Copyright (C) 1998,1999 Tom Wheeley <tomw@tsys.demon.co.uk>
+libirman v0.4.4, Copyright (C) 2000-2006 Christoph Bartelmus <lirc@bartelmus.de>
+
+License: GPL and LGPL
+
+The files which make up the library are covered under the GNU Library General
+Public License, which is in the file COPYING.lib.
+
+The files which make up the test programs and the documentation are covered
+under the GNU General Public License, which is in the file COPYING.
+
+On Debian systems, the complete text of the GNU General Public License and the
+GNU Library General Public License can be found in
+/usr/share/common-licenses/GPL and /usr/share/common-licenses/LGPL files.
+
+The Debian packaging is (C) 2001-2004 Manuel Estrada Sainz  and it is licensed
+under the GPL, see `/usr/share/common-licenses/GPL'.
+The Debian packaging is (C) 2005-2006 Amaya Rodrigo Sastre <amaya@debian.org>
+and is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+

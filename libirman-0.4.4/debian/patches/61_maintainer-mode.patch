@@ -1,0 +1,37 @@
+--- libirman-0.4.4.orig/Makefile.in	2007-08-10 13:34:50.000000000 +0200
++++ libirman-0.4.4/Makefile.in	2007-08-10 13:35:47.000000000 +0200
+@@ -146,21 +146,28 @@
+ 
+ maintainer-clean: distclean
+ 
++# maintainer mode -- turned on by default -- will cause autoconf and autoheader
++# to be run based on the timestamp of the files they generate / source
++MAINT := 1
++
++ifeq ($(MAINT),1)
+ # rules to redo the configuration
+-${srcdir}/configure: configure.in
++${srcdir}/configure: ${srcdir}/configure.in
+ 	cd ${srcdir} && autoconf
+ 
+-${srcdir}/config.h.in: stamp-h.in
+-${srcdir}/stamp-h.in: configure.in
++${srcdir}/config.h.in: ${srcdir}/stamp-h.in
++${srcdir}/stamp-h.in: ${srcdir}/configure.in
+ 	cd ${srcdir} && autoheader
+ 	echo timestamp > ${srcdir}/stamp-h.in
+ 
++config.status: ${srcdir}/configure
++	./config.status --recheck
++endif
++
+ config.h: stamp-h
+-stamp-h: config.h.in config.status
++stamp-h: ${srcdir}/config.h.in config.status
+ 	./config.status
+ 
+ Makefile: Makefile.in config.status
+ 	./config.status
+ 
+-config.status: configure
+-	./config.status --recheck

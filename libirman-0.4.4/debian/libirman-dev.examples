@@ -1,0 +1,7 @@
+test_func.c
+test_io.c
+test_name.c
+workmanir.c
+config.h
+irman.conf
+debian/examples/Makefile
