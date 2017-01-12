@@ -1,0 +1,29 @@
+Description: Do not call ir_strerror
+ This function causes linking to fail in armhf
+
+Author: Yury Usishchev <y.usishchev@contactless.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- lirc-0.9.3a.orig/plugins/irman_drv.c
++++ lirc-0.9.3a/plugins/irman_drv.c
+@@ -119,7 +119,7 @@ char* irman_rec(struct ir_remote* remote
+ 		} else if (errno == IR_EDISABLED) {
+ 			LOGPRINTF(1, "irman not initialised (this is a bug)");
+ 		} else {
+-			LOGPRINTF(1, "error reading code: \"%s\"", ir_strerror(errno));
++			LOGPRINTF(1, "error reading code"/*": \"%s\"", ir_strerror(errno)*/);
+ 		}
+ 		if (errno == IR_EDUPCODE)
+ 			return decode_all(remotes);

@@ -119,7 +119,7 @@ char* irman_rec(struct ir_remote* remotes)
 		} else if (errno == IR_EDISABLED) {
 			LOGPRINTF(1, "irman not initialised (this is a bug)");
 		} else {
-			LOGPRINTF(1, "error reading code: \"%s\"", ir_strerror(errno));
+			LOGPRINTF(1, "error reading code"/*": \"%s\"", ir_strerror(errno)*/);
 		}
 		if (errno == IR_EDUPCODE)
 			return decode_all(remotes);

@@ -17,3 +17,4 @@ upstream/0003-add-lirc-encoder-decoder-regression-test.patch
 #lirc_fix-spelling-errors.patch
 #fix-kfreebsd-ftbs.patch
 0001-Fix-shebang-in-make-pluginlist_sh.patch
+0002-Do-not-call-ir_strerror.patch
