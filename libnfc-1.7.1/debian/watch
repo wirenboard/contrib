@@ -1,0 +1,3 @@
+version=3
+opts=uversionmangle=s/[-+.](beta|alpha|rc)/~$1/ \
+https://github.com/nfc-tools/libnfc/tags (?:.*/)?libnfc-(\d.*)\.tar\.gz
