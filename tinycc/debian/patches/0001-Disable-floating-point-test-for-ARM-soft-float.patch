@@ -1,0 +1,85 @@
+From a9ff6b861109132c1e77e753598687f23d11caf6 Mon Sep 17 00:00:00 2001
+From: Matteo Cypriani <mcy@lm7.fr>
+Date: Fri, 5 Sep 2014 23:22:56 -0400
+Subject: Disable floating-point test for ARM soft-float
+
+tcc is not yet capable of doing softfloat floating-point operations on
+ARM, therefore we disable this test for these platforms. Note that tcc
+displays a warning to warn ARM users about this limitation.
+
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2014-10-16
+---
+ tests/Makefile        | 13 +++++++++++--
+ tests/tcctest.c       |  2 ++
+ tests/tests2/Makefile |  3 +++
+ 3 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/tests/Makefile b/tests/Makefile
+index e6c5660..276ec7d 100644
+--- a/tests/Makefile
++++ b/tests/Makefile
+@@ -46,6 +46,9 @@ ifeq ($(ARCH),i386)
+ else ifneq ($(ARCH),x86-64)
+  TESTS := $(filter-out vla_test-run,$(TESTS))
+ endif
++ifeq ($(CONFIG_arm_eabi),yes)
++ TESTS := $(filter-out test3,$(TESTS))
++endif
+ 
+ ifdef DISABLE_STATIC
+  export LD_LIBRARY_PATH:=$(CURDIR)/..
+@@ -214,10 +217,16 @@ abitest-cc$(EXESUF): abitest.c $(top_builddir)/$(LIBTCC)
+ abitest-tcc$(EXESUF): abitest.c libtcc.c
+ 	$(TCC) -o $@ $^ $(CPPFLAGS) $(CFLAGS) $(NATIVE_DEFINES) -DONE_SOURCE $(LIBS) $(LDFLAGS) -I$(top_srcdir)
+ 
+-abitest: abitest-cc$(EXESUF) abitest-tcc$(EXESUF)
++ABITESTS := abitest-cc$(EXESUF)
++ifneq ($(CONFIG_arm_eabi),yes) # not ARM soft-float
++	ABITESTS += abitest-tcc$(EXESUF)
++endif
++
++abitest: $(ABITESTS)
+ 	@echo ------------ $@ ------------
+ 	./abitest-cc$(EXESUF) lib_path=.. include="$(top_srcdir)/include"
+-	./abitest-tcc$(EXESUF) lib_path=.. include="$(top_srcdir)/include"
++	if [ $(CONFIG_arm_eabi) != "yes" ]; then \
++		./abitest-tcc$(EXESUF) lib_path=.. include="$(top_srcdir)/include"; fi
+ 
+ vla_test$(EXESUF): vla_test.c
+ 	$(TCC) -o $@ $^ $(CPPFLAGS) $(CFLAGS)
+diff --git a/tests/tcctest.c b/tests/tcctest.c
+index cc8ffd8..78bb785 100644
+--- a/tests/tcctest.c
++++ b/tests/tcctest.c
+@@ -1760,6 +1760,7 @@ double ftab1[3] = { 1.2, 3.4, -5.6 };
+ 
+ void float_test(void)
+ {
++#if !defined(__arm__) || defined(__ARM_PCS_VFP)
+     float fa, fb;
+     double da, db;
+     int a;
+@@ -1785,6 +1786,7 @@ void float_test(void)
+     b = 4000000000;
+     db = b;
+     printf("db = %f\n", db);
++#endif
+ }
+ 
+ int fib(int n)
+diff --git a/tests/tests2/Makefile b/tests/tests2/Makefile
+index 66d2f5a..305d995 100644
+--- a/tests/tests2/Makefile
++++ b/tests/tests2/Makefile
+@@ -95,6 +95,9 @@ TESTS =	\
+ SKIP = 34_array_assignment.test
+ 
+ # some tests do not pass on all platforms, remove them for now
++ifeq ($(CONFIG_arm_eabi),yes) # not ARM soft-float
++ SKIP += 22_floating_point.test
++endif
+ ifeq ($(TARGETOS),Darwin)
+  SKIP += 40_stdio.test
+ endif

@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+override_dh_auto_configure:
+	dh_auto_configure -- --tccdir=../tcc --docdir=/usr/share/doc/tcc
+ifeq (arm,$(DEB_HOST_ARCH_CPU))
+ifeq (armel,$(DEB_HOST_ARCH))
+	sed 's/\(TCC_ARM_VERSION\) .*/\1 4/' config.h
+else ifeq (armhf,$(DEB_HOST_ARCH))
+	sed 's/\(TCC_ARM_VERSION\) .*/\1 7/' config.h
+endif
+endif
+
+override_dh_auto_clean:
+	[ ! -f config.mak ] || dh_auto_clean
+
+override_dh_installexamples:
+	sed -i 1s@/usr/local/bin/tcc@/usr/bin/tcc@ examples/*.c
+	dh_installexamples
+	sed -i 1s@/usr/bin/tcc@/usr/local/bin/tcc@ examples/*.c
+
+clean:
+	rm -f build
+	dh clean
+
+build:
+	dh build
+	touch build # As recommended by policy §4.9
+
+%:
+	dh $@

@@ -1,0 +1,4 @@
+version=3
+
+http://download.savannah.gnu.org/releases/tinycc/ \
+(?:.*[/=]|)tcc(?:[_\-]?|[_\-]v)(\d\S*)\.(?:tar\.xz|txz|tar\.bz2|tbz2|tar\.gz|tgz)(?:[^\.].*)? debian uupdate

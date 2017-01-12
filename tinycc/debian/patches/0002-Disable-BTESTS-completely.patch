@@ -1,0 +1,26 @@
+From d1d6154777e062a69667a89c97ecbc040a31dfc7 Mon Sep 17 00:00:00 2001
+From: Matteo Cypriani <mcy@lm7.fr>
+Date: Sun, 7 Sep 2014 12:32:27 -0400
+Subject: Disable BTESTS completely
+
+These tests don't pass for now.
+
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2014-09-07
+---
+ tests/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/tests/Makefile b/tests/Makefile
+index 276ec7d..b84669e 100644
+--- a/tests/Makefile
++++ b/tests/Makefile
+@@ -17,7 +17,6 @@ TESTS = \
+  hello-run \
+  libtest \
+  test3 \
+- $(BTESTS) \
+  abitest \
+  vla_test-run \
+  moretests

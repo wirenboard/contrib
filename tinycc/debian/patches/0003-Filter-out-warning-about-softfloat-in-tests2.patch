@@ -1,0 +1,29 @@
+From 8b4aa4b23151cedba1abeb3b829c98a3a427c85a Mon Sep 17 00:00:00 2001
+From: Matteo Cypriani <mcy@lm7.fr>
+Date: Thu, 16 Oct 2014 11:17:46 -0400
+Subject: Filter-out warning about softfloat in tests2
+
+Origin: vendor
+Forwarded: yes
+Last-Update: 2014-10-17
+---
+ tests/tests2/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tests/tests2/Makefile b/tests/tests2/Makefile
+index 305d995..05a4743 100644
+--- a/tests/tests2/Makefile
++++ b/tests/tests2/Makefile
+@@ -116,10 +116,10 @@ all test: $(filter-out $(SKIP),$(TESTS))
+ %.test: %.c %.expect
+ 	@echo Test: $*...
+ 
+-	@$(TCC) -run $< $(ARGS) >$*.output 2>&1 || true
++	@$(TCC) -run $< $(ARGS) 2>&1 | grep -v 'warning: soft float ABI currently not supported: default to softfp' >$*.output || true
+ 	@diff -bu $*.expect $*.output && rm -f $*.output
+ 
+-	@($(TCC) $< -o $*.exe && ./$*.exe $(ARGS)) >$*.output2 2>&1 || true
++	@($(TCC) $< -o $*.exe && ./$*.exe $(ARGS)) 2>&1 | grep -v 'warning: soft float ABI currently not supported: default to softfp' >$*.output2 || true
+ 	@diff -bu $*.expect $*.output2 && rm -f $*.output2 $*.exe
+ 
+ clean:
