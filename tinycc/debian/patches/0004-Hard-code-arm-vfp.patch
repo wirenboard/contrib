@@ -1,0 +1,28 @@
+Description: Hard code arm vfp
+ configure cannot determine if vfp is available in chroot
+
+Author: Yury Usishchev <y.usishchev@contactless.ru>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- tcc-0.9.27~git20140923.9d7fb33.orig/configure
++++ tcc-0.9.27~git20140923.9d7fb33/configure
+@@ -304,6 +304,7 @@ strip="${cross_prefix}${strip}"
+ 
+ CONFTEST=./conftest$EXESUF
+ 
++           confvars="$confvars arm_vfp"
+ if test -z "$cross_prefix" ; then
+   if ! $cc -o $CONFTEST $source_path/conftest.c 2>/dev/null ; then
+     echo "configure: error: '$cc' failed to compile conftest.c."

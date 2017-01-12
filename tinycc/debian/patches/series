@@ -1,3 +1,4 @@
 0001-Disable-floating-point-test-for-ARM-soft-float.patch
 0002-Disable-BTESTS-completely.patch
 0003-Filter-out-warning-about-softfloat-in-tests2.patch
+0004-Hard-code-arm-vfp.patch
