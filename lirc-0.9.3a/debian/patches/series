@@ -16,3 +16,4 @@ upstream/0003-add-lirc-encoder-decoder-regression-test.patch
 #hurd_define-iotbase_u32.patch
 #lirc_fix-spelling-errors.patch
 #fix-kfreebsd-ftbs.patch
+0001-Fix-shebang-in-make-pluginlist_sh.patch
