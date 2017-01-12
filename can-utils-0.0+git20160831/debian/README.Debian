@@ -1,0 +1,15 @@
+SocketCAN documentation is avaible within Linux kernel documentation online on
+https://www.kernel.org/doc/Documentation/networking/can.txt
+or in linux-doc packages.
+
+Upstream site is hosted on github:
+https://github.com/linux-can
+
+Mailing list:
+http://vger.kernel.org/vger-lists.html#linux-can
+
+There are some (outdated) documentation for can-tools on old project site:
+http://svn.berlios.de/wsvn/socketcan/tags/final/doc/
+
+Most actual documentation could be obtained from utilities themselves with
+--help option.
