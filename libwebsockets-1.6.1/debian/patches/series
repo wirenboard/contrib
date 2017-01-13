@@ -3,3 +3,4 @@
 0005-wsi-context.patch
 02-kfreebsd.patch
 03-sort-doc-sources.patch
+Add--fPIC-option
