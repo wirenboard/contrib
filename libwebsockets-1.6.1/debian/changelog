@@ -1,0 +1,87 @@
+libwebsockets (1.6.1-1) unstable; urgency=medium
+
+  * New upstream release:
+    - update the symbols file
+  * Bump the year on my debian/* copyright notice.
+  * Update the Vcs-* fields for the debian-v1.6-stable branch.
+
+ -- Peter Pentchev <roam@ringlet.net>  Sat, 23 Jan 2016 16:55:32 +0200
+
+libwebsockets (1.6.0-5) unstable; urgency=medium
+
+  * Fix the relationship between the libwebsockets-test-server-common
+    and the libwebsockets-test-server packages.  Closes: #810517
+    Suggested by: Gianfranco Costamagna <locutusofborg@debian.org>
+  * Add the 03-sort-doc-sources patch to sort the source *.c files
+    before passing them to the script that generates the API reference.
+    Closes: #808877
+  * Build with Large File Support.
+
+ -- Peter Pentchev <roam@ringlet.net>  Sun, 17 Jan 2016 01:58:53 +0200
+
+libwebsockets (1.6.0-4) unstable; urgency=low
+
+  * Remove unneeded libwebsockets3{,-dbg} packages (closes: #809061).
+
+ -- Laszlo Boszormenyi (GCS) <gcs@debian.org>  Sat, 09 Jan 2016 08:41:42 +0100
+
+libwebsockets (1.6.0-3) unstable; urgency=medium
+
+  * Remove the Conflicts and Replaces fields for the libwebsockets6 and
+    libwebsockets6-dbg binary packages.  Closes: #808878
+  * Add the 0003-libev-context-destroy, 0004-libev-context-init, and
+    0005-wsi-context upstream patches.
+  * Refresh the line numbers of the 02-kfreebsd patch.
+  * Mark the 02-kfreebsd patch as forwarded upstream.
+  * Always regenerate the HTML API documentation, too, so that
+    the plain-text documentation is also regenerated.  Closes: #808877
+
+ -- Peter Pentchev <roam@ringlet.net>  Fri, 25 Dec 2015 14:32:06 +0200
+
+libwebsockets (1.6.0-2) unstable; urgency=medium
+
+  * Upload to unstable (closes: #794476).
+  * Add some -dev package runtime dependencies to the libwebsockets-dev
+    package so that programs that use libwebsockets may actually compile.
+    Reported by: Gianfranco Costamagna <locutusofborg@debian.org>
+  * Aggregate some of the Files sections in the debian/copyright file:
+    - almost all of the libwebsockets code is Andy Green's work
+    - the whole of the win32port/zlib/ directory is joint work by
+      Jean-loup Gailly and Mark Adler
+  * Add the 02-kfreebsd patch to fix the FTBFS on GNU/kFreeBSD.
+  * Point to /usr/share/common-licenses/LGPL-2 in the copyright file.
+
+ -- Peter Pentchev <roam@ringlet.net>  Mon, 21 Dec 2015 18:04:52 +0200
+
+libwebsockets (1.6.0-1) experimental; urgency=medium
+
+  * Bump Standards-Version to 3.9.6 with no changes.
+  * New upstream release:
+    - drop the 0001-getnameinfo, 0002-keepalive, and 01-visibility
+      patches, integrated upstream
+    - switch the build to CMake since autoconf is no longer supported
+    - bump the soname to libwebsockets6 and update the symbols file
+    - reflect the renaming of several README.* files to *.md
+    - update the copyright file
+    - turn the lws_daemonize build back on for compatibility with
+      previous Debian releases of libwebsockets
+  * Bump the debian/* copyright years.
+  * Move the static data for the test servers to an arch:all package.
+  * Drop the no longer needed misc:Pre-Depends, see #783898.
+  * Add an upstream metadata file.
+  * Remove the get-orig-source script and rules target, we don't repack
+    anything, so we actually get our tarballs from the watch file's
+    locations; suggested by
+    Gianfranco Costamagna <locutusofborg@debian.org>
+  * Turn on the libwebsockets support for libev.
+  * Change the short name of the license on the base64-decode.c file
+    from MIT to Expat to be more precise.
+  * Switch the Vcs-Browser URL to cgit.
+
+ -- Peter Pentchev <roam@ringlet.net>  Fri, 18 Dec 2015 14:12:36 +0200
+
+libwebsockets (1.2.2-1) unstable; urgency=low
+
+  * Initial release (closes: #697671).
+
+ -- Peter Pentchev <roam@ringlet.net>  Thu, 28 Mar 2013 19:10:28 +0200

@@ -1,0 +1,27 @@
+Description: Do not exit the initialization early when using libev.
+Origin: upstream; https://github.com/warmcat/libwebsockets/commit/400e5a7fedc7b8678906f45e5e8fd8d803ad2af1
+Author: Andy Green <andy.green@linaro.org>
+Last-Update: 2015-12-25
+
+--- a/lib/lws-plat-unix.c
++++ b/lib/lws-plat-unix.c
+@@ -497,13 +497,13 @@
+ 		return 1;
+ 	}
+ 
+-	if (lws_libev_init_fd_table(context))
+-		/* libev handled it instead */
+-		return 0;
++	if (!lws_libev_init_fd_table(context)) {
++		/* otherwise libev handled it instead */
+ 
+-	if (pipe(context->dummy_pipe_fds)) {
+-		lwsl_err("Unable to create pipe\n");
+-		return 1;
++		if (pipe(context->dummy_pipe_fds)) {
++			lwsl_err("Unable to create pipe\n");
++			return 1;
++		}
+ 	}
+ 
+ 	/* use the read end of pipe as first item */

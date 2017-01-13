@@ -1,0 +1,7 @@
+Name: libwebsockets
+Contact: Andy Green <andy@warmcat.com>
+Changelog: http://git.libwebsockets.org/cgi-bin/cgit/libwebsockets/tree/changelog
+Bug-Database: https://github.com/warmcat/libwebsockets/issues
+Repository: git://git.libwebsockets.org/libwebsockets.git
+Repository-Browse: http://git.libwebsockets.org/cgi-bin/cgit/libwebsockets/
+Security-Contact: Andy Green <andy@warmcat.com>
