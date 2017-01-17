@@ -1,3 +1,9 @@
+proot (4.0.2-2) unstable; urgency=medium
+
+  * Remove seccomp filter feature check
+
+ -- Yury Usishchev <y.usishchev@contactless.ru>  Fri, 06 Jan 2017 17:03:44 +0000
+
 proot (4.0.2-1) unstable; urgency=low
   * Upgrade to latest PRoot version
     - Experimental port of PRoot for AArch64

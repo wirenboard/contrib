@@ -1,0 +1,36 @@
+Description: Disable seccomp filter
+ This feature is broken with new kernels
+ .
+ proot (4.0.2-1) unstable; urgency=low
+ .
+   * Upgrade to latest PRoot version
+     - Experimental port of PRoot for AArch64
+   * Silent one wrong litian warning
+     - proot binary: spelling-error-in-binary usr/bin/proot tEH the
+Author: Rémi Duraffort <ivoire@videolan.org>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- proot-4.0.2.orig/src/GNUmakefile
++++ proot-4.0.2/src/GNUmakefile
+@@ -95,7 +95,8 @@ CHECK_VERSION = VERSION=$$($(GIT) descri
+ 		then /bin/echo -e "\#undef VERSION\n\#define VERSION \"$${VERSION}\""; \
+ 		fi;
+ 
+-CHECK_FEATURES = process_vm seccomp_filter
++CHECK_FEATURES = process_vm
++#CHECK_FEATURES = process_vm seccomp_filter
+ CHECK_PROGRAMS = $(foreach feature,$(CHECK_FEATURES),.check_$(feature))
+ CHECK_OBJECTS  = $(foreach feature,$(CHECK_FEATURES),.check_$(feature).o)
+ CHECK_RESULTS  = $(foreach feature,$(CHECK_FEATURES),.check_$(feature).res)
