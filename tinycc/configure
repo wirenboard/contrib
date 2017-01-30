@@ -304,7 +304,6 @@ strip="${cross_prefix}${strip}"
 
 CONFTEST=./conftest$EXESUF
 
-confvars="$confvars arm_vfp"
 if test -z "$cross_prefix" ; then
   if ! $cc -o $CONFTEST $source_path/conftest.c 2>/dev/null ; then
     echo "configure: error: '$cc' failed to compile conftest.c."
