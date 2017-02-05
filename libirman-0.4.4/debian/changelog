@@ -1,3 +1,9 @@
+libirman (0.4.4-2-wb1) unstable; urgency=medium
+
+  * Add -fPIC flag
+
+ -- Yury Usishchev <y.usishchev@contactless.ru>  Sun, 05 Feb 2017 15:12:17 +0300
+
 libirman (0.4.4-2) unstable; urgency=low
 
   * Add myself to uploaders for some QA work.

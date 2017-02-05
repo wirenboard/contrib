@@ -7,7 +7,7 @@ PATCH_DIR := debian/patches
 # how to call quilt
 QUILT := QUILT_PATCHES=$(PATCH_DIR) quilt --quiltrc /dev/null
 
-CFLAGS += -Wall -g -O$(if $(findstring noopt,$(DEB_BUILD_OPTIONS)),0,2)
+CFLAGS += -Wall -g -fPIC -O$(if $(findstring noopt,$(DEB_BUILD_OPTIONS)),0,2)
 
 MAKE_ENV += MAINT=""
 
