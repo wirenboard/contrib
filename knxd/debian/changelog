@@ -1,3 +1,9 @@
+knxd (0.11.15-1-wb1) unstable; urgency=medium
+
+  * Move libeibclient.so symlink to knxd-tools package
+
+ -- Yury Usishchev <y.usishchev@contactless.ru>  Tue, 07 Feb 2017 19:30:44 +0300
+
 knxd (0.11.15-1) unstable; urgency=medium
 
   * Merge from stable
