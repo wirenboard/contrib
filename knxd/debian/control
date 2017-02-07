@@ -40,7 +40,7 @@ Description: Tools to use knxd
  daemon.
 
 Package: knxd-dev
-Architecture: all
+Architecture: any
 Description: Development files for knxd
  KNX is a standard prototocol for home and buildin control.
  .
