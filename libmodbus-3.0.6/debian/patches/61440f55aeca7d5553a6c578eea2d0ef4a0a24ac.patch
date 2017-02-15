@@ -1,0 +1,126 @@
+From 61440f55aeca7d5553a6c578eea2d0ef4a0a24ac Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?St=C3=A9phane=20Raimbault?= <stephane.raimbault@gmail.com>
+Date: Thu, 2 May 2013 21:06:18 +0200
+Subject: [PATCH] Baud rate until 4,000,000 (POSIX), 1,000,000 (Windows)
+ (closes #93)
+
+---
+ src/modbus-rtu.c | 80 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+
+Index: libmodbus-3.0.6/src/modbus-rtu.c
+===================================================================
+--- libmodbus-3.0.6.orig/src/modbus-rtu.c
++++ libmodbus-3.0.6/src/modbus-rtu.c
+@@ -382,6 +382,9 @@ static int _modbus_rtu_connect(modbus_t
+     case 9600:
+         dcb.BaudRate = CBR_9600;
+         break;
++    case 14400:
++        dcb.BaudRate = CBR_14400;
++        break;
+     case 19200:
+         dcb.BaudRate = CBR_19200;
+         break;
+@@ -395,8 +398,24 @@ static int _modbus_rtu_connect(modbus_t
+         dcb.BaudRate = CBR_115200;
+         break;
+     case 230400:
++        /* CBR_230400 - not defined */
+         dcb.BaudRate = 230400;
+         break;
++    case 250000:
++        dcb.BaudRate = 250000;
++        break;
++    case 460800:
++        dcb.BaudRate = 460800;
++        break;
++    case 500000:
++        dcb.BaudRate = 500000;
++        break;
++    case 921600:
++        dcb.BaudRate = 921600;
++        break;
++    case 1000000:
++        dcb.BaudRate = 1000000;
++        break;
+     default:
+         dcb.BaudRate = CBR_9600;
+         printf("WARNING Unknown baud rate %d for %s (B9600 used)\n",
+@@ -513,15 +532,76 @@ static int _modbus_rtu_connect(modbus_t
+     case 38400:
+         speed = B38400;
+         break;
++#ifdef B57600
+     case 57600:
+         speed = B57600;
+         break;
++#endif
++#ifdef B115200
+     case 115200:
+         speed = B115200;
+         break;
++#endif
++#ifdef B230400
+     case 230400:
+         speed = B230400;
+         break;
++#endif
++#ifdef B460800
++    case 460800:
++        speed = B460800;
++        break;
++#endif
++#ifdef B500000
++    case 500000:
++        speed = B500000;
++        break;
++#endif
++#ifdef B576000
++    case 576000:
++        speed = B576000;
++        break;
++#endif
++#ifdef B921600
++    case 921600:
++        speed = B921600;
++        break;
++#endif
++#ifdef B1000000
++    case 1000000:
++        speed = B1000000;
++        break;
++#endif
++#ifdef B1152000
++   case 1152000:
++        speed = B1152000;
++        break;
++#endif
++#ifdef B1500000
++    case 1500000:
++        speed = B1500000;
++        break;
++#endif
++#ifdef B2500000
++    case 2500000:
++        speed = B2500000;
++        break;
++#endif
++#ifdef B3000000
++    case 3000000:
++        speed = B3000000;
++        break;
++#endif
++#ifdef B3500000
++    case 3500000:
++        speed = B3500000;
++        break;
++#endif
++#ifdef B4000000
++    case 4000000:
++        speed = B4000000;
++        break;
++#endif
+     default:
+         speed = B9600;
+         if (ctx->debug) {
