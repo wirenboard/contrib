@@ -1,0 +1,33 @@
+allow modbus ids from 247 to 254, which breaks standard but de-facto used in some devices
+
+
+ libmodbus (3.0.6-2+wb1) unstable; urgency=medium
+ .
+   * Add support for 230400 baudrate
+   * Baud rate until 4,000,000 (POSIX), 1,000,000 (Windows) (closes #93)
+Author: Evgeny Boger <boger@contactless.ru>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: 2017-02-15
+
+--- libmodbus-3.0.6.orig/src/modbus-rtu.c
++++ libmodbus-3.0.6/src/modbus-rtu.c
+@@ -101,7 +101,7 @@ static const uint8_t table_crc_lo[] = {
+ static int _modbus_set_slave(modbus_t *ctx, int slave)
+ {
+     /* Broadcast address is 0 (MODBUS_BROADCAST_ADDRESS) */
+-    if (slave >= 0 && slave <= 247) {
++    if (slave >= 0 && slave <= 255) {
+         ctx->slave = slave;
+     } else {
+         errno = EINVAL;

@@ -1,1 +1,4 @@
 01_fix_libmodbus_manpage.patch
+c9960a0f97bfee765a913212b2ca6cd26f22f1a5.patch
+61440f55aeca7d5553a6c578eea2d0ef4a0a24ac.patch
+modbus-rtu-allow-addresses-gt-247
