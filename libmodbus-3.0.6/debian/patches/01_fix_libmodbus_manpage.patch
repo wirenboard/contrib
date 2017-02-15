@@ -1,0 +1,186 @@
+Description: fix libmodbus.7 manpage layout
+ The libmodbus.7 manpage is rendered incorrectly, resulting in error from man:
+ "can't break line". This patch should fix that.
+Author: Ivo De Decker <ivo.dedecker@ugent.be>
+
+Index: libmodbus/doc/libmodbus.txt
+===================================================================
+--- libmodbus.orig/doc/libmodbus.txt
++++ libmodbus/doc/libmodbus.txt
+@@ -64,12 +64,12 @@ linkmb:modbus_set_slave[3]. If you're ru
+ is used to filter messages.
+ 
+ Create a Modbus RTU context::
+-    linkmb:modbus_new_rtu[3]
++    - linkmb:modbus_new_rtu[3]
+ 
+ 
+ Set the serial mode::
+-    linkmb:modbus_rtu_get_serial_mode[3]
+-    linkmb:modbus_rtu_set_serial_mode[3]
++    - linkmb:modbus_rtu_get_serial_mode[3]
++    - linkmb:modbus_rtu_set_serial_mode[3]
+ 
+ 
+ TCP (IPv4) Context
+@@ -79,7 +79,7 @@ TCP/IPv4 networks. It does not require a
+ takes care of the same.
+ 
+ Create a Modbus TCP context::
+-    linkmb:modbus_new_tcp[3]
++    - linkmb:modbus_new_tcp[3]
+ 
+ 
+ TCP PI (IPv4 and IPv6) Context
+@@ -92,7 +92,7 @@ Contrary to the TCP IPv4 only backend, t
+ resolution but it consumes about 1Kb of additional memory.
+ 
+ Create a Modbus TCP context::
+-    linkmb:modbus_new_tcp_pi[3]
++    - linkmb:modbus_new_tcp_pi[3]
+ 
+ 
+ Common
+@@ -102,40 +102,40 @@ Before using any libmodbus functions, th
+ are provided to modify and free a 'context':
+ 
+ Free libmodbus context::
+-    linkmb:modbus_free[3]
++    - linkmb:modbus_free[3]
+ 
+ Context setters and getters::
+-    linkmb:modbus_get_byte_timeout[3]
+-    linkmb:modbus_set_byte_timeout[3]
+-    linkmb:modbus_set_debug[3]
+-    linkmb:modbus_set_error_recovery[3]
+-    linkmb:modbus_get_header_length[3]
+-    linkmb:modbus_get_response_timeout[3]
+-    linkmb:modbus_set_response_timeout[3]
+-    linkmb:modbus_set_slave[3]
+-    linkmb:modbus_set_socket[3]
+-    linkmb:modbus_get_socket[3]
++    - linkmb:modbus_get_byte_timeout[3]
++    - linkmb:modbus_set_byte_timeout[3]
++    - linkmb:modbus_set_debug[3]
++    - linkmb:modbus_set_error_recovery[3]
++    - linkmb:modbus_get_header_length[3]
++    - linkmb:modbus_get_response_timeout[3]
++    - linkmb:modbus_set_response_timeout[3]
++    - linkmb:modbus_set_slave[3]
++    - linkmb:modbus_set_socket[3]
++    - linkmb:modbus_get_socket[3]
+ 
+ A libmodbus 'context' is thread safe and may be shared among as many application
+ threads as necessary, without any additional locking required on the part of the
+ caller.
+ 
+ Macros for data manipulation::
+-    MODBUS_GET_HIGH_BYTE(data), extracts the high byte from a byte
+-    MODBUS_GET_LOW_BYTE(data), extracts the low byte from a byte
+-    MODBUS_GET_INT32_FROM_INT16(tab_int16, index), builds an int32 from the two
++    - MODBUS_GET_HIGH_BYTE(data), extracts the high byte from a byte
++    - MODBUS_GET_LOW_BYTE(data), extracts the low byte from a byte
++    - MODBUS_GET_INT32_FROM_INT16(tab_int16, index), builds an int32 from the two
+     first int16 starting at tab_int16[index]
+-    MODBUS_GET_INT16_FROM_INT8(tab_int8, index), builds an int16 from the two
++    - MODBUS_GET_INT16_FROM_INT8(tab_int8, index), builds an int16 from the two
+     first int8 starting at tab_int8[index]
+-    MODBUS_SET_INT16_TO_INT8(tab_int8, index, value), set an int16 value into
++    - MODBUS_SET_INT16_TO_INT8(tab_int8, index, value), set an int16 value into
+     the two first bytes starting at tab_int8[index]
+ 
+ Functions for data manipulation::
+-    linkmb:modbus_set_bits_from_byte[3]
+-    linkmb:modbus_set_bits_from_bytes[3]
+-    linkmb:modbus_get_byte_from_bits[3]
+-    linkmb:modbus_get_float[3]
+-    linkmb:modbus_set_float[3]
++    - linkmb:modbus_set_bits_from_byte[3]
++    - linkmb:modbus_set_bits_from_bytes[3]
++    - linkmb:modbus_get_byte_from_bits[3]
++    - linkmb:modbus_get_float[3]
++    - linkmb:modbus_set_float[3]
+ 
+ 
+ Connection
+@@ -144,13 +144,13 @@ The following functions are provided to
+ Modbus devices:
+ 
+ Establish a connection::
+-    linkmb:modbus_connect[3]
++    - linkmb:modbus_connect[3]
+ 
+ Close a connection::
+-    linkmb:modbus_close[3]
++    - linkmb:modbus_close[3]
+ 
+ Flush a connection::
+-    linkmb:modbus_flush[3]
++    - linkmb:modbus_flush[3]
+ 
+ 
+ Client
+@@ -160,27 +160,27 @@ them from/to remote devices. The followi
+ send Modbus requests:
+ 
+ Read data::
+-     linkmb:modbus_read_bits[3]
+-     linkmb:modbus_read_input_bits[3]
+-     linkmb:modbus_read_registers[3]
+-     linkmb:modbus_read_input_registers[3]
+-     linkmb:modbus_report_slave_id[3]
++    -  linkmb:modbus_read_bits[3]
++    -  linkmb:modbus_read_input_bits[3]
++    -  linkmb:modbus_read_registers[3]
++    -  linkmb:modbus_read_input_registers[3]
++    -  linkmb:modbus_report_slave_id[3]
+ 
+ Write data::
+-     linkmb:modbus_write_bit[3]
+-     linkmb:modbus_write_register[3]
+-     linkmb:modbus_write_bits[3]
+-     linkmb:modbus_write_registers[3]
++    -  linkmb:modbus_write_bit[3]
++    -  linkmb:modbus_write_register[3]
++    -  linkmb:modbus_write_bits[3]
++    -  linkmb:modbus_write_registers[3]
+ 
+ Write and read data::
+-      linkmb:modbus_write_and_read_registers[3]
++    -   linkmb:modbus_write_and_read_registers[3]
+ 
+ Raw requests::
+-    linkmb:modbus_send_raw_request[3]
+-    linkmb:modbus_receive_confirmation[3]
++    - linkmb:modbus_send_raw_request[3]
++    - linkmb:modbus_receive_confirmation[3]
+ 
+ Reply an exception::
+-    linkmb:modbus_reply_exception[3]
++    - linkmb:modbus_reply_exception[3]
+ 
+ 
+ Server
+@@ -189,16 +189,16 @@ The server is waiting for request from c
+ concerned by the request. The libmodbus offers the following functions to
+ handle requests:
+ 
+-Data mapping:
+-     linkmb:modbus_mapping_new[3]
+-     linkmb:modbus_mapping_free[3]
++Data mapping::
++    -  linkmb:modbus_mapping_new[3]
++    -  linkmb:modbus_mapping_free[3]
+ 
+ Receive::
+-     linkmb:modbus_receive[3]
++    -  linkmb:modbus_receive[3]
+ 
+ Reply::
+-     linkmb:modbus_reply[3]
+-     linkmb:modbus_reply_exception[3]
++    -  linkmb:modbus_reply[3]
++    -  linkmb:modbus_reply_exception[3]
+ 
+ 
+ ERROR HANDLING
