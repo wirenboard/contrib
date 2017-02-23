@@ -1,0 +1,25 @@
+# Description: remove the harcoded python version in console exe
+# Author: Carl Chenet <chaica@debian.org>
+
+Index: pip-1.1/pip.egg-info/entry_points.txt
+===================================================================
+--- pip-1.1.orig/pip.egg-info/entry_points.txt	2012-02-16 21:08:06.000000000 +0100
++++ pip-1.1/pip.egg-info/entry_points.txt	2012-05-27 02:26:21.000000000 +0200
+@@ -1,4 +1,3 @@
+ [console_scripts]
+-pip = pip:main
+ pip-2.7 = pip:main
+ 
+Index: pip-1.1/setup.py
+===================================================================
+--- pip-1.1.orig/setup.py	2012-02-16 21:05:03.000000000 +0100
++++ pip-1.1/setup.py	2012-05-27 02:26:36.000000000 +0200
+@@ -49,7 +49,7 @@
+       url='http://www.pip-installer.org',
+       license='MIT',
+       packages=['pip', 'pip.commands', 'pip.vcs'],
+-      entry_points=dict(console_scripts=['pip=pip:main', 'pip-%s=pip:main' % sys.version[:3]]),
++      entry_points=dict(console_scripts=['pip-%s=pip:main' % sys.version[:3]]),
+       test_suite='nose.collector',
+       tests_require=['nose', 'virtualenv>=1.7', 'scripttest>=1.1.1', 'mock'],
+       zip_safe=False)
