@@ -1,3 +1,9 @@
+python-virtualenv (1.7.1.2-2wb1) unstable; urgency=medium
+
+  * pip: Make _get_pages single threaded
+
+ -- Yury Usishchev <y.usishchev@contactless.ru>  Thu, 23 Feb 2017 12:18:09 +0300
+
 python-virtualenv (1.7.1.2-2) unstable; urgency=low
 
   * Apply test_urlparse_uses_fragment.patch to the bundled pip, allowing it to

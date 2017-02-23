@@ -7,7 +7,7 @@ override_dh_auto_configure:
 	rm -f virtualenv_support/pip-1.1.debian1.tar.gz
 	# Patch pip 1.1
 	tar -xf virtualenv_support/pip-1.1.tar.gz
-	cd pip-1.1 && patch -p1 < ../debian/pip-test_urlparse_uses_fragment.patch
+	cd pip-1.1 && patch -p1 < ../debian/pip-test_urlparse_uses_fragment.patch && patch -p1 < ../debian/make_get_pages_single_threaded.patch
 	GZIP=--best tar --owner root --group root -cz \
 	                -f virtualenv_support/pip-1.1.debian1.tar.gz pip-1.1
 	# Rebuild the embedded parts, we may be quilt patching their sources
