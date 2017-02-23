@@ -1,3 +1,10 @@
+python-pip (1.1-3wb1) unstable; urgency=medium
+
+  * pip/index.py
+    - Make _get_pages single threaded
+
+ -- Yury Usishchev <y.usishchev@contactless.ru>  Thu, 23 Feb 2017 10:58:44 +0300
+
 python-pip (1.1-3) unstable; urgency=low
 
   * debian/patches
