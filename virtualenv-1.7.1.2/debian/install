@@ -1,0 +1,3 @@
+scripts/virtualenv /usr/bin/
+virtualenv_support/*.egg /usr/share/python-virtualenv/
+virtualenv_support/*.tar.gz /usr/share/python-virtualenv/

@@ -1,0 +1,28 @@
+Description: store files in /usr/share/python-virtualenv/
+Author: Carl Chenet <chaica@ohmytux.com>
+
+--- a/virtualenv.py
++++ b/virtualenv.py
+@@ -576,7 +576,8 @@
+ def file_search_dirs():
+     here = os.path.dirname(os.path.abspath(__file__))
+     dirs = ['.', here,
+-            join(here, 'virtualenv_support')]
++            #join(here, 'virtualenv_support')]
++            '/usr/share/python-virtualenv/']
+     if os.path.splitext(os.path.dirname(__file__))[0] != 'virtualenv':
+         # Probably some boot script; just in case virtualenv is installed...
+         try:
+--- a/setup.py
++++ b/setup.py
+@@ -50,8 +50,8 @@
+       url='http://www.virtualenv.org',
+       license='MIT',
+       py_modules=['virtualenv'],
+-      packages=['virtualenv_support'],
+-      package_data={'virtualenv_support': ['*-py%s.egg' % sys.version[:3], '*.tar.gz']},
++      #packages=['virtualenv_support'],
++      #package_data={'virtualenv_support': ['*-py%s.egg' % sys.version[:3], '*.tar.gz']},
+       test_suite='nose.collector',
+       tests_require=['nose', 'Mock'],
+       **kw

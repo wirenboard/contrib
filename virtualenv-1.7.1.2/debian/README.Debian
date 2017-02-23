@@ -1,0 +1,7 @@
+The pip command from the python-pip package should be used to install
+applications in the environment created by virtualenv.
+
+The Virtualenv sources tarball provides the eggs for setuptools 2.4,2.5,2.6
+and tarballs of the pip project and distribute project. When no internet 
+connection is available, these files are required in order to setup
+properly the environments. Otherwise virtualenv attempts to download them.

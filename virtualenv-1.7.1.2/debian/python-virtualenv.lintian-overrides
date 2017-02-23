@@ -1,0 +1,9 @@
+# Virtualenv contains eggs for setuptools, and checks them against
+# a checksum.  The checksum is expected to match PyPI's checksum.
+# We don't have control over the egg format, and at any rate these
+# files are not intended to be executed as shell scripts.
+
+python-virtualenv: package-installs-python-egg usr/share/python-virtualenv/setuptools-0.6c11-py2.4.egg
+python-virtualenv: package-installs-python-egg usr/share/python-virtualenv/setuptools-0.6c11-py2.5.egg
+python-virtualenv: package-installs-python-egg usr/share/python-virtualenv/setuptools-0.6c11-py2.6.egg
+python-virtualenv: package-installs-python-egg usr/share/python-virtualenv/setuptools-0.6c11-py2.7.egg
