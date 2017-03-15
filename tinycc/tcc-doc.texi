@@ -176,24 +176,14 @@ In a script, it gives the following header:
 #!/usr/local/bin/tcc -run -L/usr/X11R6/lib -lX11
 @end example
 
-@item -mfloat-abi (ARM only)
-Select the float ABI. Possible values: @code{softfp} and @code{hard}
-
-@item -dumpversion
-Print only the compiler version and nothing else.
-
 @item -v
 Display TCC version.
 
 @item -vv
-Show included files.  As sole argument, print search dirs (as below).
+Show included files.  As sole argument, print search dirs.  -vvv shows tries too.
 
 @item -bench
 Display compilation statistics.
-
-@item -print-search-dirs
-Print the configured installation directory and a list of library
-and include directories tcc will search.
 
 @end table
 
@@ -216,6 +206,10 @@ also be defined: @option{-DF(a)=a+1}
 
 @item -Usym
 Undefine preprocessor symbol @samp{sym}.
+
+@item -E
+Preprocess only, to stdout or file (with -o).
+
 @end table
 
 Compilation flags:
@@ -235,6 +229,14 @@ Do not generate common symbols for uninitialized data.
 
 @item -fleading-underscore
 Add a leading underscore at the beginning of each C symbol.
+
+@item -fms-extensions
+Allow a MS C compiler extensions to the language. Currently this
+assumes a nested named structure declaration without an identifier
+behaves like an unnamed one.
+
+@item -fdollars-in-identifiers
+Allow dollar signs in identifiers
 
 @end table
 
@@ -303,7 +305,11 @@ opened with @code{dlopen()} needs to access executable symbols.
 Generate an object file combining all input files.
 
 @item -Wl,-rpath=path
-Put custom seatch path for dynamic libraries into executable.
+Put custom search path for dynamic libraries into executable.
+
+@item -Wl,--enable-new-dtags
+When putting a custom search path for dynamic libraries into the executable,
+create the new ELF dynamic tag DT_RUNPATH instead of the old legacy DT_RPATH.
 
 @item -Wl,--oformat=fmt
 Use @var{fmt} as output format. The supported output formats are:
@@ -324,6 +330,9 @@ Modify executable layout.
 
 @item -Wl,-Bsymbolic
 Set DT_SYMBOLIC tag.
+
+@item -Wl,-(no-)whole-archive
+Turn on/off linking of all objects in archives.
 
 @end table
 
@@ -357,6 +366,31 @@ Generate makefile fragment with dependencies.
 
 @item -MF depfile
 Use @file{depfile} as output for -MD.
+
+@item -print-search-dirs
+Print the configured installation directory and a list of library
+and include directories tcc will search.
+
+@item -dumpversion
+Print version.
+
+@end table
+
+Target specific options:
+
+@table @option
+@item -mms-bitfields
+Use an algorithm for bitfield alignment consistent with MSVC. Default is
+gcc's algorithm.
+
+@item -mfloat-abi (ARM only)
+Select the float ABI. Possible values: @code{softfp} and @code{hard}
+
+@item -mno-sse
+Do not use sse registers on x86_64
+
+@item -m32, -m64
+Pass command line to the i386/x86_64 cross compiler.
 
 @end table
 
@@ -1180,8 +1214,10 @@ if the lvalue has an integer type, then these flags give its real
 type. The type alone is not enough in case of cast optimisations.
 
 @item VT_LLOCAL
-is a saved lvalue on the stack. @code{VT_LLOCAL} should be eliminated
-ASAP because its semantics are rather complicated.
+is a saved lvalue on the stack. @code{VT_LVAL} must also be set with
+@code{VT_LLOCAL}. @code{VT_LLOCAL} can arise when a @code{VT_LVAL} in
+a register has to be saved to the stack, or it can come from an
+architecture-specific calling convention.
 
 @item VT_MUSTCAST
 indicates that a cast to the value type must be performed if the value

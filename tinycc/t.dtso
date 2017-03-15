@@ -1,0 +1,3 @@
+#define __cat_internal(a, b) a##b
+
+__cat_internal(foo, bar): moo

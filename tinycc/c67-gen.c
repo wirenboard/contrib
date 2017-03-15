@@ -109,20 +109,6 @@ enum {
 #define MAX_ALIGN     8
 
 /******************************************************/
-/* ELF defines */
-
-#define EM_TCC_TARGET EM_C60
-
-/* relocation type for 32 bit data relocation */
-#define R_DATA_32   R_C60_32
-#define R_DATA_PTR  R_C60_32
-#define R_JMP_SLOT  R_C60_JMP_SLOT
-#define R_COPY      R_C60_COPY
-
-#define ELF_START_ADDR 0x00000400
-#define ELF_PAGE_SIZE  0x1000
-
-/******************************************************/
 #else /* ! TARGET_DEFS_ONLY */
 /******************************************************/
 #include "tcc.h"
@@ -196,7 +182,8 @@ FILE *f = NULL;
 void C67_g(int c)
 {
     int ind1;
-
+    if (nocode_wanted)
+        return;
 #ifdef ASSEMBLY_LISTING_C67
     fprintf(f, " %08X", c);
 #endif
@@ -1567,14 +1554,14 @@ void load(int r, SValue * sv)
 
     fr = sv->r;
     ft = sv->type.t;
-    fc = sv->c.ul;
+    fc = sv->c.i;
 
     v = fr & VT_VALMASK;
     if (fr & VT_LVAL) {
 	if (v == VT_LLOCAL) {
 	    v1.type.t = VT_INT;
 	    v1.r = VT_LOCAL | VT_LVAL;
-	    v1.c.ul = fc;
+	    v1.c.i = fc;
 	    load(r, &v1);
 	    fr = r;
 	} else if ((ft & VT_BTYPE) == VT_LDOUBLE) {
@@ -1726,7 +1713,7 @@ void store(int r, SValue * v)
     int fr, bt, ft, fc, size, t, element;
 
     ft = v->type.t;
-    fc = v->c.ul;
+    fc = v->c.i;
     fr = v->r & VT_VALMASK;
     bt = ft & VT_BTYPE;
     /* XXX: incorrect if float reg to reg */
@@ -1881,7 +1868,7 @@ static void gcall_or_jmp(int is_jmp)
 
 /* Return the number of registers needed to return the struct, or 0 if
    returning via struct pointer. */
-ST_FUNC int gfunc_sret(CType *vt, int variadic, CType *ret, int *ret_align) {
+ST_FUNC int gfunc_sret(CType *vt, int variadic, CType *ret, int *ret_align, int *regsize) {
     *ret_align = 1; // Never have to re-align return values for x86-64
     return 0;
 }
@@ -2052,6 +2039,8 @@ void gfunc_epilog(void)
 int gjmp(int t)
 {
     int ind1 = ind;
+    if (nocode_wanted)
+        return t;
 
     C67_MVKL(C67_A0, t);	//r=reg to load,  constant
     C67_MVKH(C67_A0, t);	//r=reg to load,  constant
@@ -2084,7 +2073,9 @@ int gtst(int inv, int t)
     int v, *p;
 
     v = vtop->r & VT_VALMASK;
-    if (v == VT_CMP) {
+    if (nocode_wanted) {
+        ;
+    } else if (v == VT_CMP) {
 	/* fast case : can jump directly since flags are set */
 	// C67 uses B2 sort of as flags register
 	ind1 = ind;
@@ -2102,17 +2093,16 @@ int gtst(int inv, int t)
 	C67_NOP(5);
 	t = ind1;		//return where we need to patch
 
-    } else { /* VT_JMP || VT_JMPI */
+    } else if (v == VT_JMP || v == VT_JMPI) {
 	/* && or || optimization */
 	if ((v & 1) == inv) {
 	    /* insert vtop->c jump list in t */
-	    p = &vtop->c.i;
 
 	    // I guess the idea is to traverse to the
 	    // null at the end of the list and store t
 	    // there
 
-	    n = *p;
+	    n = vtop->c.i;
 	    while (n != 0) {
 		p = (int *) (cur_text_section->data + n);
 
@@ -2304,7 +2294,7 @@ void gen_opf(int op)
 	gv2(RC_FLOAT, RC_FLOAT);	// make sure src2 is on b side
 
     ft = vtop->type.t;
-    fc = vtop->c.ul;
+    fc = vtop->c.i;
     r = vtop->r;
     fr = vtop[-1].r;
 

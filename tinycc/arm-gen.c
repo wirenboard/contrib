@@ -1,7 +1,7 @@
 /*
  *  ARMv4 code generator for TCC
  *
- *  Copyright (c) 2003 Daniel Glöckner
+ *  Copyright (c) 2003 Daniel GlÃ¶ckner
  *  Copyright (c) 2012 Thomas Preud'homme
  *
  *  Based on i386-gen.c by Fabrice Bellard
@@ -79,6 +79,8 @@ enum {
     TREG_F6,
     TREG_F7,
 #endif
+    TREG_SP = 13,
+    TREG_LR,
 };
 
 #ifdef TCC_ARM_VFP
@@ -126,25 +128,6 @@ enum {
 #define MAX_ALIGN     8
 
 #define CHAR_IS_UNSIGNED
-
-/******************************************************/
-/* ELF defines */
-
-#define EM_TCC_TARGET EM_ARM
-
-/* relocation type for 32 bit data relocation */
-#define R_DATA_32   R_ARM_ABS32
-#define R_DATA_PTR  R_ARM_ABS32
-#define R_JMP_SLOT  R_ARM_JUMP_SLOT
-#define R_COPY      R_ARM_COPY
-
-#define ELF_START_ADDR 0x00008000
-#define ELF_PAGE_SIZE  0x1000
-
-enum float_abi {
-    ARM_SOFTFP_FLOAT,
-    ARM_HARD_FLOAT,
-};
 
 /******************************************************/
 #else /* ! TARGET_DEFS_ONLY */
@@ -217,7 +200,7 @@ static int regmask(int r) {
 
 /******************************************************/
 
-#ifdef TCC_ARM_EABI
+#if defined(TCC_ARM_EABI) && !defined(CONFIG_TCC_ELFINTERP)
 char *default_elfinterp(struct TCCState *s)
 {
     if (s->float_abi == ARM_HARD_FLOAT)
@@ -231,7 +214,8 @@ void o(uint32_t i)
 {
   /* this is a good place to start adding big-endian support*/
   int ind1;
-
+  if (nocode_wanted)
+    return;
   ind1 = ind + 4;
   if (!cur_text_section)
     tcc_error("compiler error! This happens f.ex. if the compiler\n"
@@ -357,7 +341,7 @@ void stuff_const_harder(uint32_t op, uint32_t v) {
   }
 }
 
-ST_FUNC uint32_t encbranch(int pos, int addr, int fail)
+uint32_t encbranch(int pos, int addr, int fail)
 {
   addr-=pos+8;
   addr/=4;
@@ -406,24 +390,26 @@ static uint32_t vfpr(int r)
 {
   if(r<TREG_F0 || r>TREG_F7)
     tcc_error("compiler error! register %i is no vfp register",r);
-  return r-5;
+  return r - TREG_F0;
 }
 #else
 static uint32_t fpr(int r)
 {
   if(r<TREG_F0 || r>TREG_F3)
     tcc_error("compiler error! register %i is no fpa register",r);
-  return r-5;
+  return r - TREG_F0;
 }
 #endif
 
 static uint32_t intr(int r)
 {
-  if(r==4)
+  if(r == TREG_R12)
     return 12;
-  if((r<0 || r>4) && r!=14)
-    tcc_error("compiler error! register %i is no int register",r);
-  return r;
+  if(r >= TREG_R0 && r <= TREG_R3)
+    return r - TREG_R0;
+  if (r >= TREG_SP && r <= TREG_LR)
+    return r + (13 - TREG_SP);
+  tcc_error("compiler error! register %i is no int register",r);
 }
 
 static void calcaddr(uint32_t *base, int *off, int *sgn, int maxoff, unsigned shift)
@@ -528,7 +514,7 @@ void load(int r, SValue *sv)
 
   fr = sv->r;
   ft = sv->type.t;
-  fc = sv->c.ul;
+  fc = sv->c.i;
 
   if(fc>=0)
     sign=0;
@@ -543,16 +529,18 @@ void load(int r, SValue *sv)
     if(v == VT_LLOCAL) {
       v1.type.t = VT_PTR;
       v1.r = VT_LOCAL | VT_LVAL;
-      v1.c.ul = sv->c.ul;
-      load(base=14 /* lr */, &v1);
+      v1.c.i = sv->c.i;
+      load(TREG_LR, &v1);
+      base = 14; /* lr */
       fc=sign=0;
       v=VT_LOCAL;
     } else if(v == VT_CONST) {
       v1.type.t = VT_PTR;
       v1.r = fr&~VT_LVAL;
-      v1.c.ul = sv->c.ul;
+      v1.c.i = sv->c.i;
       v1.sym=sv->sym;
-      load(base=14, &v1);
+      load(TREG_LR, &v1);
+      base = 14; /* lr */
       fc=sign=0;
       v=VT_LOCAL;
     } else if(v < VT_CONST) {
@@ -609,38 +597,38 @@ void load(int r, SValue *sv)
     }
   } else {
     if (v == VT_CONST) {
-      op=stuff_const(0xE3A00000|(intr(r)<<12),sv->c.ul);
+      op=stuff_const(0xE3A00000|(intr(r)<<12),sv->c.i);
       if (fr & VT_SYM || !op) {
         o(0xE59F0000|(intr(r)<<12));
         o(0xEA000000);
         if(fr & VT_SYM)
 	  greloc(cur_text_section, sv->sym, ind, R_ARM_ABS32);
-        o(sv->c.ul);
+        o(sv->c.i);
       } else
         o(op);
       return;
     } else if (v == VT_LOCAL) {
-      op=stuff_const(0xE28B0000|(intr(r)<<12),sv->c.ul);
+      op=stuff_const(0xE28B0000|(intr(r)<<12),sv->c.i);
       if (fr & VT_SYM || !op) {
 	o(0xE59F0000|(intr(r)<<12));
 	o(0xEA000000);
 	if(fr & VT_SYM) // needed ?
 	  greloc(cur_text_section, sv->sym, ind, R_ARM_ABS32);
-	o(sv->c.ul);
+	o(sv->c.i);
 	o(0xE08B0000|(intr(r)<<12)|intr(r));
       } else
 	o(op);
       return;
     } else if(v == VT_CMP) {
-      o(mapcc(sv->c.ul)|0x3A00001|(intr(r)<<12));
-      o(mapcc(negcc(sv->c.ul))|0x3A00000|(intr(r)<<12));
+      o(mapcc(sv->c.i)|0x3A00001|(intr(r)<<12));
+      o(mapcc(negcc(sv->c.i))|0x3A00000|(intr(r)<<12));
       return;
     } else if (v == VT_JMP || v == VT_JMPI) {
       int t;
       t = v & 1;
       o(0xE3A00000|(intr(r)<<12)|t);
       o(0xEA000000);
-      gsym(sv->c.ul);
+      gsym(sv->c.i);
       o(0xE3A00000|(intr(r)<<12)|(t^1));
       return;
     } else if (v < VT_CONST) {
@@ -667,7 +655,7 @@ void store(int r, SValue *sv)
 
   fr = sv->r;
   ft = sv->type.t;
-  fc = sv->c.ul;
+  fc = sv->c.i;
 
   if(fc>=0)
     sign=0;
@@ -678,7 +666,7 @@ void store(int r, SValue *sv)
 
   v = fr & VT_VALMASK;
   if (fr & VT_LVAL || fr == VT_LOCAL) {
-    uint32_t base = 0xb;
+    uint32_t base = 0xb; /* fp */
     if(v < VT_CONST) {
       base=intr(v);
       v=VT_LOCAL;
@@ -686,9 +674,10 @@ void store(int r, SValue *sv)
     } else if(v == VT_CONST) {
       v1.type.t = ft;
       v1.r = fr&~VT_LVAL;
-      v1.c.ul = sv->c.ul;
+      v1.c.i = sv->c.i;
       v1.sym=sv->sym;
-      load(base=14, &v1);
+      load(TREG_LR, &v1);
+      base = 14; /* lr */
       fc=sign=0;
       v=VT_LOCAL;
     }
@@ -751,7 +740,7 @@ static void gcall_or_jmp(int is_jmp)
   if ((vtop->r & (VT_VALMASK | VT_LVAL)) == VT_CONST) {
     uint32_t x;
     /* constant case */
-    x=encbranch(ind,ind+vtop->c.ul,0);
+    x=encbranch(ind,ind+vtop->c.i,0);
     if(x) {
       if (vtop->r & VT_SYM) {
 	/* relocation case */
@@ -765,7 +754,7 @@ static void gcall_or_jmp(int is_jmp)
       o(0xE51FF004);   // ldr pc,[pc,#-4]
       if (vtop->r & VT_SYM)
 	greloc(cur_text_section, vtop->sym, ind, R_ARM_ABS32);
-      o(vtop->c.ul);
+      o(vtop->c.i);
     }
   } else {
     /* otherwise, indirect call */
@@ -774,6 +763,15 @@ static void gcall_or_jmp(int is_jmp)
       o(0xE1A0E00F);       // mov lr,pc
     o(0xE1A0F000|intr(r)); // mov pc,r
   }
+}
+
+static int unalias_ldbl(int btype)
+{
+#if LDOUBLE_SIZE == 8
+    if (btype == VT_LDOUBLE)
+      btype = VT_DOUBLE;
+#endif
+    return btype;
 }
 
 /* Return whether a structure is an homogeneous float aggregate or not.
@@ -788,9 +786,9 @@ static int is_hgen_float_aggr(CType *type)
     int btype, nb_fields = 0;
 
     ref = type->ref->next;
-    btype = ref->type.t & VT_BTYPE;
+    btype = unalias_ldbl(ref->type.t & VT_BTYPE);
     if (btype == VT_FLOAT || btype == VT_DOUBLE) {
-      for(; ref && btype == (ref->type.t & VT_BTYPE); ref = ref->next, nb_fields++);
+      for(; ref && btype == unalias_ldbl(ref->type.t & VT_BTYPE); ref = ref->next, nb_fields++);
       return !ref && nb_fields <= 4;
     }
   }
@@ -869,18 +867,20 @@ int floats_in_core_regs(SValue *sval)
 
 /* Return the number of registers needed to return the struct, or 0 if
    returning via struct pointer. */
-ST_FUNC int gfunc_sret(CType *vt, int variadic, CType *ret, int *ret_align) {
+ST_FUNC int gfunc_sret(CType *vt, int variadic, CType *ret, int *ret_align, int *regsize) {
 #ifdef TCC_ARM_EABI
     int size, align;
     size = type_size(vt, &align);
     if (float_abi == ARM_HARD_FLOAT && !variadic &&
         (is_float(vt->t) || is_hgen_float_aggr(vt))) {
         *ret_align = 8;
+	*regsize = 8;
         ret->ref = NULL;
         ret->t = VT_DOUBLE;
         return (size + 7) >> 3;
     } else if (size <= 4) {
         *ret_align = 4;
+	*regsize = 4;
         ret->ref = NULL;
         ret->t = VT_INT;
         return 1;
@@ -1045,6 +1045,7 @@ static int copy_params(int nb_args, struct plan *plan, int todo)
 {
   int size, align, r, i, nb_extra_sval = 0;
   struct param_plan *pplan;
+  int pass = 0;
 
    /* Several constraints require parameters to be copied in a specific order:
       - structures are copied to the stack before being loaded in a reg;
@@ -1061,8 +1062,14 @@ static int copy_params(int nb_args, struct plan *plan, int todo)
       - parameters assigned to VFP regs be copied before structures assigned to
         VFP regs as the copy might use an even numbered VFP reg that already
         holds part of a structure. */
+again:
   for(i = 0; i < NB_CLASSES; i++) {
     for(pplan = plan->clsplans[i]; pplan; pplan = pplan->prev) {
+
+      if (pass
+          && (i != CORE_CLASS || pplan->sval->r < VT_CONST))
+        continue;
+
       vpushv(pplan->sval);
       pplan->sval->r = pplan->sval->r2 = VT_CONST; /* disable entry */
       switch(i) {
@@ -1168,6 +1175,11 @@ static int copy_params(int nb_args, struct plan *plan, int todo)
     }
   }
 
+  /* second pass to restore registers that were saved on stack by accident.
+     Maybe redundant after the "lvalue_save" patch in tccgen.c:gv() */
+  if (++pass < 2)
+    goto again;
+
   /* Manually free remaining registers since next parameters are loaded
    * manually, without the help of gv(int). */
   save_regs(nb_args);
@@ -1199,11 +1211,13 @@ static int copy_params(int nb_args, struct plan *plan, int todo)
 void gfunc_call(int nb_args)
 {
   int r, args_size;
-  int variadic, def_float_abi = float_abi;
+  int def_float_abi = float_abi;
   int todo;
   struct plan plan;
 
 #ifdef TCC_ARM_EABI
+  int variadic;
+
   if (float_abi == ARM_HARD_FLOAT) {
     variadic = (vtop[-nb_args].type.ref->c == FUNC_ELLIPSIS);
     if (variadic || floats_in_core_regs(&vtop[-nb_args]))
@@ -1253,10 +1267,13 @@ void gfunc_call(int nb_args)
 void gfunc_prolog(CType *func_type)
 {
   Sym *sym,*sym2;
-  int n, nf, size, align, struct_ret = 0;
+  int n, nf, size, align, rs, struct_ret = 0;
   int addr, pn, sn; /* pn=core, sn=stack */
-  struct avail_regs avregs = AVAIL_REGS_INITIALIZER;
   CType ret_type;
+
+#ifdef TCC_ARM_EABI
+  struct avail_regs avregs = AVAIL_REGS_INITIALIZER;
+#endif
 
   sym = func_type->ref;
   func_vt = sym->type;
@@ -1264,7 +1281,7 @@ void gfunc_prolog(CType *func_type)
 
   n = nf = 0;
   if ((func_vt.t & VT_BTYPE) == VT_STRUCT &&
-      !gfunc_sret(&func_vt, func_var, &ret_type, &align))
+      !gfunc_sret(&func_vt, func_var, &ret_type, &align, &rs))
   {
     n++;
     struct_ret = 1;
@@ -1337,8 +1354,8 @@ void gfunc_prolog(CType *func_type)
       if (!sn && pn > 4)
         sn = (pn - 4);
     } else {
-from_stack:
 #ifdef TCC_ARM_EABI
+from_stack:
         sn = (sn + (align-1)/4) & -(align/4);
 #endif
       addr = (n + nf + sn) * 4;
@@ -1395,6 +1412,8 @@ void gfunc_epilog(void)
 int gjmp(int t)
 {
   int r;
+  if (nocode_wanted)
+    return t;
   r=ind;
   o(0xE0000000|encbranch(r,t,1));
   return r;
@@ -1411,14 +1430,18 @@ int gtst(int inv, int t)
 {
   int v, r;
   uint32_t op;
+
   v = vtop->r & VT_VALMASK;
   r=ind;
-  if (v == VT_CMP) {
+
+  if (nocode_wanted) {
+    ;
+  } else if (v == VT_CMP) {
     op=mapcc(inv?negcc(vtop->c.i):vtop->c.i);
     op|=encbranch(r,t,1);
     o(op);
     t=r;
-  } else { /* VT_JMP || VT_JMPI */
+  } else if (v == VT_JMP || v == VT_JMPI) {
     if ((v & 1) == inv) {
       if(!vtop->c.i)
 	vtop->c.i=t;
@@ -2087,20 +2110,44 @@ void ggoto(void)
 
 /* Save the stack pointer onto the stack and return the location of its address */
 ST_FUNC void gen_vla_sp_save(int addr) {
-    tcc_error("variable length arrays unsupported for this target");
+    SValue v;
+    v.type.t = VT_PTR;
+    v.r = VT_LOCAL | VT_LVAL;
+    v.c.i = addr;
+    store(TREG_SP, &v);
 }
 
 /* Restore the SP from a location on the stack */
 ST_FUNC void gen_vla_sp_restore(int addr) {
-    tcc_error("variable length arrays unsupported for this target");
+    SValue v;
+    v.type.t = VT_PTR;
+    v.r = VT_LOCAL | VT_LVAL;
+    v.c.i = addr;
+    load(TREG_SP, &v);
 }
 
 /* Subtract from the stack pointer, and push the resulting value onto the stack */
 ST_FUNC void gen_vla_alloc(CType *type, int align) {
-    tcc_error("variable length arrays unsupported for this target");
+    int r = intr(gv(RC_INT));
+    o(0xE04D0000|(r<<12)|r); /* sub r, sp, r */
+#ifdef TCC_ARM_EABI
+    if (align < 8)
+        align = 8;
+#else
+    if (align < 4)
+        align = 4;
+#endif
+    if (align & (align - 1))
+        tcc_error("alignment is not a power of 2: %i", align);
+    o(stuff_const(0xE3C0D000|(r<<16), align - 1)); /* bic sp, r, #align-1 */
+    vpop();
 }
 
 /* end of ARM code generator */
 /*************************************************************/
 #endif
 /*************************************************************/
+
+#ifndef TCC_IS_NATIVE
+#include "arm-asm.c"
+#endif
