@@ -4,12 +4,8 @@
 
 TOP = ..
 include $(TOP)/Makefile
-SRCDIR = $(top_srcdir)/tests
-VPATH = $(SRCDIR) $(top_srcdir)
-
-# clear CFLAGS and LDFLAGS
-CFLAGS :=
-LDFLAGS :=
+VPATH = $(TOPSRC)/tests $(TOPSRC) $(TOP)
+CFLAGS := $(filter-out -W% -g% -O%,$(CFLAGS)) -I$(TOPSRC)
 
 # what tests to run
 TESTS = \
@@ -17,19 +13,18 @@ TESTS = \
  hello-run \
  libtest \
  test3 \
- $(BTESTS) \
+ memtest \
+ dlltest \
  abitest \
  vla_test-run \
- moretests
+ cross-test \
+ tests2-dir \
+ pp-dir
 
 BTESTS = test1b test3b btest
 
-ifdef CONFIG_CROSS
- TESTS += hello-cross
-endif
-
 # test4 -- problem with -static
-# asmtest -- minor differences with gcc
+# asmtest / asmtest2 -- minor differences with gcc
 # btest -- works on i386 (including win32)
 
 # bounds-checking is supported only on i386
@@ -37,80 +32,63 @@ ifneq ($(ARCH),i386)
  TESTS := $(filter-out $(BTESTS),$(TESTS))
 endif
 ifdef CONFIG_WIN32
- TESTS := w32-prep $(filter-out $(BTESTS),$(TESTS))
+ TESTS := $(filter-out $(BTESTS),$(TESTS))
 endif
 ifeq ($(TARGETOS),Darwin)
  TESTS := $(filter-out hello-exe test3 $(BTESTS),$(TESTS))
 endif
-ifeq ($(ARCH),i386)
-else ifneq ($(ARCH),x86-64)
+ifeq (,$(filter arm64 i386 x86_64,$(ARCH)))
  TESTS := $(filter-out vla_test-run,$(TESTS))
 endif
+ifeq ($(CONFIG_arm_eabi),yes)
+ TESTS := $(filter-out test3,$(TESTS))
+endif
+ifeq (,$(filter i386 x86_64,$(ARCH)))
+ TESTS := $(filter-out dlltest,$(TESTS))
+endif
+ifndef CONFIG_CROSS
+ TESTS := $(filter-out cross-%,$(TESTS))
+endif
 
-ifdef DISABLE_STATIC
- export LD_LIBRARY_PATH:=$(CURDIR)/..
+ifdef CONFIG_WIN32
+ PATH := $(CURDIR)/$(TOP):$(PATH) # for libtcc_test to find libtcc.dll
 endif
 
 ifeq ($(TARGETOS),Darwin)
- CFLAGS+=-Wl,-flat_namespace,-undefined,warning
+ CFLAGS += -Wl,-flat_namespace,-undefined,warning
+ TCCFLAGS += -D_ANSI_SOURCE
  export MACOSX_DEPLOYMENT_TARGET:=10.2
- NATIVE_DEFINES+=-D_ANSI_SOURCE
 endif
 
-# run local version of tcc with local libraries and includes
-TCCFLAGS = -B$(TOP) -I$(TOP) -I$(top_srcdir) -I$(top_srcdir)/include
-ifdef CONFIG_WIN32
- TCCFLAGS = -B$(top_srcdir)/win32 -I$(top_srcdir) -I$(top_srcdir)/include -I$(TOP) -L$(TOP)
-endif
-XTCCFLAGS = -B$(TOP) -B$(top_srcdir)/win32 -I$(TOP) -I$(top_srcdir) -I$(top_srcdir)/include
-
-TCC = $(TOP)/tcc $(TCCFLAGS)
-RUN_TCC = $(NATIVE_DEFINES) -DONE_SOURCE -run $(top_srcdir)/tcc.c $(TCCFLAGS)
+RUN_TCC = $(NATIVE_DEFINES) -DONE_SOURCE -run $(TOPSRC)/tcc.c $(TCCFLAGS)
 
 DISAS = objdump -d
 
-# libtcc test
-ifdef LIBTCC1
- LIBTCC1:=$(TOP)/$(LIBTCC1)
-endif
-
-all test : $(TESTS)
+all test : clean-s $(TESTS)
 
 hello-exe: ../examples/ex1.c
 	@echo ------------ $@ ------------
 	$(TCC) $< -o hello$(EXESUF) || ($(TOP)/tcc -vv; exit 1) && ./hello$(EXESUF)
 
-hello-cross: ../examples/ex1.c
-	@echo ------------ $@ ------------
-	for XTCC in $(PROGS_CROSS) ; \
-		do echo -n "Test of $$XTCC...  "; \
-		out=$$($(TOP)/$$XTCC $(XTCCFLAGS) -c $< 2>&1); \
-		test $$? -ne 0 && { echo "Failed\n$$out\n" ; $(TOP)/$$XTCC -vv; exit 1; } ; \
-		echo "Success"; \
-	done
-
 hello-run: ../examples/ex1.c
 	@echo ------------ $@ ------------
 	$(TCC) -run $<
 
-libtest: libtcc_test$(EXESUF) $(LIBTCC1)
+libtest: libtcc_test$(EXESUF)
 	@echo ------------ $@ ------------
-	./libtcc_test$(EXESUF) lib_path=..
+	./libtcc_test$(EXESUF) $(TCCFLAGS)
 
-libtcc_test$(EXESUF): libtcc_test.c $(top_builddir)/$(LIBTCC)
-	$(CC) -o $@ $^ $(CPPFLAGS) $(CFLAGS) $(NATIVE_DEFINES) $(LIBS) $(LINK_LIBTCC) $(LDFLAGS) -I$(top_srcdir)
+libtcc_test$(EXESUF): libtcc_test.c $(LIBTCC)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-moretests:
+%-dir:
 	@echo ------------ $@ ------------
-	$(MAKE) -C tests2
-
-w32-prep:
-	cp ../libtcc1.a ../lib
+	$(MAKE) -k -C $*
 
 # test.ref - generate using cc
 test.ref: tcctest.c
-	$(CC) -o tcctest.cc $< -I$(top_srcdir) $(CPPFLAGS) -w $(CFLAGS) $(NATIVE_DEFINES) -std=gnu99 -O0 -fno-omit-frame-pointer $(LDFLAGS)
-	./tcctest.cc > $@
+	$(CC) -o tcctest.gcc $< $(NATIVE_DEFINES) $(CFLAGS) -w -O0 -std=gnu99 -fno-omit-frame-pointer
+	./tcctest.gcc > $@
 
 # auto test
 test1 test1b: tcctest.c test.ref
@@ -153,6 +131,28 @@ test4: tcctest.c test.ref
 	./tcctest2 > test2.out
 	@if diff -u test.ref test2.out ; then echo "Static Auto Test OK"; fi
 
+# use tcc to create libtcc.so/.dll and the tcc(.exe) frontend and run them
+dlltest:
+	@echo ------------ $@ ------------
+	$(TCC) -DONE_SOURCE $(NATIVE_DEFINES) -DLIBTCC_AS_DLL $(TOPSRC)/libtcc.c $(LIBS) -shared -o libtcc2$(DLLSUF)
+	$(TCC) $(NATIVE_DEFINES) $(TOPSRC)/tcc.c libtcc2$(DLLSUF) $(LIBS) -Wl,-rpath=. -o tcc2$(EXESUF)
+	./tcc2$(EXESUF) $(TCCFLAGS) $(RUN_TCC) -run $(TOPSRC)/examples/ex1.c
+ifndef CONFIG_WIN32
+	@echo ------------ $@ with PIC ------------
+	$(CC) $(CFLAGS) -fPIC -DONE_SOURCE $(NATIVE_DEFINES) -DLIBTCC_AS_DLL -c $(TOPSRC)/libtcc.c
+	$(TCC) libtcc.o $(LIBS) -shared -o libtcc2$(DLLSUF)
+	$(TCC) $(NATIVE_DEFINES) $(TOPSRC)/tcc.c libtcc2$(DLLSUF) $(LIBS) -Wl,-rpath=. -o tcc2$(EXESUF)
+	./tcc2$(EXESUF) $(TCCFLAGS) $(RUN_TCC) -run $(TOPSRC)/examples/ex1.c
+endif
+	@rm tcc2$(EXESUF) libtcc2$(DLLSUF)
+
+memtest:
+	@echo ------------ $@ ------------
+	$(CC) $(CFLAGS) $(NATIVE_DEFINES) -DONE_SOURCE -DMEM_DEBUG=2 $(TOPSRC)/tcc.c $(LIBS) -o memtest-tcc$(EXESUF)
+	./memtest-tcc$(EXESUF) $(TCCFLAGS) $(NATIVE_DEFINES) -DONE_SOURCE $(TOPSRC)/tcc.c $(LIBS)
+	./memtest-tcc$(EXESUF) $(TCCFLAGS) $(NATIVE_DEFINES) -DONE_SOURCE -run $(TOPSRC)/tcc.c $(TCCFLAGS) $(TOPSRC)/tests/tcctest.c
+
+
 # memory and bound check auto test
 BOUNDS_OK  = 1 4 8 10 14
 BOUNDS_FAIL= 2 5 7 9 11 12 13 15
@@ -181,49 +181,70 @@ btest: boundtest.c
 speedtest: ex2 ex3
 	@echo ------------ $@ ------------
 	time ./ex2 1238 2 3 4 10 13 4
-	time $(TCC) -run $(top_srcdir)/examples/ex2.c 1238 2 3 4 10 13 4
+	time $(TCC) -run $(TOPSRC)/examples/ex2.c 1238 2 3 4 10 13 4
 	time ./ex3 35
-	time $(TCC) -run $(top_srcdir)/examples/ex3.c 35
+	time $(TCC) -run $(TOPSRC)/examples/ex3.c 35
 
 weaktest: tcctest.c test.ref
-	$(TCC) -c $< -o weaktest.tcc.o $(CPPFLAGS) $(CFLAGS)
-	 $(CC) -c $< -o weaktest.cc.o -I. $(CPPFLAGS) -w $(CFLAGS)
+	$(TCC) -c $< -o weaktest.tcc.o
+	$(CC) -c $< -o weaktest.gcc.o $(NATIVE_DEFINES) $(CFLAGS) -w -O0 -std=gnu99 -fno-omit-frame-pointer
 	objdump -t weaktest.tcc.o | grep ' w ' | sed -e 's/.* \([a-zA-Z0-9_]*\)$$/\1/' | LC_ALL=C sort > weaktest.tcc.o.txt
-	objdump -t weaktest.cc.o | grep ' w ' | sed -e 's/.* \([a-zA-Z0-9_]*\)$$/\1/' | LC_ALL=C sort > weaktest.cc.o.txt
-	diff weaktest.cc.o.txt weaktest.tcc.o.txt && echo "Weak Auto Test OK"
+	objdump -t weaktest.gcc.o | grep ' w ' | sed -e 's/.* \([a-zA-Z0-9_]*\)$$/\1/' | LC_ALL=C sort > weaktest.gcc.o.txt
+	diff weaktest.gcc.o.txt weaktest.tcc.o.txt && echo "Weak Auto Test OK"
 
-ex%: $(top_srcdir)/examples/ex%.c
-	$(CC) -o $@ $< $(CPPFLAGS) $(CFLAGS) $(LDFLAGS)
+ex%: $(TOPSRC)/examples/ex%.c
+	$(CC) -o $@ $< $(CFLAGS)
 
 # tiny assembler testing
 asmtest.ref: asmtest.S
 	$(CC) -Wa,-W -o asmtest.ref.o -c asmtest.S
 	objdump -D asmtest.ref.o > asmtest.ref
 
-asmtest: asmtest.ref
+asmtest asmtest2: asmtest.ref
 	@echo ------------ $@ ------------
-	$(TCC) -c asmtest.S
+	$(TCC) $(MAYBE_RUN_TCC) -c asmtest.S
 	objdump -D asmtest.o > asmtest.out
 	@if diff -u --ignore-matching-lines="file format" asmtest.ref asmtest.out ; then echo "ASM Auto Test OK"; fi
 
+# test assembler with tcc compiled by itself
+asmtest2: MAYBE_RUN_TCC = $(RUN_TCC)
+
 # Check that code generated by libtcc is binary compatible with
 # that generated by CC
-abitest-cc$(EXESUF): abitest.c $(top_builddir)/$(LIBTCC)
-	$(CC) -o $@ $^ $(CPPFLAGS) $(CFLAGS) $(NATIVE_DEFINES) $(LIBS) $(LINK_LIBTCC) $(LDFLAGS) -I$(top_srcdir)
+abitest-cc$(EXESUF): abitest.c $(LIBTCC)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) -w
 
 abitest-tcc$(EXESUF): abitest.c libtcc.c
-	$(TCC) -o $@ $^ $(CPPFLAGS) $(CFLAGS) $(NATIVE_DEFINES) -DONE_SOURCE $(LIBS) $(LDFLAGS) -I$(top_srcdir)
+	$(TCC) -o $@ $^ $(NATIVE_DEFINES) -DONE_SOURCE $(LIBS)
 
-abitest: abitest-cc$(EXESUF) abitest-tcc$(EXESUF)
+ABITESTS := abitest-cc$(EXESUF)
+ifneq ($(CONFIG_arm_eabi),yes) # not ARM soft-float
+ ABITESTS += abitest-tcc$(EXESUF)
+endif
+
+abitest: $(ABITESTS)
 	@echo ------------ $@ ------------
-	./abitest-cc$(EXESUF) lib_path=.. include="$(top_srcdir)/include"
-	./abitest-tcc$(EXESUF) lib_path=.. include="$(top_srcdir)/include"
+	./abitest-cc$(EXESUF) $(TCCFLAGS)
+ifneq ($(CONFIG_arm_eabi),yes) # not ARM soft-float
+	./abitest-tcc$(EXESUF) $(TCCFLAGS)
+endif
 
 vla_test$(EXESUF): vla_test.c
-	$(TCC) -o $@ $^ $(CPPFLAGS) $(CFLAGS)
+	$(TCC) -o $@ $^
+
 vla_test-run: vla_test$(EXESUF)
 	@echo ------------ $@ ------------
 	./vla_test$(EXESUF)
+
+cross-test :
+	@echo ------------ $@ ------------
+	$(TOP)/i386-tcc$(EXESUF) $(TCCFLAGS-unx) -c $(TOPSRC)/examples/ex3.c && echo "ok"
+	$(TOP)/x86_64-tcc$(EXESUF) $(TCCFLAGS-unx) -c $(TOPSRC)/examples/ex3.c && echo "ok"
+	$(TOP)/arm-tcc$(EXESUF) $(TCCFLAGS-unx) -c $(TOPSRC)/examples/ex3.c && echo "ok"
+	$(TOP)/c67-tcc$(EXESUF) $(TCCFLAGS-unx) -c $(TOPSRC)/examples/ex3.c && echo "ok"
+	$(TOP)/i386-win32-tcc$(EXESUF) $(TCCFLAGS-win) $(TOPSRC)/win32/examples/hello_win.c && echo "ok"
+	$(TOP)/x86_64-win32-tcc$(EXESUF) $(TCCFLAGS-win) $(TOPSRC)/win32/examples/hello_win.c && echo "ok"
+	$(TOP)/arm-wince-tcc$(EXESUF) $(TCCFLAGS-win) -c $(TOPSRC)/win32/examples/hello_win.c && echo "ok"
 
 # targets for development
 %.bin: %.c tcc
@@ -242,8 +263,12 @@ cache: tcc_g
 
 # clean
 clean:
+	rm -f *~ *.o *.a *.bin *.i *.ref *.out *.out? *.out?b *.cc *.gcc \
+	      *-cc *-gcc *-tcc *.exe hello libtcc_test vla_test tcctest[1234] \
+	      ex? tcc_g *.def weaktest.*.txt
 	$(MAKE) -C tests2 $@
-	rm -vf *~ *.o *.a *.bin *.i *.ref *.out *.out? *.out?b *.cc \
-		*-cc *-tcc *.exe \
-		hello libtcc_test vla_test tcctest[1234] ex? tcc_g tcclib.h \
-		../lib/libtcc1.a
+	$(MAKE) -C pp $@
+
+# silent clean, used before running tests
+clean-s:
+	@$(MAKE) -s --no-print-directory clean

@@ -27,21 +27,32 @@
 
  Author (name)              I agree (YES/NO)    Files/Features (optional)
  ------------------------------------------------------------------------------
- Daniel Glöckner            NO                  arm-gen.c
- Daniel Glöckner            YES                 not arm-gen.c
+ Adam Sampson               YES                 makefiles
+ Daniel GlÃ¶ckner            NO                  arm-gen.c
+ Daniel GlÃ¶ckner            YES                 not arm-gen.c
+ Edmund Grimley Evans       YES                 arm64
  Fabrice Bellard            YES                 original author
- Frédéric Féret             YES                 x86 64/16 bit asm
+ FrÃ©dÃ©ric FÃ©ret             YES                 x86 64/16 bit asm
  grischka                   YES                 tccpe.c
+ Henry Kroll                YES
+ Joe Soroka                 YES
+ Kirill Smelkov             YES
+ mingodad                   YES
+ Pip Cet                    YES
  Shinichiro Hamaji          YES                 x86_64-gen.c
+ Vincent LefÃ¨vre            YES
  Thomas Preud'homme         YES                 arm-gen.c
- Timo VJ Lähde (Timppa)     ?                   tiny_libmaker.c
+ Timo VJ LÃ¤hde (Timppa)     ?                   tiny_libmaker.c
  TK                         ?                   tcccoff.c c67-gen.c
+ Urs Janssen                YES
+ waddlesplash               YES
+ Christian Jullien          YES                 Windows Cygwin build and tests
 
 
  ------------------------------------------------------------------------------
 
  Please add yourself to the list above (rsp. replace the question mark)
- and (after fetching the latest version) commit to the "mob" brancn with
+ and (after fetching the latest version) commit to the "mob" branch with
  commit message:
 
      Relicensing TinyCC

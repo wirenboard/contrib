@@ -13,8 +13,24 @@
 #define LONG_DOUBLE_LITERAL(x) x ## L
 #endif
 
-static const char *tccdir = NULL;
-static const char *include_dir = NULL;
+static int g_argc;
+static char **g_argv;
+
+static void set_options(TCCState *s, int argc, char **argv)
+{
+    int i;
+    for (i = 1; i < argc; ++i) {
+        char *a = argv[i];
+        if (a[0] == '-') {
+            if (a[1] == 'B')
+                tcc_set_lib_path(s, a+2);
+            else if (a[1] == 'I')
+                tcc_add_include_path(s, a+2);
+            else if (a[1] == 'L')
+                tcc_add_library_path(s, a+2);
+        }
+    }
+}
 
 typedef int (*callback_type) (void*);
 
@@ -29,12 +45,9 @@ static int run_callback(const char *src, callback_type callback) {
   s = tcc_new();
   if (!s)
     return -1;
-  if (tccdir)
-    tcc_set_lib_path(s, tccdir);
-  if (include_dir) {
-    if (tcc_add_include_path(s, include_dir) == -1)
-      return -1;
-  }
+
+  set_options(s, g_argc, g_argv);
+
   if (tcc_set_output_type(s, TCC_OUTPUT_MEMORY) == -1)
     return -1;
   if (tcc_compile_string(s, src) == -1)
@@ -131,6 +144,122 @@ static int ret_2double_test(void) {
 }
 
 /*
+ * ret_8plus2double_test:
+ *
+ * This catches a corner case in the x86_64 ABI code: the first 7
+ * arguments fit into registers, the 8th doesn't, but the 9th argument
+ * fits into the 8th XMM register.
+ *
+ * Note that the purpose of the 10th argument is to avoid a situation
+ * in which gcc would accidentally put the double at the right
+ * address, thus causing a success message even though TCC actually
+ * generated incorrect code.
+ */
+typedef ret_2double_test_type (*ret_8plus2double_test_function_type) (double, double, double, double, double, double, double, ret_2double_test_type, double, double);
+
+static int ret_8plus2double_test_callback(void *ptr) {
+  ret_8plus2double_test_function_type f = (ret_8plus2double_test_function_type)ptr;
+  ret_2double_test_type a = {10, 35};
+  ret_2double_test_type r;
+  r = f(0, 0, 0, 0, 0, 0, 0, a, 37, 38);
+  return ((r.x == 37) && (r.y == 37)) ? 0 : -1;
+}
+
+static int ret_8plus2double_test(void) {
+  const char *src =
+  "typedef struct ret_2double_test_type_s {double x, y;} ret_2double_test_type;"
+  "ret_2double_test_type f(double x1, double x2, double x3, double x4, double x5, double x6, double x7, ret_2double_test_type a, double x8, double x9) {\n"
+  "  ret_2double_test_type r = { x8, x8 };\n"
+  "  return r;\n"
+  "}\n";
+
+  return run_callback(src, ret_8plus2double_test_callback);
+}
+
+/*
+ * ret_mixed_test:
+ *
+ * On x86-64, a struct with a double and a 64-bit integer should be
+ * passed in one SSE register and one integer register.
+ */
+typedef struct ret_mixed_test_type_s {double x; long long y;} ret_mixed_test_type;
+typedef ret_mixed_test_type (*ret_mixed_test_function_type) (ret_mixed_test_type);
+
+static int ret_mixed_test_callback(void *ptr) {
+  ret_mixed_test_function_type f = (ret_mixed_test_function_type)ptr;
+  ret_mixed_test_type a = {10, 35};
+  ret_mixed_test_type r;
+  r = f(a);
+  return ((r.x == a.x*5) && (r.y == a.y*3)) ? 0 : -1;
+}
+
+static int ret_mixed_test(void) {
+  const char *src =
+  "typedef struct ret_mixed_test_type_s {double x; long long y;} ret_mixed_test_type;"
+  "ret_mixed_test_type f(ret_mixed_test_type a) {\n"
+  "  ret_mixed_test_type r = {a.x*5, a.y*3};\n"
+  "  return r;\n"
+  "}\n";
+
+  return run_callback(src, ret_mixed_test_callback);
+}
+
+/*
+ * ret_mixed2_test:
+ *
+ * On x86-64, a struct with two floats and two 32-bit integers should
+ * be passed in one SSE register and one integer register.
+ */
+typedef struct ret_mixed2_test_type_s {float x,x2; int y,y2;} ret_mixed2_test_type;
+typedef ret_mixed2_test_type (*ret_mixed2_test_function_type) (ret_mixed2_test_type);
+
+static int ret_mixed2_test_callback(void *ptr) {
+  ret_mixed2_test_function_type f = (ret_mixed2_test_function_type)ptr;
+  ret_mixed2_test_type a = {10, 5, 35, 7 };
+  ret_mixed2_test_type r;
+  r = f(a);
+  return ((r.x == a.x*5) && (r.y == a.y*3)) ? 0 : -1;
+}
+
+static int ret_mixed2_test(void) {
+  const char *src =
+  "typedef struct ret_mixed2_test_type_s {float x, x2; int y,y2;} ret_mixed2_test_type;"
+  "ret_mixed2_test_type f(ret_mixed2_test_type a) {\n"
+  "  ret_mixed2_test_type r = {a.x*5, 0, a.y*3, 0};\n"
+  "  return r;\n"
+  "}\n";
+
+  return run_callback(src, ret_mixed2_test_callback);
+}
+
+/*
+ * ret_mixed3_test:
+ *
+ * On x86-64, this struct should be passed in two integer registers.
+ */
+typedef struct ret_mixed3_test_type_s {float x; int y; float x2; int y2;} ret_mixed3_test_type;
+typedef ret_mixed3_test_type (*ret_mixed3_test_function_type) (ret_mixed3_test_type);
+
+static int ret_mixed3_test_callback(void *ptr) {
+  ret_mixed3_test_function_type f = (ret_mixed3_test_function_type)ptr;
+  ret_mixed3_test_type a = {10, 5, 35, 7 };
+  ret_mixed3_test_type r;
+  r = f(a);
+  return ((r.x == a.x*5) && (r.y2 == a.y*3)) ? 0 : -1;
+}
+
+static int ret_mixed3_test(void) {
+  const char *src =
+  "typedef struct ret_mixed3_test_type_s {float x; int y; float x2; int y2;} ret_mixed3_test_type;"
+  "ret_mixed3_test_type f(ret_mixed3_test_type a) {\n"
+  "  ret_mixed3_test_type r = {a.x*5, 0, 0, a.y*3};\n"
+  "  return r;\n"
+  "}\n";
+
+  return run_callback(src, ret_mixed3_test_callback);
+}
+
+/*
  * reg_pack_test: return a small struct which should be packed into
  * registers (Win32) during return.
  */
@@ -180,6 +309,39 @@ static int reg_pack_longlong_test(void) {
   "}\n";
   
   return run_callback(src, reg_pack_longlong_test_callback);
+}
+
+/*
+ * ret_6plus2longlong_test:
+ *
+ * This catches a corner case in the x86_64 ABI code: the first 5
+ * arguments fit into registers, the 6th doesn't, but the 7th argument
+ * fits into the 6th argument integer register, %r9.
+ *
+ * Note that the purpose of the 10th argument is to avoid a situation
+ * in which gcc would accidentally put the longlong at the right
+ * address, thus causing a success message even though TCC actually
+ * generated incorrect code.
+ */
+typedef reg_pack_longlong_test_type (*ret_6plus2longlong_test_function_type) (long long, long long, long long, long long, long long, reg_pack_longlong_test_type, long long, long long);
+
+static int ret_6plus2longlong_test_callback(void *ptr) {
+  ret_6plus2longlong_test_function_type f = (ret_6plus2longlong_test_function_type)ptr;
+  reg_pack_longlong_test_type a = {10, 35};
+  reg_pack_longlong_test_type r;
+  r = f(0, 0, 0, 0, 0, a, 37, 38);
+  return ((r.x == 37) && (r.y == 37)) ? 0 : -1;
+}
+
+static int ret_6plus2longlong_test(void) {
+  const char *src =
+  "typedef struct reg_pack_longlong_test_type_s {long long x, y;} reg_pack_longlong_test_type;"
+  "reg_pack_longlong_test_type f(long long x1, long long x2, long long x3, long long x4, long long x5, reg_pack_longlong_test_type a, long long x8, long long x9) {\n"
+  "  reg_pack_longlong_test_type r = { x8, x8 };\n"
+  "  return r;\n"
+  "}\n";
+
+  return run_callback(src, ret_6plus2longlong_test_callback);
 }
 
 /*
@@ -316,6 +478,42 @@ static int many_struct_test_2(void) {
 }
 
 /*
+ * Win64 calling convention test.
+ */
+
+typedef struct many_struct_test_3_type_s {int a, b;} many_struct_test_3_type;
+typedef many_struct_test_3_type (*many_struct_test_3_function_type) (many_struct_test_3_type,many_struct_test_3_type,many_struct_test_3_type,many_struct_test_3_type,many_struct_test_3_type,many_struct_test_3_type, ...);
+typedef struct many_struct_test_3_struct_type { many_struct_test_3_function_type f; many_struct_test_3_function_type *f2; } many_struct_test_3_struct_type;
+
+static void many_struct_test_3_dummy(double d, ...)
+{
+  volatile double x = d;
+}
+
+static int many_struct_test_3_callback(void *ptr) {
+  many_struct_test_3_struct_type s = { ptr, };
+  many_struct_test_3_struct_type *s2 = &s;
+  s2->f2 = &s2->f;
+  many_struct_test_3_dummy(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, &s2);
+  many_struct_test_3_function_type f = *(s2->f2);
+  many_struct_test_3_type v = {1,2};
+  many_struct_test_3_type r = (*((s2->f2=&f)+0))(v,v,v,v,v,v,1.0);
+  return ((r.a == 6) && (r.b == 12))?0:-1;
+}
+
+static int many_struct_test_3(void) {
+  const char *src =
+  "typedef struct many_struct_test_3_type_s {int a, b;} many_struct_test_3_type;\n"
+  "many_struct_test_3_type f(many_struct_test_3_type x1, many_struct_test_3_type x2, many_struct_test_3_type x3, many_struct_test_3_type x4, many_struct_test_3_type x5, many_struct_test_3_type x6, ...) {\n"
+  "  many_struct_test_3_type y;\n"
+  "  y.a = x1.a + x2.a + x3.a + x4.a + x5.a + x6.a;\n"
+  "  y.b = x1.b + x2.b + x3.b + x4.b + x5.b + x6.b;\n"
+  "  return y;\n"
+  "}\n";
+  return run_callback(src, many_struct_test_3_callback);
+}
+
+/*
  * stdarg_test: Test variable argument list ABI
  */
 
@@ -426,13 +624,11 @@ int main(int argc, char **argv) {
   
   /* if tcclib.h and libtcc1.a are not installed, where can we find them */
   for (i = 1; i < argc; ++i) {
-    if (!memcmp(argv[i], "lib_path=",9))
-      tccdir = argv[i] + 9;
-    else if (!memcmp(argv[i], "run_test=", 9))
+    if (!memcmp(argv[i], "run_test=", 9))
       testname = argv[i] + 9;
-    else if (!memcmp(argv[i], "include=", 8))
-      include_dir = argv[i] + 8;
-  }   
+  }
+
+  g_argv = argv, g_argc = argc;
 
   RUN_TEST(ret_int_test);
   RUN_TEST(ret_longlong_test);
@@ -441,6 +637,11 @@ int main(int argc, char **argv) {
   RUN_TEST(ret_longdouble_test);
   RUN_TEST(ret_2float_test);
   RUN_TEST(ret_2double_test);
+  /* RUN_TEST(ret_8plus2double_test); currently broken on x86_64 */
+  /* RUN_TEST(ret_6plus2longlong_test); currently broken on x86_64 */
+  /* RUN_TEST(ret_mixed_test); currently broken on x86_64 */
+  /* RUN_TEST(ret_mixed2_test); currently broken on x86_64 */
+  RUN_TEST(ret_mixed3_test);
   RUN_TEST(reg_pack_test);
   RUN_TEST(reg_pack_longlong_test);
   RUN_TEST(sret_test);
@@ -448,6 +649,7 @@ int main(int argc, char **argv) {
   RUN_TEST(two_member_union_test);
   RUN_TEST(many_struct_test);
   RUN_TEST(many_struct_test_2);
+  RUN_TEST(many_struct_test_3);
   RUN_TEST(stdarg_test);
   RUN_TEST(stdarg_struct_test);
   RUN_TEST(arg_align_test);

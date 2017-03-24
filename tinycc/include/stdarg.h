@@ -27,10 +27,14 @@ void *__va_arg(__va_list_struct *ap, int arg_type, int size, int align);
 #define va_copy(dest, src) (*(dest) = *(src))
 #define va_end(ap)
 
+/* avoid conflicting definition for va_list on Macs. */
+#define _VA_LIST_T
+
 #else /* _WIN64 */
 typedef char *va_list;
 #define va_start(ap,last) __builtin_va_start(ap,last)
-#define va_arg(ap,type) (ap += 8, sizeof(type)<=8 ? *(type*)ap : **(type**)ap)
+#define va_arg(ap, t) ((sizeof(t) > 8 || (sizeof(t) & (sizeof(t) - 1))) \
+	? **(t **)((ap += 8) - 8) : *(t  *)((ap += 8) - 8))
 #define va_copy(dest, src) ((dest) = (src))
 #define va_end(ap)
 #endif
@@ -45,6 +49,19 @@ typedef char *va_list;
                         &~3), *(type *)(ap - ((sizeof(type)+3)&~3)))
 #define va_copy(dest, src) (dest) = (src)
 #define va_end(ap)
+
+#elif defined(__aarch64__)
+typedef struct {
+    void *__stack;
+    void *__gr_top;
+    void *__vr_top;
+    int   __gr_offs;
+    int   __vr_offs;
+} va_list;
+#define va_start(ap, last) __va_start(ap, last)
+#define va_arg(ap, type) __va_arg(ap, type)
+#define va_end(ap)
+#define va_copy(dest, src) ((dest) = (src))
 
 #else /* __i386__ */
 typedef char *va_list;
