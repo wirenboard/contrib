@@ -1,3 +1,0 @@
-version=3
-opts="pgpsigurlmangle=s/$/.asc/" \
- http://mosquitto.org/files/source/mosquitto-(.*)\.tar\.gz

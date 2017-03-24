@@ -1,8 +1,0 @@
-perl-use-dpkg-buildflags.patch
-0003-Resolver-fixed-possible-segmentation-fault-on-DNS-fo.patch
-0004-Resolver-fixed-crashes-in-timeout-handler.patch
-0005-Resolver-fixed-CNAME-processing-for-several-requests.patch
-0006-Resolver-changed-the-ngx_resolver_create_-_query-arg.patch
-0007-Resolver-fixed-use-after-free-memory-accesses-with-C.patch
-0008-Resolver-limited-CNAME-recursion.patch
-0009-Core-skip-special-buffers-on-writing-ticket-981.patch
