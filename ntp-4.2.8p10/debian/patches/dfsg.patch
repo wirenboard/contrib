@@ -1,0 +1,147 @@
+From: Kurt Roeckx <kurt@roeckx.be>
+Subject: Make the package compile with non dfsg compatible parts removed.
+Forwarded: not-needed
+Bug-Debian: http://bugs.debian.org/328200
+
+Index: ntp-4.2.8p6+dfsg/adjtimed/adjtimed.c
+===================================================================
+--- ntp-4.2.8p6+dfsg.orig/adjtimed/adjtimed.c
++++ ntp-4.2.8p6+dfsg/adjtimed/adjtimed.c
+@@ -41,8 +41,6 @@ static char RCSid[] = "adjtimed.c,v 3.1
+ #include "ntp_syslog.h"
+ #include "ntp_stdlib.h"
+ 
+-#include "adjtime.h"
+-
+ double atof (const char *);
+ 
+ int InitClockRate (void);
+Index: ntp-4.2.8p6+dfsg/libntp/Makefile.am
+===================================================================
+--- ntp-4.2.8p6+dfsg.orig/libntp/Makefile.am
++++ ntp-4.2.8p6+dfsg/libntp/Makefile.am
+@@ -44,7 +44,6 @@ endif
+ 
+ libntp_a_SRCS =						\
+ 	a_md5encrypt.c					\
+-	adjtime.c					\
+ 	atoint.c					\
+ 	atolfp.c					\
+ 	atouint.c					\
+Index: ntp-4.2.8p6+dfsg/include/Makefile.am
+===================================================================
+--- ntp-4.2.8p6+dfsg.orig/include/Makefile.am
++++ ntp-4.2.8p6+dfsg/include/Makefile.am
+@@ -3,7 +3,6 @@ NULL =
+ SUBDIRS = isc
+ 
+ noinst_HEADERS =	\
+-	adjtime.h	\
+ 	audio.h		\
+ 	ascii.h		\
+ 	audio.h		\
+@@ -69,9 +68,6 @@ noinst_HEADERS =	\
+ 	refidsmear.h	\
+ 	safecast.h	\
+ 	ssl_applink.c	\
+-	timepps-SCO.h	\
+-	timepps-Solaris.h	\
+-	timepps-SunOS.h	\
+ 	timespecops.h	\
+ 	timetoa.h	\
+ 	timevalops.h	\
+Index: ntp-4.2.8p6+dfsg/configure.ac
+===================================================================
+--- ntp-4.2.8p6+dfsg.orig/configure.ac
++++ ntp-4.2.8p6+dfsg/configure.ac
+@@ -2925,28 +2925,28 @@ case "$ntp_ok$ntp_canparse" in
+     AC_MSG_ERROR([That's a parse clock and this system doesn't support it!])
+ esac
+ 
+-AC_MSG_CHECKING([WHARTON 400A Series clock])
+-AC_ARG_ENABLE(
+-    [WHARTON],
+-    [AS_HELP_STRING(
+-	[--enable-WHARTON],
+-	[s WHARTON 400A Series clock]
+-    )],
+-    [ntp_ok=$enableval],
+-    [ntp_ok=$ntp_eapc]
+-)
+-case "$ntp_ok" in
+- yes)
+-    ntp_libparse=yes
+-    ntp_refclock=yes
+-    AC_DEFINE([CLOCK_WHARTON_400A], [1], [WHARTON 400A Series clock])
+-    ;;
+-esac
+-AC_MSG_RESULT([$ntp_ok])
+-case "$ntp_ok$ntp_canparse" in
+- yesno)
+-    AC_MSG_ERROR([That's a parse clock and this system doesn't support it!])
+-esac
++dnl AC_MSG_CHECKING([WHARTON 400A Series clock])
++dnl AC_ARG_ENABLE(
++dnl     [WHARTON],
++dnl     [AS_HELP_STRING(
++dnl 	[--enable-WHARTON],
++dnl 	[s WHARTON 400A Series clock]
++dnl     )],
++dnl     [ntp_ok=$enableval],
++dnl     [ntp_ok=$ntp_eapc]
++dnl )
++dnl case "$ntp_ok" in
++dnl  yes)
++dnl     ntp_libparse=yes
++dnl     ntp_refclock=yes
++dnl     AC_DEFINE([CLOCK_WHARTON_400A], [1], [WHARTON 400A Series clock])
++dnl     ;;
++dnl esac
++dnl AC_MSG_RESULT([$ntp_ok])
++dnl case "$ntp_ok$ntp_canparse" in
++dnl  yesno)
++dnl     AC_MSG_ERROR([That's a parse clock and this system doesn't support it!])
++dnl esac
+ 
+ AC_MSG_CHECKING([VARITEXT clock])
+ AC_ARG_ENABLE(
+@@ -4365,7 +4365,6 @@ AC_CONFIG_FILES([scripts/ntpsweep/Makefi
+ AC_CONFIG_FILES([scripts/ntpsweep/ntpsweep],	[chmod +x scripts/ntpsweep/ntpsweep])
+ AC_CONFIG_FILES([scripts/ntptrace/Makefile])
+ AC_CONFIG_FILES([scripts/ntptrace/ntptrace],	[chmod +x scripts/ntptrace/ntptrace])
+-AC_CONFIG_FILES([scripts/ntpver],	[chmod +x scripts/ntpver])
+ AC_CONFIG_FILES([scripts/plot_summary],	[chmod +x scripts/plot_summary])
+ AC_CONFIG_FILES([scripts/summary],	[chmod +x scripts/summary])
+ AC_CONFIG_FILES([scripts/update-leap/Makefile])
+Index: ntp-4.2.8p6+dfsg/scripts/Makefile.am
+===================================================================
+--- ntp-4.2.8p6+dfsg.orig/scripts/Makefile.am
++++ ntp-4.2.8p6+dfsg/scripts/Makefile.am
+@@ -26,7 +26,6 @@ std_def_list =							\
+ 	$(NULL)
+ 
+ noinst_SCRIPTS =		\
+-	ntpver			\
+ 	plot_summary		\
+ 	summary			\
+ 	$(NULL)
+Index: ntp-4.2.8p6+dfsg/libparse/Makefile.am
+===================================================================
+--- ntp-4.2.8p6+dfsg.orig/libparse/Makefile.am
++++ ntp-4.2.8p6+dfsg/libparse/Makefile.am
+@@ -46,7 +46,6 @@ libparse_a_SOURCES = parse.c \
+ 		     clk_rcc8000.c \
+ 		     clk_hopf6021.c \
+ 		     clk_computime.c \
+-		     clk_wharton.c \
+ 		     clk_varitext.c \
+ 		     clk_sel240x.c \
+ 		     data_mbg.c \
+@@ -72,7 +71,6 @@ libparse_kernel_a_LIBADD =	\
+ 	kclk_trimtaip.o		\
+ 	kclk_trimtsip.o		\
+ 	kclk_varitext.o		\
+-	kclk_wharton.o		\
+ 	kclk_sel240x.o		\
+ 	kbinio.o		\
+ 	kieee754io.o		\
