@@ -27,6 +27,7 @@ endif
 		--disable-local-libopts \
 		--enable-ntp-signd \
 		--disable-dependency-tracking \
+		--enable-local-libopts \
 		--with-locfile=legacy \
 		--with-openssl-libdir=/usr/lib/$(DEB_HOST_MULTIARCH)
 
