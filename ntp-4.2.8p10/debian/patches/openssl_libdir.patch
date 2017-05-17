@@ -1,0 +1,30 @@
+Description: Don't set an rpath for openssl just because it's not in /usr/lib
+Author: Kurt Roeckx <kurt@roeckx.be>
+Last-Update: 2015-07-25
+
+Index: ntp-4.2.8p3+dfsg/sntp/m4/ntp_openssl.m4
+===================================================================
+--- ntp-4.2.8p3+dfsg.orig/sntp/m4/ntp_openssl.m4
++++ ntp-4.2.8p3+dfsg/sntp/m4/ntp_openssl.m4
+@@ -201,21 +201,6 @@ case "$with_crypto:$ntp_openssl" in
+ 	    CPPFLAGS_NTP="$CPPFLAGS_NTP -I$openssl_incdir"
+ 	    ;;
+ 	esac
+-	case "$openssl_libdir" in
+-	 /usr/lib)
+-	    ;;
+-	 *)
+-	    LDADD_NTP="$LDADD_NTP -L$openssl_libdir"
+-	    case "$need_dash_r" in
+-	     1)
+-		LDFLAGS_NTP="$LDFLAGS_NTP -R$openssl_libdir"
+-	    esac
+-	    case "$need_dash_Wlrpath" in
+-	     1)
+-		LDFLAGS_NTP="$LDFLAGS_NTP -Wl,-rpath,$openssl_libdir"
+-	    esac
+-	    ;;
+-	esac
+ 	LDADD_NTP="$LDADD_NTP -lcrypto"
+     esac
+ esac

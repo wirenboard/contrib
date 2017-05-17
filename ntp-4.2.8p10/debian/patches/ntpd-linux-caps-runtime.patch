@@ -1,0 +1,52 @@
+From: Martin Pitt <martin.pitt@ubuntu.com>
+Subject: runtime check for capabilities
+Bug: http://bugs.ntp.org/1433
+Bug-Debian: http://bugs.debian.org/282941
+Bug-Debian: http://bugs.debian.org/298059
+
+add runtime check whether the kernel really supports capabilities; do
+not drop root privileges if not
+
+
+Index: ntp-4.2.8p7+dfsg/ntpd/ntpd.c
+===================================================================
+--- ntp-4.2.8p7+dfsg.orig/ntpd/ntpd.c
++++ ntp-4.2.8p7+dfsg/ntpd/ntpd.c
+@@ -179,6 +179,7 @@ int droproot;
+ int root_dropped;
+ char *user;		/* User to switch to */
+ char *group;		/* group to switch to */
++int have_caps = 0;      /* runtime check whether capabilities work, leave at 0 here */
+ const char *chrootdir;	/* directory to chroot to */
+ uid_t sw_uid;
+ gid_t sw_gid;
+@@ -939,8 +940,29 @@ ntpdmain(
+ 	report_event(EVNT_SYSRESTART, NULL, NULL);
+ 	initializing = FALSE;
+ 
++#ifdef HAVE_LINUX_CAPABILITIES
++	{
++		/*  Check that setting capabilities actually works; we might be
++		 *  run on a kernel with disabled capabilities. We must not
++		 *  drop privileges in this case.
++		 */
++		cap_t caps;
++		if (!(caps = cap_from_text( "cap_sys_time,cap_setuid,cap_setgid,cap_sys_chroot,cap_net_bind_service=pe"))) {
++			msyslog( LOG_ERR, "cap_from_text() failed: %m" );
++			exit(-1);
++		}
++		if (cap_set_proc(caps) == 0)
++			have_caps = 1;
++		cap_free(caps);
++	}
++#endif /* HAVE_LINUX_CAPABILITIES */
++
+ # ifdef HAVE_DROPROOT
++# ifdef HAVE_LINUX_CAPABILITIES
++	if (droproot && have_caps) {
++# else
+ 	if (droproot) {
++# endif
+ 
+ #ifdef NEED_EARLY_FORK
+ 		fork_nonchroot_worker();
