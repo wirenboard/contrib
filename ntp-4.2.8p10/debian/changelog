@@ -1,3 +1,9 @@
+ntp (1:4.2.8p10+dfsg-3wb1) unstable; urgency=medium
+
+  * Change to support PPS on Wirenboard controllers
+
+ --  <kilpio@contactless.ru>  Wed, 17 May 2017 16:39:37 +0300
+
 ntp (1:4.2.8p10+dfsg-3) unstable; urgency=medium
 
   * No-change upload to supersede accidental upload of experimental
