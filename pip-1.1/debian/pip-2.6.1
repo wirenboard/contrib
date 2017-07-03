@@ -1,0 +1,135 @@
+'\" t
+.\"     Title: pip-2.6
+.\"    Author: [see the "AUTHORS" section]
+.\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
+.\"      Date: 05/27/2012
+.\"    Manual: \ \&
+.\"    Source: \ \&
+.\"  Language: English
+.\"
+.TH "PIP-2.6" "1" "05/27/2012" "\ \&" "\ \&"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+pip-2.6 \- install Python packages
+.SH "SYNOPSIS"
+.sp
+\fBpip-2.6\fR [\fIcommand\fR] [\fIoptions\fR]
+.SH "DESCRIPTION"
+.sp
+pip is an alternative Python package installer\&. It performs the same basic job as easy_install, but with some extra features\&. It can work with version control repositories (currently only Git, Mercurial, and Bazaar repositories), logs output extensively, and prevents partial installs by downloading all requirements before starting installation\&.
+.sp
+It has some disadvantages when compared to easy_install\&. It does not use egg files, although it does preserve egg metadata\&. Some setuptools features are not yet supported, and some custom setup\&.py features won\(aat work\&.
+.SH "COMMANDS"
+.sp
+The command comes before any options\&. The following commands are recognized:
+.PP
+\fBhelp\fR
+.RS 4
+Show the help text\&.
+.RE
+.PP
+\fBbundle\fR
+.RS 4
+Create "bundles" which can be used by pip to install the group of Python packages in multiple places\&.
+.RE
+.PP
+\fBfreeze\fR
+.RS 4
+Write the current list of installed packages to a requirements file, which can be used by pip to reinstall the same set of packages\&.
+.RE
+.PP
+\fBinstall\fR
+.RS 4
+Install packages\&.
+.RE
+.PP
+\fBunzip\fR
+.RS 4
+Unzip an individual package\&.
+.RE
+.PP
+\fBzip\fR
+.RS 4
+Zip an individual package\&.
+.RE
+.SH "OPTIONS"
+.PP
+\fB\-h, \-\-help\fR
+.RS 4
+Show summary of options\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Show the version of the program\&.
+.RE
+.PP
+\fB\-v, \-\-verbose\fR
+.RS 4
+Be more verbose\&.
+.RE
+.PP
+\fB\-q, \-\-quiet\fR
+.RS 4
+Be less verbose; suppress unimportant output\&.
+.RE
+.PP
+\fB\-\-log\fR=\fIFILENAME\fR
+.RS 4
+Log file where a complete (maximum verbosity) record will be kept\&.
+.RE
+.PP
+\fB\-\-proxy\fR=\fIPROXY\fR
+.RS 4
+Have pip use a proxy server to access sites\&. This can be specified using "user:password@proxy\&.server:port" notation\&. If the password is left out, pip will ask for it\&.
+.RE
+.PP
+\fB\-\-exists\-action\fR=\fIEXISTS_ACTION\fR
+.RS 4
+Default action when a path already exists\&.Use this option more then one time to specify another action if a certain option is not available, choices: (s)witch, (i)gnore, (w)ipe, (b)ackup
+.RE
+.PP
+\fB\-\-timeout\fR=\fITIMEOUT\fR
+.RS 4
+Set the timeout for connecting to download sites, in seconds\&. This defaults to 15 seconds if not given\&.
+.RE
+.SH "AUTHORS"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+This manual page was originally written by Jeff Licquia <licquia@debian\&.org>, later rewritten by Carl Chenet <chaica@debian\&.org>\&.
+.fi
+.if n \{\
+.RE
+.\}
+.SH "LICENSE"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License, version 3 or any later version published by the Free Software Foundation\&.
+.fi
+.if n \{\
+.RE
+.\}

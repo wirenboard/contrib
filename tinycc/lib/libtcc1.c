@@ -28,8 +28,6 @@ the Free Software Foundation, 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  
 */
 
-#include <stdint.h>
-
 #define W_TYPE_SIZE   32
 #define BITS_PER_UNIT 8
 
@@ -105,7 +103,7 @@ union double_long {
 
 union float_long {
     float f;
-    long l;
+    unsigned int l;
 };
 
 /* XXX: we don't support several builtin supports for now */
@@ -624,23 +622,24 @@ long long __fixxfdi (long double a1)
 #if defined(TCC_TARGET_X86_64) && !defined(_WIN64)
 
 #ifndef __TINYC__
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <string.h>
+# undef __va_start
+# undef __va_arg
+# undef __va_copy
+# undef __va_end
 #else
-/* Avoid including stdlib.h because it is not easily available when
-   cross compiling */
-extern void *malloc(unsigned long long);
-void *memset(void *s, int c, size_t n);
-extern void free(void*);
+/* Avoid include files, they may not be available when cross compiling */
+extern void *memset(void *s, int c, __SIZE_TYPE__ n);
 extern void abort(void);
 #endif
 
+/* This should be in sync with our include/stdarg.h */
 enum __va_arg_type {
     __va_gen_reg, __va_float_reg, __va_stack
 };
 
-//This should be in sync with the declaration on our include/stdarg.h
 /* GCC compatible definition of va_list. */
 typedef struct {
     unsigned int gp_offset;
@@ -651,11 +650,6 @@ typedef struct {
     };
     char *reg_save_area;
 } __va_list_struct;
-
-#undef __va_start
-#undef __va_arg
-#undef __va_copy
-#undef __va_end
 
 void __va_start(__va_list_struct *ap, void *fp)
 {
@@ -673,11 +667,10 @@ void *__va_arg(__va_list_struct *ap,
     align = (align + 7) & ~7;
     switch (arg_type) {
     case __va_gen_reg:
-        if (ap->gp_offset < 48) {
-            ap->gp_offset += 8;
-            return ap->reg_save_area + ap->gp_offset - 8;
+        if (ap->gp_offset + size <= 48) {
+            ap->gp_offset += size;
+            return ap->reg_save_area + ap->gp_offset - size;
         }
-        size = 8;
         goto use_overflow_area;
 
     case __va_float_reg:
@@ -691,34 +684,23 @@ void *__va_arg(__va_list_struct *ap,
     case __va_stack:
     use_overflow_area:
         ap->overflow_arg_area += size;
-        ap->overflow_arg_area = (char*)((intptr_t)(ap->overflow_arg_area + align - 1) & -(intptr_t)align);
+        ap->overflow_arg_area = (char*)((long long)(ap->overflow_arg_area + align - 1) & -align);
         return ap->overflow_arg_area - size;
 
-    default:
-#ifndef __TINYC__
-        fprintf(stderr, "unknown ABI type for __va_arg\n");
-#endif
+    default: /* should never happen */
         abort();
     }
 }
-
 #endif /* __x86_64__ */
 
-/* Flushing for tccrun */
-#if defined(TCC_TARGET_X86_64) || defined(TCC_TARGET_I386)
-
-void __clear_cache(char *beginning, char *end)
-{
-}
-
-#elif defined(TCC_TARGET_ARM)
-
+#if defined TCC_TARGET_ARM && !defined __TINYC__
 #define _GNU_SOURCE
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <stdio.h>
 
-void __clear_cache(char *beginning, char *end)
+/* Flushing for tccrun */
+void __clear_cache(void *beginning, void *end)
 {
 /* __ARM_NR_cacheflush is kernel private and should not be used in user space.
  * However, there is no ARM asm parser in tcc so we use it for now */
@@ -733,7 +715,4 @@ void __clear_cache(char *beginning, char *end)
              "ret");
 #endif
 }
-
-#else
-#warning __clear_cache not defined for this architecture, avoid using tcc -run
-#endif
+#endif /* arm */

@@ -39,7 +39,7 @@
     For the 'Hello DLL' example type
 
 	tcc -shared dll.c
-	tiny_impdef dll.dll (optional)
+	tcc -impdef dll.dll (optional)
         tcc hello_dll.c dll.def
 
 
@@ -54,7 +54,7 @@
         tcc examples/libtcc_test.c -I libtcc libtcc/libtcc.def
 
     - Compiling with MinGW:
-        gcc examples/libtcc_test.c -I libtcc libtcc.dll
+        gcc examples/libtcc_test.c -I libtcc libtcc.dll -o libtcc_test.exe
 
     - Compiling with MSVC:
         lib /def:libtcc\libtcc.def /out:libtcc.lib
@@ -66,10 +66,10 @@
     To link with Windows system DLLs, TCC uses import definition
     files (.def) instead of libraries.
 
-    The included 'tiny_impdef' program may be used to make additional 
-    .def files for any DLL. For example:
+    The now built-in 'tiny_impdef' program may be used to make
+    additional .def files for any DLL. For example
 
-        tiny_impdef.exe opengl32.dll
+        tcc -impdef [-v] opengl32.dll [-o opengl32.def]
 
     Put opengl32.def into the tcc/lib directory.  Specify -lopengl32 at
     the TCC commandline to link a program that uses opengl32.dll.
@@ -98,46 +98,57 @@
 
     Tiny Libmaker:
     --------------
-    The included tiny_libmaker tool by Timovj Lahde can be used as
+    The now built-in tiny_libmaker tool by Timovj Lahde can be used as
     'ar' replacement to make a library from several object files:
 
-	tiny_libmaker [rcs] library objectfiles ...
+	tcc -ar [rcsv] library objectfiles ...
 
 
     Compilation from source:
     ------------------------
     * You can use the MinGW and MSYS tools available at
-
         http://www.mingw.org
 
       Untar the TCC archive and type in the MSYS shell:
-
         ./configure [--prefix installpath]
         make
         make install
 
-    The default install location is c:\Program Files\tcc
+      The default install location is c:\Program Files\tcc
 
     * Alternatively you can compile TCC with just GCC from MinGW using
+        > build-tcc.bat (from the win32 directory)
 
-        build-tcc.bat (from the win32 directory)
+      Also MSVC can be used with the "VSTools Developer Command Prompt":
+        > build-tcc.bat -c cl
 
-      To install, copy the entire contents of the win32 directory to
-      where you want.
+      or with a tcc (needs to be in a different directory)
+        > build-tcc.bat -c some-tcc-dir\tcc.exe
 
+      Also you can copy/install everything into another directory:
+        > build-tcc.bat -i <dir>
+
+    * You can also bootstrap a native tcc Windows toolchain with cygwin.
+       https://www.cygwin.com/
+
+      Install Base, gcc, make
+      Launch Cygwin Terminal
+        > make
+      or to force 32bit executables (including 64bit backend)
+        > make TARGET=32
+      or to force 64bit executables (including 32bit backend)
+        > make TARGET=64
 
     Limitations:
     ------------
     - On the object file level, currently TCC supports only the ELF format,
       not COFF as used by MinGW and MSVC.  It is not possible to exchange
-      object files or libraries between TCC and these compilers.  However
-      libraries for TCC from objects by TCC can be made using tiny_libmaker
-      or MinGW's ar.
+      object files or libraries between TCC and these compilers.
+
+      However libraries for TCC from objects by TCC can be made using
+        tcc -ar lib.a files.o ,,,
 
     - No leading underscore is generated in the ELF symbols.
-
-    - Bounds checking (option -b) is not supported on 64-bit OS.
-
 
     Documentation and License:
     --------------------------

@@ -1,0 +1,16 @@
+# Description: use the same .egg string format than Debian python-setuptools
+# Author: Carl Chenet <chaica@ohmytux.com>
+
+Index: pip-1.0/pip/req.py
+===================================================================
+--- pip-1.0.orig/pip/req.py	2011-04-13 03:38:11.000000000 +0200
++++ pip-1.0/pip/req.py	2011-04-13 03:40:17.000000000 +0200
+@@ -403,7 +403,7 @@
+         paths_to_remove = UninstallPathSet(dist)
+ 
+         pip_egg_info_path = os.path.join(dist.location,
+-                                         dist.egg_name()) + '.egg-info'
++                                        dist.egg_name().split('-py')[0]) + '.egg-info'
+         # workaround for http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=618367
+         debian_egg_info_path = pip_egg_info_path.replace(
+             '-py%s' % pkg_resources.PY_MAJOR, '')

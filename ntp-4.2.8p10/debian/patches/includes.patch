@@ -1,0 +1,32 @@
+    - Make a few include files be self-skipping and self-complete.
+
+ -- Matthias Urlichs <smurf@debian.org>  Tue, 15 Mar 2005 11:09:52 +0100
+
+Index: ntp-4.2.8p3+dfsg/include/ntp_control.h
+===================================================================
+--- ntp-4.2.8p3+dfsg.orig/include/ntp_control.h
++++ ntp-4.2.8p3+dfsg/include/ntp_control.h
+@@ -1,3 +1,5 @@
++#ifndef NTP_CONTROL
++#define NTP_CONTROL
+ /*
+  * ntp_control.h - definitions related to NTP mode 6 control messages
+  */
+@@ -190,3 +192,5 @@ extern struct ctl_trap ctl_traps[CTL_MAX
+ #define	IFSTATS_FIELDS	12
+ #define	RESLIST_FIELDS	4
+ 
++#endif /* NTP_CONTROL */
++
+Index: ntp-4.2.8p3+dfsg/include/ntpd.h
+===================================================================
+--- ntp-4.2.8p3+dfsg.orig/include/ntpd.h
++++ ntp-4.2.8p3+dfsg/include/ntpd.h
+@@ -16,6 +16,7 @@
+ #include "ntp_select.h"
+ #include "ntp_malloc.h"
+ #include "ntp_refclock.h"
++#include "ntp_control.h"
+ #include "ntp_intres.h"
+ #include "recvbuff.h"
+ 

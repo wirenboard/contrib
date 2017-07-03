@@ -1,0 +1,4 @@
+format_egg_string.patch
+remove_hardcoded_python_version.patch
+test_urlparse_uses_fragment.patch
+make_get_pages_single_threaded.patch

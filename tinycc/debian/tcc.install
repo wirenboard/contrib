@@ -1,3 +1,4 @@
 usr/bin
-usr/lib/tcc
+usr/lib/tcc/include
+usr/lib/tcc/libtcc1.a
 usr/share

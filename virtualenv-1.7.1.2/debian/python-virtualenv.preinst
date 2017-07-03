@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = upgrade ] && dpkg --compare-versions "$2" lt 1.4.3-1; then
+        pycentral pkgremove python-virtualenv
+
+       for pyversion in 2.4 2.5; do
+           if [ -d /usr/lib/python$pyversion/site-packages/virtualenv-* ]; then
+               rm -rf /usr/lib/python$pyversion/site-packages/virtualenv-*
+           fi
+       done
+fi
+
+
+#DEBHELPER#
+
+exit 0
+
