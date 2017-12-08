@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Roger A. Light <roger@atchoo.org>
 Build-Depends: debhelper (>= 9),
                libc-ares-dev,
-               libssl-dev (>=1.0.0),
+               libssl-dev (>=1.0.0) | libssl1.0-dev,
                libwebsockets-dev (>=1.2),
                libwrap0-dev,
                python-all (>= 2.6.6-3~),
