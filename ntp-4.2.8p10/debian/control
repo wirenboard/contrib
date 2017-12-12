@@ -3,7 +3,7 @@ Section: net
 Priority: optional
 Maintainer: Debian NTP Team <pkg-ntp-maintainers@lists.alioth.debian.org>
 Uploaders: Peter Eisentraut <petere@debian.org>, Kurt Roeckx <kurt@roeckx.be>, Bernhard Schmidt <berni@debian.org>
-Build-Depends: dh-autoreconf, debhelper (>= 6), libedit-dev, libcap2-dev [linux-any], libssl-dev (>= 1.0.0e-1), autogen (>= 1:5.11), libopts25-dev (>= 1:5.11), pps-tools [linux-any], dh-apparmor
+Build-Depends: dh-autoreconf, debhelper (>= 6), libedit-dev, libcap2-dev [linux-any], libssl-dev (>= 1.0.0e-1) | libssl1.0-dev, autogen (>= 1:5.11), libopts25-dev (>= 1:5.11), pps-tools [linux-any], dh-apparmor
 Build-Conflicts: libavahi-compat-libdnssd-dev, libwww-dev, libwww-ssl-dev
 Standards-Version: 3.9.5
 Homepage: http://support.ntp.org/
