@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Peter Pentchev <roam@ringlet.net>
 Uploaders: Laszlo Boszormenyi (GCS) <gcs@debian.org>
-Build-Depends: debhelper (>= 9), cmake, libev-dev, libssl-dev, openssl,
+Build-Depends: debhelper (>= 9), cmake, libev-dev, libssl-dev | libssl1.0-dev, openssl,
 	zlib1g-dev
 Standards-Version: 3.9.6
 Homepage: https://libwebsockets.org/
@@ -25,7 +25,7 @@ Package: libwebsockets-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends: libwebsockets6 (= ${binary:Version}), libev-dev, libssl-dev,
+Depends: libwebsockets6 (= ${binary:Version}), libev-dev, libssl-dev | libssl1.0-dev,
 	zlib1g-dev, ${misc:Depends}
 Description: lightweight C websockets library - development files
  Libwebsockets is a lightweight pure C library for both websockets
