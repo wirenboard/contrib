@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Peter Pentchev <roam@ringlet.net>
 Uploaders: Laszlo Boszormenyi (GCS) <gcs@debian.org>
-Build-Depends: debhelper (>= 10), cmake, libev-dev, libssl-dev, libuv1-dev,
+Build-Depends: debhelper (>= 9), cmake, libev-dev, libssl-dev, libuv1-dev,
 	openssl, zlib1g-dev
 Standards-Version: 3.9.8
 Homepage: https://libwebsockets.org/
