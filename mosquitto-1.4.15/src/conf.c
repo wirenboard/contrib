@@ -723,6 +723,8 @@ int _config_read_file_core(struct mqtt3_config *config, bool reload, const char 
 #endif
 				}else if(!strcmp(token, "allow_anonymous")){
 					if(_conf_parse_bool(&token, "allow_anonymous", &config->allow_anonymous, saveptr)) return MOSQ_ERR_INVAL;
+				}else if(!strcmp(token, "allow_anonymous_localhost")){
+					if(_conf_parse_bool(&token, "allow_anonymous_localhost", &config->allow_anonymous_localhost, saveptr)) return MOSQ_ERR_INVAL;
 				}else if(!strcmp(token, "allow_duplicate_messages")){
 					if(_conf_parse_bool(&token, "allow_duplicate_messages", &config->allow_duplicate_messages, saveptr)) return MOSQ_ERR_INVAL;
 				}else if(!strcmp(token, "allow_zero_length_clientid")){
