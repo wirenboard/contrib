@@ -103,6 +103,7 @@ struct _mqtt3_listener {
 struct mqtt3_config {
 	char *acl_file;
 	bool allow_anonymous;
+	bool allow_anonymous_localhost;
 	bool allow_duplicate_messages;
 	bool allow_zero_length_clientid;
 	bool auth_plugin_deny_special_chars;

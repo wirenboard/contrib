@@ -412,7 +412,9 @@ int mqtt3_handle_connect(struct mosquitto_db *db, struct mosquitto *context)
 			password = NULL;
 		}
 
-		if(!username_flag && db->config->allow_anonymous == false){
+		if(!username_flag && db->config->allow_anonymous == false && 
+			!((db->config->allow_anonymous_localhost == true) && !strncmp(context->address, "127.0.0.1", 9)))
+		{
 			_mosquitto_send_connack(context, 0, CONNACK_REFUSED_NOT_AUTHORIZED);
 			rc = 1;
 			goto handle_connect_error;

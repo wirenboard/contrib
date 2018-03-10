@@ -99,7 +99,7 @@ static struct libwebsocket_protocols protocols[] = {
 		"http-only",
 		callback_http,
 		sizeof (struct libws_http_data),
-		0,
+		65535,
 #ifdef LWS_FEATURE_PROTOCOLS_HAS_ID_FIELD
 		0,
 #endif
@@ -112,7 +112,7 @@ static struct libwebsocket_protocols protocols[] = {
 		"mqtt",
 		callback_mqtt,
 		sizeof(struct libws_mqtt_data),
-		0,
+		65535,
 #ifdef LWS_FEATURE_PROTOCOLS_HAS_ID_FIELD
 		1,
 #endif
@@ -125,7 +125,7 @@ static struct libwebsocket_protocols protocols[] = {
 		"mqttv3.1",
 		callback_mqtt,
 		sizeof(struct libws_mqtt_data),
-		0,
+		65535,
 #ifdef LWS_FEATURE_PROTOCOLS_HAS_ID_FIELD
 		1,
 #endif
@@ -226,6 +226,13 @@ static int callback_mqtt(struct libwebsocket_context *context,
 			}
 			mosq->sock = libwebsocket_get_socket_fd(wsi);
 			HASH_ADD(hh_sock, db->contexts_by_sock, sock, sizeof(mosq->sock), mosq);
+
+			int optval = 0;
+			socklen_t optlen = sizeof(optval);
+
+			if (setsockopt(mosq->sock, SOL_TCP, TCP_NODELAY, (const void *)&optval, optlen) < 0)
+				return 1;
+
 			break;
 
 		case LWS_CALLBACK_CLOSED:

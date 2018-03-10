@@ -8,3 +8,5 @@ libdir.patch
 build-timestamp.patch
 hurd-errno.patch
 debian-config.patch
+disable-notcpdelay.patch
+allow_anonymous_localhost.patch
