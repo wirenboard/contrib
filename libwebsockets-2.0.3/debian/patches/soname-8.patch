@@ -1,0 +1,18 @@
+Description: Clamp the library's SONAME to 8.
+ There's no need for a SONAME bump when a function is added;
+ we have the symbols file for that.
+Forwarded: not-needed
+Author: Peter Pentchev <roam@ringlet.net>
+Last-Update: 2016-10-01
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -14,7 +14,7 @@
+ set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+ set(CPACK_PACKAGE_VENDOR "andy@warmcat.com")
+ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE} ${PACKAGE_VERSION}")
+-set(SOVERSION "8.1")
++set(SOVERSION "8")
+ set(CPACK_SOURCE_GENERATOR "TGZ")
+ set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
+ set(VERSION "${CPACK_PACKAGE_VERSION}")

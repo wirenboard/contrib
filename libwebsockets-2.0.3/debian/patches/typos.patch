@@ -1,0 +1,231 @@
+Description: Fix some typographical errors.
+Forwarded: yes
+Author: Peter Pentchev <roam@ringlet.net>
+Last-Update: 2016-10-01
+
+--- a/lib/private-libwebsockets.h
++++ b/lib/private-libwebsockets.h
+@@ -626,7 +626,7 @@
+  *   vhostwide SSL context
+  *   vhostwide proxy
+  *
+- * heirarchy:
++ * hierarchy:
+  *
+  * context -> vhost -> wsi
+  *
+--- a/lib/server.c
++++ b/lib/server.c
+@@ -1153,7 +1153,7 @@
+ 	new_wsi->pending_timeout = NO_PENDING_TIMEOUT;
+ 	new_wsi->rxflow_change_to = LWS_RXFLOW_ALLOW;
+ 
+-	/* intialize the instance struct */
++	/* initialize the instance struct */
+ 
+ 	new_wsi->state = LWSS_HTTP;
+ 	new_wsi->mode = LWSCM_HTTP_SERVING;
+@@ -1495,7 +1495,7 @@
+ 		    wsi->state == LWSS_HTTP_ISSUING_FILE ||
+ 		    wsi->state == LWSS_HTTP_HEADERS) {
+ 			if (!wsi->u.hdr.ah)
+-				/* no autoservice beacuse we will do it next */
++				/* no autoservice because we will do it next */
+ 				if (lws_header_table_attach(wsi, 0))
+ 					goto try_pollout;
+ 
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -378,7 +378,7 @@
+ 	endif()
+ endif()
+ 
+-# Put the libaries and binaries that get built into directories at the
++# Put the libraries and binaries that get built into directories at the
+ # top of the build tree rather than in hard-to-find leaf directories. 
+ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+ SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+--- a/README.build.md
++++ b/README.build.md
+@@ -225,11 +225,11 @@
+ -----------------------
+ 
+ To set compile time flags you can either use one of the CMake gui applications
+-or do it via command line.
++or do it via the command line.
+ 
+ Command line
+ ------------
+-To list avaialable options (ommit the H if you don't want the help text):
++To list available options (omit the H if you don't want the help text):
+ 
+ 	cmake -LH ..
+ 
+--- a/README.lwsws.md
++++ b/README.lwsws.md
+@@ -241,7 +241,7 @@
+ Other mount options
+ -------------------
+ 
+-1) When using a cgi:// protcol origin at a mountpoint, you may also give cgi environment variables specific to the mountpoint like this
++1) When using a cgi:// protocol origin at a mountpoint, you may also give cgi environment variables specific to the mountpoint like this
+ 
+ ```
+        {
+--- a/README.test-apps.md
++++ b/README.test-apps.md
+@@ -84,7 +84,7 @@
+ $ libwebsockets-test-client localhost --ssl -s
+ ```
+ 
+-the -s tells it to accept the default selfsigned cert from the server,
++the -s tells it to accept the default self-signed cert from the server,
+ otherwise it will strictly fail the connection if there is no CA cert to
+ validate the server's certificate.
+ 
+@@ -141,7 +141,7 @@
+ $ libwebsockets-test-client localhost --ssl
+ ```
+ 
+-By default the client test applet is set to accept selfsigned
++By default the client test applet is set to accept self-signed
+ certificates used by the test server, this is indicated by the
+ `use_ssl` var being set to `2`.  Set it to `1` to reject any server
+ certificate that it doesn't have a trusted CA cert for.
+@@ -192,7 +192,7 @@
+ standard, you must complete a handshake with a specified
+ protocol.  By default lws-mirror-protocol is used which is
+ supported by the test server.  But if you are using it on
+-another server, you can specify the protcol to handshake with
++another server, you can specify the protocol to handshake with
+ by `--protocol=protocolname`
+ 
+ 
+@@ -350,7 +350,7 @@
+ -------------------
+ 
+ 1) Autobahn tests the user code + lws implementation.  So to get the same
+-results, you need to follow test-echo.c in terms of user implmentation.
++results, you need to follow test-echo.c in terms of user implementation.
+ 
+ 2) Some of the tests make no sense for Libwebsockets to support and we fail them.
+ 
+--- a/lib/http2.c
++++ b/lib/http2.c
+@@ -479,7 +479,7 @@
+ 			wsi->u.http.fd = LWS_INVALID_FILE;
+ 
+ 			if (lws_is_ssl(lws_http2_get_network_wsi(wsi))) {
+-				lwsl_info("skipping nonexistant ssl upgrade headers\n");
++				lwsl_info("skipping nonexistent ssl upgrade headers\n");
+ 				break;
+ 			}
+ 
+--- a/lib/libwebsockets.c
++++ b/lib/libwebsockets.c
+@@ -1310,7 +1310,7 @@
+ }
+ 
+ /**
+- * lws_get_context - Allow geting lws_context from a Websocket connection
++ * lws_get_context - Allow getting lws_context from a Websocket connection
+  * instance
+  *
+  * With this function, users can access context in the callback function.
+@@ -1706,7 +1706,7 @@
+ 	new_wsi->pending_timeout = NO_PENDING_TIMEOUT;
+ 	new_wsi->rxflow_change_to = LWS_RXFLOW_ALLOW;
+ 
+-	/* intialize the instance struct */
++	/* initialize the instance struct */
+ 
+ 	new_wsi->state = LWSS_CGI;
+ 	new_wsi->mode = LWSCM_CGI;
+--- a/lib/libwebsockets.h
++++ b/lib/libwebsockets.h
+@@ -1011,7 +1011,7 @@
+  *
+  *	LWS_CALLBACK_OPENSSL_LOAD_EXTRA_SERVER_VERIFY_CERTS: if configured for
+  *		including OpenSSL support, this callback allows your user code
+- *		to load extra certifcates into the server which allow it to
++ *		to load extra certificates into the server which allow it to
+  *		verify the validity of certificates returned by clients.  @user
+  *		is the server's OpenSSL SSL_CTX*
+  *
+--- a/lib/lws-plat-unix.c
++++ b/lib/lws-plat-unix.c
+@@ -538,7 +538,7 @@
+ 	freeifaddrs(ifr);
+ 
+ 	if (rc == -1) {
+-		/* check if bind to IP adddress */
++		/* check if bind to IP address */
+ #ifdef LWS_USE_IPV6
+ 		if (inet_pton(AF_INET6, ifname, &addr6->sin6_addr) == 1)
+ 			rc = 0;
+--- a/lib/service.c
++++ b/lib/service.c
+@@ -923,7 +923,7 @@
+ 			lws_change_pollfd(wsi, LWS_POLLIN, 0);
+ 
+ 			/* let user code know, he'll usually ask for writeable
+-			 * callback and drain / reenable it there
++			 * callback and drain / re-enable it there
+ 			 */
+ 			if (user_callback_handle_rxflow(
+ 					wsi->protocol->callback,
+--- a/test-server/attack.sh
++++ b/test-server/attack.sh
+@@ -233,7 +233,7 @@
+ check
+ 
+ echo
+-echo "---- nonexistant file"
++echo "---- nonexistent file"
+ rm -f /tmp/lwscap
+ echo -e "GET /nope HTTP/1.1\x0d\x0a\x0d\x0a" | nc $SERVER $PORT | sed '1,/^\r$/d'> /tmp/lwscap
+ check media
+--- a/test-server/test-echo.c
++++ b/test-server/test-echo.c
+@@ -182,7 +182,7 @@
+ 	/* first protocol must always be HTTP handler */
+ 
+ 	{
+-		"",		/* name - can be overriden with -e */
++		"",		/* name - can be overridden with -e */
+ 		callback_echo,
+ 		sizeof(struct per_session_data__echo),	/* per_session_data_size */
+ 		MAX_ECHO_PAYLOAD,
+--- a/test-server/test-ping.c
++++ b/test-server/test-ping.c
+@@ -396,7 +396,7 @@
+ 		case 'r':
+ 			clients = atoi(optarg);
+ 			if (clients > MAX_PING_CLIENTS || clients < 1) {
+-				fprintf(stderr, "Max clients supportd = %d\n",
++				fprintf(stderr, "Max clients supported = %d\n",
+ 							      MAX_PING_CLIENTS);
+ 				return 1;
+ 			}
+--- a/README.coding.md
++++ b/README.coding.md
+@@ -21,7 +21,7 @@
+ in use by the user code.
+ 
+ If you want to restrict that allocation, or increase it, you can use ulimit or
+-similar to change the avaiable number of file descriptors, and when restarted
++similar to change the available number of file descriptors, and when restarted
+ **libwebsockets** will adapt accordingly.
+ 
+ 
+--- a/test-server/test-server-http.c
++++ b/test-server/test-server-http.c
+@@ -279,7 +279,7 @@
+ 						     LWS_O_RDONLY);
+ 
+ 			if (pss->fd == LWS_INVALID_FILE) {
+-				lwsl_err("faild to open file %s\n", leaf_path);
++				lwsl_err("failed to open file %s\n", leaf_path);
+ 				return -1;
+ 			}
+ 

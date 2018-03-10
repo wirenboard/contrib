@@ -1,0 +1,38 @@
+Description: Do not call deprecated cleanup functions in OpenSSL 1.1.
+Bug-Debian: https://bugs.debian.org/828416
+Forwarded: yes
+Author: Peter Pentchev <roam@ringlet.net>
+Last-Update: 2016-10-01
+
+--- a/lib/ssl.c
++++ b/lib/ssl.c
+@@ -194,6 +194,7 @@
+ 	if (!vhost->user_supplied_ssl_ctx && vhost->ssl_client_ctx)
+ 		SSL_CTX_free(vhost->ssl_client_ctx);
+ 
++#if (OPENSSL_VERSION_NUMBER < 0x10100006L)
+ #if (OPENSSL_VERSION_NUMBER < 0x01000000) || defined(USE_WOLFSSL)
+ 	ERR_remove_state(0);
+ #else
+@@ -210,6 +211,7 @@
+ 	CRYPTO_cleanup_all_ex_data();
+ #endif
+ #endif
++#endif
+ }
+ 
+ LWS_VISIBLE void
+@@ -688,6 +690,7 @@
+ #else
+ #if defined(LWS_USE_MBEDTLS)
+ #else
++#if (OPENSSL_VERSION_NUMBER < 0x10100006L)
+ #if (OPENSSL_VERSION_NUMBER < 0x01000000) || defined(USE_WOLFSSL)
+ 	ERR_remove_state(0);
+ #else
+@@ -704,4 +707,5 @@
+ 	CRYPTO_cleanup_all_ex_data();
+ #endif
+ #endif
++#endif
+ }
