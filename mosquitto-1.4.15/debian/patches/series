@@ -8,3 +8,4 @@ libdir.patch
 build-timestamp.patch
 hurd-errno.patch
 debian-config.patch
+allow_anonymous_localhost.patch
