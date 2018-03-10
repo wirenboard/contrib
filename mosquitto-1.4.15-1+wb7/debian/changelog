@@ -1,3 +1,12 @@
+mosquitto (1.4.15-1+wb7-2) wheezy-wb; urgency=medium
+
+  build for Wiren Board. Contains two patches:
+  * Improves WebSockets performance on high-latency connections
+   - This resets TCP_NODELAY and increases send buffer on WebSoscket fd
+  * option to allow unauthenticated connects from localhost
+  
+ -- Evgeny Boger <boger@contactless.ru>  Sat, 10 Mar 2018 14:11:59 +0300
+
 mosquitto (1.4.15-1) unstable; urgency=high
 
   * SECURITY UPDATE: If a SIGHUP is sent to the broker when there are no more
