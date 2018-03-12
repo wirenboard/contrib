@@ -1,0 +1,31 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# Debian debhelper package build rules for libwebsockets
+
+# Aim for the top, adapt if anything should break on the buildds.
+DEB_BUILD_MAINT_OPTIONS=	hardening=+all
+export DEB_BUILD_MAINT_OPTIONS
+
+# Large File Support
+LFS_CFLAGS:=	$(shell getconf LFS_CFLAGS 2>/dev/null || echo "-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64")
+LFS_LDFLAGS:=	$(shell getconf LFS_LDFLAGS 2>/dev/null || true)
+
+DEB_CFLAGS_MAINT_APPEND=	$(LFS_CFLAGS) -fno-strict-aliasing
+DEB_LDFLAGS_MAINT_APPEND=	$(LFS_LDFLAGS)
+export DEB_CFLAGS_MAINT_APPEND DEB_LDFLAGS_MAINT_APPEND
+
+arch?=		$(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- -DCMAKE_LIBRARY_ARCHITECTURE=${arch} \
+	    -DLIB_SUFFIX=/${arch} -DLWS_WITHOUT_DAEMONIZE=OFF \
+	    -DLWS_WITH_LIBEV=ON -DLWS_WITH_LIBUV=ON -DCMAKE_BUILD_TYPE=Debug
+
+.PHONY: override_dh_auto_configure
