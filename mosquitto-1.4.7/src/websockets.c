@@ -28,7 +28,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifdef WITH_WEBSOCKETS
-
+#include <netinet/tcp.h>
 #include <libwebsockets.h>
 #include "mosquitto_internal.h"
 #include "mosquitto_broker.h"
@@ -99,7 +99,7 @@ static struct libwebsocket_protocols protocols[] = {
 		"http-only",
 		callback_http,
 		sizeof (struct libws_http_data),
-		0,
+		65535,
 #ifdef LWS_FEATURE_PROTOCOLS_HAS_ID_FIELD
 		0,
 #endif
@@ -112,7 +112,7 @@ static struct libwebsocket_protocols protocols[] = {
 		"mqtt",
 		callback_mqtt,
 		sizeof(struct libws_mqtt_data),
-		0,
+		65535,
 #ifdef LWS_FEATURE_PROTOCOLS_HAS_ID_FIELD
 		1,
 #endif
@@ -125,7 +125,7 @@ static struct libwebsocket_protocols protocols[] = {
 		"mqttv3.1",
 		callback_mqtt,
 		sizeof(struct libws_mqtt_data),
-		0,
+		65535,
 #ifdef LWS_FEATURE_PROTOCOLS_HAS_ID_FIELD
 		1,
 #endif
@@ -196,6 +196,16 @@ static int callback_mqtt(struct libwebsocket_context *context,
 				u->mosq = NULL;
 				return -1;
 			}
+
+
+		int optval = 0;
+		socklen_t optlen = sizeof(optval);
+
+			if (setsockopt(libwebsocket_get_socket_fd(wsi), SOL_TCP, TCP_NODELAY, (const void *)&optval, optlen) < 0)
+				return 1;
+
+
+
 			break;
 
 		case LWS_CALLBACK_CLOSED:

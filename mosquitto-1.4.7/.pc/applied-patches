@@ -7,3 +7,4 @@ libdir.patch
 build-timestamp.patch
 bind_localhost_hack
 фд�allow_anonymous_localhost
+disable-notcpdelay.patch
