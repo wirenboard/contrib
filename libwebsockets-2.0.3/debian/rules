@@ -9,9 +9,28 @@
 # Aim for the top, adapt if anything should break on the buildds.
 DEB_BUILD_MAINT_OPTIONS=	hardening=+all
 export DEB_BUILD_MAINT_OPTIONS
-export CC=gcc-4.7
 
-# Large File Support
+ifeq ($(DEB_TARGET_ARCH),armel)
+  CROSS_COMPILE=arm-linux-gnueabi-
+endif
+ 
+CXX=$(CROSS_COMPILE)g++
+CXX_PATH := $(shell which $(CROSS_COMPILE)g++-4.7)
+ 
+CC=$(CROSS_COMPILE)gcc
+CC_PATH := $(shell which $(CROSS_COMPILE)gcc-4.7)
+ 
+ifneq ($(CXX_PATH),)
+  CXX=$(CROSS_COMPILE)g++-4.7
+endif
+ 
+ifneq ($(CC_PATH),)
+  CC=$(CROSS_COMPILE)gcc-4.7
+endif
+export CC
+
+# Large File Support 
+LD=$(CXX)
 LFS_CFLAGS:=	$(shell getconf LFS_CFLAGS 2>/dev/null || echo "-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64")
 LFS_LDFLAGS:=	$(shell getconf LFS_LDFLAGS 2>/dev/null || true)
 
