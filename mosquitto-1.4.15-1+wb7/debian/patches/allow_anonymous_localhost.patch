@@ -1,0 +1,45 @@
+Description: option to allow unauthenticated connects from localhost
+Author: Evgeny Boger <boger@contactless.ru>>
+Origin: vendor
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+Index: mosquitto-1.4.15/src/conf.c
+===================================================================
+--- mosquitto-1.4.15.orig/src/conf.c	2018-03-10 00:13:07.000000000 +0000
++++ mosquitto-1.4.15/src/conf.c	2018-03-10 00:13:42.000000000 +0000
+@@ -723,6 +723,8 @@
+ #endif
+ 				}else if(!strcmp(token, "allow_anonymous")){
+ 					if(_conf_parse_bool(&token, "allow_anonymous", &config->allow_anonymous, saveptr)) return MOSQ_ERR_INVAL;
++				}else if(!strcmp(token, "allow_anonymous_localhost")){
++					if(_conf_parse_bool(&token, "allow_anonymous_localhost", &config->allow_anonymous_localhost, saveptr)) return MOSQ_ERR_INVAL;
+ 				}else if(!strcmp(token, "allow_duplicate_messages")){
+ 					if(_conf_parse_bool(&token, "allow_duplicate_messages", &config->allow_duplicate_messages, saveptr)) return MOSQ_ERR_INVAL;
+ 				}else if(!strcmp(token, "allow_zero_length_clientid")){
+Index: mosquitto-1.4.15/src/mosquitto_broker.h
+===================================================================
+--- mosquitto-1.4.15.orig/src/mosquitto_broker.h	2018-03-10 00:13:07.000000000 +0000
++++ mosquitto-1.4.15/src/mosquitto_broker.h	2018-03-10 00:13:42.000000000 +0000
+@@ -103,6 +103,7 @@
+ struct mqtt3_config {
+ 	char *acl_file;
+ 	bool allow_anonymous;
++	bool allow_anonymous_localhost;
+ 	bool allow_duplicate_messages;
+ 	bool allow_zero_length_clientid;
+ 	bool auth_plugin_deny_special_chars;
+Index: mosquitto-1.4.15/src/read_handle_server.c
+===================================================================
+--- mosquitto-1.4.15.orig/src/read_handle_server.c	2018-03-10 00:13:07.000000000 +0000
++++ mosquitto-1.4.15/src/read_handle_server.c	2018-03-10 00:13:42.000000000 +0000
+@@ -412,7 +412,9 @@
+ 			password = NULL;
+ 		}
+ 
+-		if(!username_flag && db->config->allow_anonymous == false){
++		if(!username_flag && db->config->allow_anonymous == false && 
++			!((db->config->allow_anonymous_localhost == true) && !strncmp(context->address, "127.0.0.1", 9)))
++		{
+ 			_mosquitto_send_connack(context, 0, CONNACK_REFUSED_NOT_AUTHORIZED);
+ 			rc = 1;
+ 			goto handle_connect_error;
