@@ -612,7 +612,7 @@ if ((CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX) AND NOT LWS_WITHOUT_TE
     if (UNIX)
 	# jeez clang understands -pthread but dies if he sees it at link time!
 	# http://stackoverflow.com/questions/2391194/what-is-gs-pthread-equiv-in-clang
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread" )
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread -fPIC" )
     endif()
 endif()
 
