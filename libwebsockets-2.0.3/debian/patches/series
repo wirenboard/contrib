@@ -1,3 +1,4 @@
 typos.patch
 openssl-1.1.patch
 soname-8.patch
+Add--fPIC-option.patch
