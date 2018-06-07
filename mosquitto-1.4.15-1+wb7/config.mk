@@ -57,6 +57,10 @@ WITH_MEMORY_TRACKING:=yes
 # information about the broker state.
 WITH_SYS_TREE:=yes
 
+# Build with systemd support. If enabled, mosquitto will notify systemd after
+# initialization. See README in service/systemd/ for more information.
+WITH_SYSTEMD:=yes
+
 # Build with SRV lookup support.
 WITH_SRV:=yes
 
