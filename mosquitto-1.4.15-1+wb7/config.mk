@@ -59,7 +59,7 @@ WITH_SYS_TREE:=yes
 
 # Build with systemd support. If enabled, mosquitto will notify systemd after
 # initialization. See README in service/systemd/ for more information.
-WITH_SYSTEMD:=yes
+WITH_SYSTEMD:=no
 
 # Build with SRV lookup support.
 WITH_SRV:=yes
@@ -220,6 +220,11 @@ endif
 
 ifeq ($(WITH_SYS_TREE),yes)
 	BROKER_CFLAGS:=$(BROKER_CFLAGS) -DWITH_SYS_TREE
+endif
+
+ifeq ($(WITH_SYSTEMD),yes)
+	BROKER_CFLAGS:=$(BROKER_CFLAGS) -DWITH_SYSTEMD
+	BROKER_LIBS:=$(BROKER_LIBS) -lsystemd
 endif
 
 ifeq ($(WITH_SRV),yes)
