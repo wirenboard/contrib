@@ -1,5 +1,7 @@
 [Unit]
 Description=Mosquitto MQTT v3.1/v3.1.1 Broker
+After=syslog.target
+After=remote-fs.target
 
 [Service]
 Type=notify
