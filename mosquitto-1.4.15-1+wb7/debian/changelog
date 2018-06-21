@@ -1,3 +1,9 @@
+mosquitto (1.4.15-1+wb7-3) stable; urgency=medium
+
+  * Use systemd to manage daemon
+
+ -- Nikita Maslov <n.maslov@contactless.ru>  Thu, 07 Jun 2018 19:59:46 +0300
+
 mosquitto (1.4.15-1+wb7-2) wheezy-wb; urgency=medium
 
   build for Wiren Board. Contains two patches:

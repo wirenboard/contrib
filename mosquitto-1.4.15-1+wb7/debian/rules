@@ -11,6 +11,15 @@ override_dh_installchangelogs:
 override_dh_auto_configure:
 	# Don't process CMake rules, CMakeLists.txt is only included for Windows/Mac support.
 
+
+ifeq ($(filter nosystemd,$(DEB_BUILD_PROFILES)),)
+BUILD_OPTS=WITH_SYSTEMD=yes
+endif
+
+override_dh_auto_build:
+	@echo "Build-options: $(BUILD_OPTS)"
+	dh_auto_build -- $(BUILD_OPTS)
+
 override_dh_auto_test:
 
 override_dh_strip:
@@ -27,3 +36,14 @@ override_dh_auto_install:
 	install -d debian/tmp/etc/mosquitto/certs/
 	install -m 644 debian/README-certs debian/tmp/etc/mosquitto/certs/README
 	install -m 644 debian/mosquitto.conf debian/tmp/etc/mosquitto/mosquitto.conf
+ifeq ($(filter nosystemd,$(DEB_BUILD_PROFILES)),)
+	install -d debian/tmp/lib/systemd/system/
+	install -m 644 debian/mosquitto.service debian/tmp/lib/systemd/system/mosquitto.service
+endif
+
+override_dh_installinit:
+ifneq ($(filter nosystemd,$(DEB_BUILD_PROFILES)),)
+	dh_installinit
+else
+	@echo "No initscript will be installed because of systemd"
+endif
