@@ -1,0 +1,12 @@
+Source: nodesource-repo
+Section: misc
+Priority: optional
+Maintainer: Evgeny Boger <boger@contactless.ru>
+Build-Depends: debhelper (>= 9)
+
+Package: nodesource-repo
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends} apt-transport-https
+Recommends: gpgv
+Description: Node Source repository and keys

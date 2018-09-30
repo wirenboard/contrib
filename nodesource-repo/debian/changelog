@@ -1,0 +1,5 @@
+nodesource-repo (1.0) stable; urgency=medium
+
+  * Initial release.
+
+ -- Evgeny Boger <boger@contactless.ru>  Sun, 30 Sep 2018 15:56:05 +0300

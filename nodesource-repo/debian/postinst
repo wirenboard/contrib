@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+apt-get update -o Dir::Etc::sourcelist="sources.list.d/nodesource.list" \
+    -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+
+#DEBHELPER#
+
+exit 0

@@ -1,0 +1,2 @@
+keyrings/nodesource.gpg	etc/apt/trusted.gpg.d/
+list.d/nodesource.list etc/apt/sources.list.d/

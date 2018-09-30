@@ -1,0 +1,15 @@
+README for the nodesource-repo package
+=====================================
+
+
+Introduction
+------------
+
+Contains
+
+ * nodesource repo keyring
+ * nodesource apt list.d files
+
+To convert the key to gpg keyring:
+  curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+  gpg --no-default-keyring --keyring /etc/apt/trusted.gpg --output nodesource.gpg --export
