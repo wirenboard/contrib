@@ -1,0 +1,12 @@
+perl-use-dpkg-buildflags.patch
+0002-Make-sure-signature-stays-the-same-in-all-nginx-buil.patch
+0003-define_gnu_source-on-other-glibc-based-platforms.patch
+0004-SSL-error-messages-style.patch
+0005-SSL-style.patch
+0006-SSL-support-for-multiple-curves-ticket-885.patch
+CVE-2017-7529-Range-filter.patch
+CVE-2018-16843-0-HTTP-2-flood-detection.patch
+CVE-2018-16843-1-Adapt-HTTP-2-flood-detection-to-nginx-1.10.3.patch
+CVE-2018-16844-0-HTTP-2-limited-maximum-number-of-requests-in-connect.patch
+CVE-2018-16844-1-HTTP-2-limit-the-number-of-idle-state-switches.patch
+CVE-2018-16845-Mp4-fixed-reading-64-bit-atoms.patch
