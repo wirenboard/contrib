@@ -13,6 +13,9 @@ dpkg-maintscript-helper rm_conffile \
 dpkg-maintscript-helper rm_conffile \
 	          /etc/nginx/naxsi-ui.conf       1.6.2-2~ -- "$@"
 
+# join www-data to i2c group for use cryptodev on i2c bus
+getent group i2c|grep ':www-data' >/dev/null || usermod -G i2c www-data
+
 case "$1" in
   configure)
     logdir="/var/log/nginx"
