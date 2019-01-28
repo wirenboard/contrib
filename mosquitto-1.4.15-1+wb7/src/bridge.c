@@ -49,7 +49,6 @@ int mqtt3_bridge_new(struct mosquitto_db *db, struct _mqtt3_bridge *bridge)
 	char hostname[256];
 	int len;
 	char *id, *local_id;
-	int rc;
 
 	assert(db);
 	assert(bridge);
@@ -111,15 +110,9 @@ int mqtt3_bridge_new(struct mosquitto_db *db, struct _mqtt3_bridge *bridge)
 	new_context->tls_capath = new_context->bridge->tls_capath;
 	new_context->tls_certfile = new_context->bridge->tls_certfile;
 	new_context->tls_keyfile = new_context->bridge->tls_keyfile;
-	new_context->tls_keyfile_engine = new_context->bridge->tls_keyfile_engine;
 	new_context->tls_cert_reqs = SSL_VERIFY_PEER;
 	new_context->tls_version = new_context->bridge->tls_version;
 	new_context->tls_insecure = new_context->bridge->tls_insecure;
-	rc = _mosquito_keyfile_engine_extract(new_context);
-	if (rc) {
-		_mosquitto_free(local_id);
-		return rc;
-	}
 #ifdef REAL_WITH_TLS_PSK
 	new_context->tls_psk_identity = new_context->bridge->tls_psk_identity;
 	new_context->tls_psk = new_context->bridge->tls_psk;
