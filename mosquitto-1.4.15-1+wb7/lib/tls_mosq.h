@@ -34,6 +34,8 @@ Contributors:
 #  endif
 #endif
 
+#define KEYFILE_ENGINE_PREFIX  "engine:"
+
 int _mosquitto_server_certificate_verify(int preverify_ok, X509_STORE_CTX *ctx);
 int _mosquitto_verify_certificate_hostname(X509 *cert, const char *hostname);
 
