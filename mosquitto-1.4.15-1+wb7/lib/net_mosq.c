@@ -102,7 +102,6 @@ void _mosquitto_net_init(void)
 #endif
 
 #ifdef WITH_TLS
-	OPENSSL_init_ssl(OPENSSL_INIT_LOAD_CONFIG, NULL);
 	SSL_load_error_strings();
 	SSL_library_init();
 	OpenSSL_add_all_algorithms();
@@ -212,7 +211,6 @@ int _mosquitto_socket_close(struct mosquitto *mosq)
 #endif
 {
 	int rc = 0;
-	struct mosquitto *context;
 
 	assert(mosq);
 #ifdef WITH_TLS
@@ -244,9 +242,7 @@ int _mosquitto_socket_close(struct mosquitto *mosq)
 	{
 		if((int)mosq->sock >= 0){
 #ifdef WITH_BROKER
-			HASH_FIND(hh_sock, db->contexts_by_sock, &mosq->sock, sizeof(context->sock), context);
-			if (context != NULL)
-				HASH_DELETE(hh_sock, db->contexts_by_sock, mosq);
+			HASH_DELETE(hh_sock, db->contexts_by_sock, mosq);
 #endif
 			rc = COMPAT_CLOSE(mosq->sock);
 			mosq->sock = INVALID_SOCKET;
@@ -498,31 +494,6 @@ int mosquitto__socket_connect_tls(struct mosquitto *mosq)
 }
 #endif
 
-#ifdef WITH_TLS
-int _mosquito_keyfile_engine_extract(struct mosquitto *mosq)
-{
-	char *keyfile, *p;
-
-	if (mosq->tls_keyfile == NULL)
-		return MOSQ_ERR_SUCCESS;
-
-	if (strlen(mosq->tls_keyfile) < sizeof(KEYFILE_ENGINE_PREFIX) - 1 || strncmp(mosq->tls_keyfile, KEYFILE_ENGINE_PREFIX, sizeof(KEYFILE_ENGINE_PREFIX) - 1))
-		return MOSQ_ERR_SUCCESS;
-
-	keyfile = mosq->tls_keyfile;
-
-	keyfile += sizeof(KEYFILE_ENGINE_PREFIX) - 1;
-	p = strchr(keyfile, ':');
-	if (!p)
-		return MOSQ_ERR_INVAL;
-	*p = '\0';
-	mosq->tls_keyfile_engine = _mosquitto_strdup(keyfile);
-	*p++ = ':';
-	mosq->tls_keyfile = _mosquitto_strdup(p);
-	return MOSQ_ERR_SUCCESS;
-}
-#endif
-
 int _mosquitto_socket_connect_step3(struct mosquitto *mosq, const char *host, uint16_t port, const char *bind_address, bool blocking)
 {
 #ifdef WITH_TLS
@@ -623,47 +594,21 @@ int _mosquitto_socket_connect_step3(struct mosquitto *mosq, const char *host, ui
 				}
 			}
 			if(mosq->tls_keyfile){
-				if (mosq->tls_keyfile_engine) {
-					ENGINE *engine = ENGINE_by_id(mosq->tls_keyfile_engine);
-					if (engine == NULL) {
-						_mosquitto_log_printf(mosq, MOSQ_LOG_ERR, "Error: failed ENGINE_by_id.");
-						COMPAT_CLOSE(mosq->sock);
-						return MOSQ_ERR_TLS;
-					}
-					EVP_PKEY *pkey = ENGINE_load_private_key(engine, mosq->tls_keyfile, 0, 0);
-					if (pkey == NULL) {
-						_mosquitto_log_printf(mosq, MOSQ_LOG_ERR, "Error: failed ENGINE_load_private_key.");
-						COMPAT_CLOSE(mosq->sock);
-						ENGINE_free(engine);
-						return MOSQ_ERR_TLS;
-					}
-					ENGINE_free(engine);
-
-					if (SSL_CTX_use_PrivateKey(mosq->ssl_ctx, pkey) == 0) {
-						_mosquitto_log_printf(mosq, MOSQ_LOG_ERR, "Error: failed SSL_CTX_use_PrivateKey.");
-						COMPAT_CLOSE(mosq->sock);
-						EVP_PKEY_free(pkey);
-						return MOSQ_ERR_TLS;
-					}
-					
-					EVP_PKEY_free(pkey);
-				} else {
-					ret = SSL_CTX_use_PrivateKey_file(mosq->ssl_ctx, mosq->tls_keyfile, SSL_FILETYPE_PEM);
-					if(ret != 1){
+				ret = SSL_CTX_use_PrivateKey_file(mosq->ssl_ctx, mosq->tls_keyfile, SSL_FILETYPE_PEM);
+				if(ret != 1){
 #ifdef WITH_BROKER
-						_mosquitto_log_printf(mosq, MOSQ_LOG_ERR, "Error: Unable to load client key file, check bridge_keyfile \"%s\".", mosq->tls_keyfile);
+					_mosquitto_log_printf(mosq, MOSQ_LOG_ERR, "Error: Unable to load client key file, check bridge_keyfile \"%s\".", mosq->tls_keyfile);
 #else
-						_mosquitto_log_printf(mosq, MOSQ_LOG_ERR, "Error: Unable to load client key file \"%s\".", mosq->tls_keyfile);
+					_mosquitto_log_printf(mosq, MOSQ_LOG_ERR, "Error: Unable to load client key file \"%s\".", mosq->tls_keyfile);
 #endif
-						COMPAT_CLOSE(mosq->sock);
-						return MOSQ_ERR_TLS;
-					}
-					ret = SSL_CTX_check_private_key(mosq->ssl_ctx);
-					if(ret != 1){
-						_mosquitto_log_printf(mosq, MOSQ_LOG_ERR, "Error: Client certificate/key are inconsistent.");
-						COMPAT_CLOSE(mosq->sock);
-						return MOSQ_ERR_TLS;
-					}
+					COMPAT_CLOSE(mosq->sock);
+					return MOSQ_ERR_TLS;
+				}
+				ret = SSL_CTX_check_private_key(mosq->ssl_ctx);
+				if(ret != 1){
+					_mosquitto_log_printf(mosq, MOSQ_LOG_ERR, "Error: Client certificate/key are inconsistent.");
+					COMPAT_CLOSE(mosq->sock);
+					return MOSQ_ERR_TLS;
 				}
 			}
 #ifdef REAL_WITH_TLS_PSK

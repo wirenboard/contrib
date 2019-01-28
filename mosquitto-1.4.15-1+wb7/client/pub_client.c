@@ -451,6 +451,5 @@ int main(int argc, char *argv[])
 	if(rc){
 		fprintf(stderr, "Error: %s\n", mosquitto_strerror(rc));
 	}
-	client_config_cleanup(&cfg);
 	return rc;
 }
