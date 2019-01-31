@@ -17,7 +17,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 override_dh_auto_configure:
 	-test -f tests/t_client.sh.not || mv tests/t_client.sh tests/t_client.sh.not
-	$(ENV_VARS) dh_auto_configure -- $(shell dpkg-buildflags --export=configure) --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --includedir=\$${prefix}/include/openvpn --enable-pkcs11 --enable-x509-alt-username $(EXTRA_ARGS)
+	$(ENV_VARS) dh_auto_configure -- $(shell dpkg-buildflags --export=configure) --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --includedir=\$${prefix}/include/openvpn --enable-x509-alt-username $(EXTRA_ARGS)
 
 
 override_dh_auto_build:

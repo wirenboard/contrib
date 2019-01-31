@@ -268,11 +268,13 @@ void tls_ctx_load_cert_file(struct tls_root_ctx *ctx, const char *cert_file,
  *                              "[[INLINE]]" in the case of inline files.
  * @param priv_key_file_inline  A string containing the private key
  *
+ * @param priv_key_file_engine  A string containing the engine_id
+ *
  * @return                      1 if an error occurred, 0 if parsing was
  *                              successful.
  */
 int tls_ctx_load_priv_file(struct tls_root_ctx *ctx, const char *priv_key_file,
-                           const char *priv_key_file_inline
+                           const char *priv_key_file_inline, const char *priv_key_file_engine
                            );
 
 #ifdef MANAGMENT_EXTERNAL_KEY

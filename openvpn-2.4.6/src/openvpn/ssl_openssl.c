@@ -59,6 +59,7 @@
 #ifndef OPENSSL_NO_EC
 #include <openssl/ec.h>
 #endif
+#include <openssl/engine.h>
 
 /*
  * Allocate space in SSL objects in which to store a struct tls_session
@@ -71,6 +72,11 @@ int mydata_index; /* GLOBAL */
 void
 tls_init_lib(void)
 {
+#if OPENSSL_VERSION_NUMBER >= 0x10100003L
+    OPENSSL_init_ssl(OPENSSL_INIT_LOAD_CONFIG, NULL);
+#endif
+    OPENSSL_config(NULL);
+
     SSL_library_init();
 #ifndef ENABLE_SMALL
     SSL_load_error_strings();
@@ -881,38 +887,55 @@ tls_ctx_load_cert_file(struct tls_root_ctx *ctx, const char *cert_file,
 
 int
 tls_ctx_load_priv_file(struct tls_root_ctx *ctx, const char *priv_key_file,
-                       const char *priv_key_file_inline
+                       const char *priv_key_file_inline, const char *priv_key_file_engine
                        )
 {
     SSL_CTX *ssl_ctx = NULL;
+    ASSERT(NULL != ctx);
+    ssl_ctx = ctx->ctx;
     BIO *in = NULL;
     EVP_PKEY *pkey = NULL;
     int ret = 1;
+    ENGINE *engine;
 
-    ASSERT(NULL != ctx);
-
-    ssl_ctx = ctx->ctx;
-
-    if (!strcmp(priv_key_file, INLINE_FILE_TAG) && priv_key_file_inline)
+    if (priv_key_file_engine != NULL)
     {
-        in = BIO_new_mem_buf((char *)priv_key_file_inline, -1);
+        engine = ENGINE_by_id(priv_key_file_engine);
+        if (engine == NULL)
+        {
+            goto end;
+        }
+        pkey = ENGINE_load_private_key(engine, priv_key_file_inline ? priv_key_file_inline : priv_key_file, 0, 0);
+        if (pkey == NULL)
+        {
+            ENGINE_free(engine);
+            goto end;
+        }
+        ENGINE_free(engine);
     }
     else
     {
-        in = BIO_new_file(priv_key_file, "r");
-    }
+        if (!strcmp(priv_key_file, INLINE_FILE_TAG) && priv_key_file_inline)
+        {
+            in = BIO_new_mem_buf((char *)priv_key_file_inline, -1);
+        }
+        else
+        {
+            in = BIO_new_file(priv_key_file, "r");
+        }
 
-    if (!in)
-    {
-        goto end;
-    }
+        if (!in)
+        {
+            goto end;
+        }
 
-    pkey = PEM_read_bio_PrivateKey(in, NULL,
-                                   SSL_CTX_get_default_passwd_cb(ctx->ctx),
-                                   SSL_CTX_get_default_passwd_cb_userdata(ctx->ctx));
-    if (!pkey)
-    {
-        goto end;
+        pkey = PEM_read_bio_PrivateKey(in, NULL,
+                                        SSL_CTX_get_default_passwd_cb(ctx->ctx),
+                                        SSL_CTX_get_default_passwd_cb_userdata(ctx->ctx));
+        if (!pkey)
+        {
+            goto end;
+        }
     }
 
     if (!SSL_CTX_use_PrivateKey(ssl_ctx, pkey))
@@ -945,6 +968,7 @@ end:
     }
     return ret;
 }
+
 
 void
 backend_tls_ctx_reload_crl(struct tls_root_ctx *ssl_ctx, const char *crl_file,

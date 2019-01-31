@@ -903,6 +903,7 @@ init_options(struct options *o, const bool init_gc)
 #endif /* _WIN32 */
 #endif /* P2MP_SERVER */
     o->allow_recursive_routing = false;
+    o->priv_key_file_engine = NULL;
 }
 
 void
@@ -3305,7 +3306,7 @@ options_postprocess_filechecks(struct options *options)
     errs |= check_file_access(CHKACC_FILE|CHKACC_INLINE, options->extra_certs_file, R_OK,
                               "--extra-certs");
 #ifdef MANAGMENT_EXTERNAL_KEY
-    if (!(options->management_flags & MF_EXTERNAL_KEY))
+    if (!(options->management_flags & MF_EXTERNAL_KEY) && !options->priv_key_file_engine)
 #endif
     {
         errs |= check_file_access(CHKACC_FILE|CHKACC_INLINE|CHKACC_PRIVATE,
@@ -7787,12 +7788,34 @@ add_option(struct options *options,
 #endif
     else if (streq(p[0], "key") && p[1] && ((streq(p[1], INLINE_FILE_TAG) && p[2]) || !p[2]) && !p[3])
     {
+        const char *engine;
+        char *s;
+
         VERIFY_PERMISSION(OPT_P_GENERAL);
         options->priv_key_file = p[1];
         if (streq(p[1], INLINE_FILE_TAG) && p[2])
         {
             options->priv_key_file_inline = p[2];
         }
+
+#define PRIVATE_KEY_ENGINE_PREFIX "engine:"
+        engine = options->priv_key_file_inline ? options->priv_key_file_inline : options->priv_key_file;
+        if (strlen(engine) >= sizeof(PRIVATE_KEY_ENGINE_PREFIX) && !strncmp(engine, PRIVATE_KEY_ENGINE_PREFIX, sizeof(PRIVATE_KEY_ENGINE_PREFIX) - 1)) {
+            engine += sizeof(PRIVATE_KEY_ENGINE_PREFIX) - 1;
+            s = strchr(engine, ':');
+            if (!s) {
+                msg(msglevel, "invalid key engine format: %s", engine);
+                goto err;
+            }
+            *s++ = '\0';
+            if (options->priv_key_file_inline) {
+                options->priv_key_file_inline = s;
+            } else {
+                options->priv_key_file = s;
+            }
+            options->priv_key_file_engine = engine;
+        }
+#undef PRIVATE_KEY_ENGINE_PREFIX
     }
     else if (streq(p[0], "tls-version-min") && p[1] && !p[3])
     {
