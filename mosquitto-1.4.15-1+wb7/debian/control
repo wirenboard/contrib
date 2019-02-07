@@ -24,6 +24,7 @@ Depends: adduser (>= 3.10),
          libuuid1,
          lsb-base (>=4.1+Debian3),
          libsystemd0 <!nosystemd>,
+         libateccssl1.1,
          ${misc:Depends},
          ${shlibs:Depends}
 Suggests: apparmor
