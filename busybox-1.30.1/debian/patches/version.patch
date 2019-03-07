@@ -1,0 +1,33 @@
+Subject: build-sys: allow override of BB_BT (build tag) from command line
+From: Bastian Blank <waldi@debian.org>
+Date: Fri Mar 28 14:13:30 2008 +0000
+Forwarded: no
+
+--- a/Makefile.flags
++++ b/Makefile.flags
+@@ -17,6 +17,10 @@
+ 	$(if $(CONFIG_LFS),-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64) \
+ 	-D"BB_VER=KBUILD_STR($(BB_VER))"
+ 
++ifdef BB_EXTRA_VERSION
++CPPFLAGS += -D"BB_BUILD_TAG=KBUILD_STR($(BB_EXTRA_VERSION))"
++endif
++
+ CFLAGS += $(call cc-option,-Wall,)
+ CFLAGS += $(call cc-option,-Wshadow,)
+ CFLAGS += $(call cc-option,-Wwrite-strings,)
+--- a/libbb/messages.c
++++ b/libbb/messages.c
+@@ -7,8 +7,11 @@
+ #include "libbb.h"
+ 
+ /* allow version to be extended, via CFLAGS */
++#ifndef BB_BUILD_TAG
++#define BB_BUILD_TAG AUTOCONF_TIMESTAMP
++#endif
+ #ifndef BB_EXTRA_VERSION
+-#define BB_EXTRA_VERSION " ("AUTOCONF_TIMESTAMP")"
++#define BB_EXTRA_VERSION " ("BB_BUILD_TAG")"
+ #endif
+ 
+ const char bb_banner[] ALIGN1 = "BusyBox v" BB_VER BB_EXTRA_VERSION;

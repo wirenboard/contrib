@@ -1,0 +1,14 @@
+# cherry-picked from upstream
+cherry-pick.1_30_0-35-g74d9f1ba3.udhcpc-when-decoding-dhcp-subnet-ensure-it-is-4-bytes-long.patch
+
+# The following patches will likely be merged soon
+u-mount-FreeBSD-support.patch
+swaponoff-FreeBSD-support.patch
+
+# other patches
+shell-ash-export-HOME.patch
+version.patch
+init-console.patch
+stop-checking-ancient-kernel-version.patch
+install-readlink-in-bin.patch
+stop-overriding-stack-alignment-on-i386.patch

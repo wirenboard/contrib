@@ -1,0 +1,208 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# Activate full hardening build flags
+export DEB_BUILD_MAINT_OPTIONS := hardening=+all
+
+include /usr/share/dpkg/default.mk
+
+##############################################################################
+
+TESTSUITE_ENV = SKIP_KNOWN_BUGS=y VERBOSE=y
+# always run tests in UTF8 mode to verify unicode support
+TESTSUITE_ENV += LANG=C.UTF-8 LC_ALL=C.UTF-8
+TESTSUITE_ENV += SKIP_INTERNET_TESTS=y
+# Required for testsuite/taskset.tests
+TESTSUITE_ENV += SHELL='sh -e'
+
+# build directory
+b = debian/build
+
+# which flavours to build
+flavours = deb static udeb
+
+ifneq (${DEB_HOST_GNU_TYPE},${DEB_BUILD_GNU_TYPE})
+export CROSS_COMPILE = ${DEB_HOST_GNU_TYPE}-
+endif
+
+# We filter the following from CFLAGS:
+# -Werror=format-security
+#   because busybox uses constructs like
+#    bb_error_msg_and_die(bb_msg_memory_exhausted);
+#   in several places, and gcc complains because bb_msg_memory_exhausted is an
+#   extern.
+#
+# -O2
+#   to use the optimization setting from busybox's configuration and build
+#   system, causing it to use -Os. This reduces built binaries' size
+#   considerably, making it easier to fit on space constrained systems.
+CFLAGS := $(filter-out -Werror=format-security -O2, ${CFLAGS})
+
+# Avoid Kconfig outputting the timestamp into generated configuration files. We
+# use this to compare against the configuration files in debian/config/pkg for
+# builds on Linux so that we can detect upstream configuration changes (e.g.
+# added applets).
+export KCONFIG_NOTIMESTAMP=1
+
+%:
+	dh $@
+
+##############################################################################
+
+override_dh_auto_configure: $(patsubst %,${b}/%/.stamp-setup, ${flavours})
+
+${b}/%/.stamp-setup: DIR = ${b}/$*
+${b}/%/.stamp-setup:
+	rm -rf ${DIR}
+	mkdir -p ${DIR}
+	cp -a -l $(filter-out debian ${b}, $(wildcard *)) ${DIR}
+
+# Generate the .config file. First variable assignment wins.
+# Several steps..
+
+# 1, rm it just in case
+	rm -f ${DIR}/.config
+
+# 2, put any arch-specific overrides so they will have higher precedence
+# should be empty for linux
+	cat debian/config/os/${DEB_HOST_ARCH_OS} > ${DIR}/.config
+
+# 3, on non-linux platform, disable all config symbols
+# which select PLATFORM_LINUX.
+# Configuration information is stored in source files and in Config.src,
+# so we have to generate Config.in files first, -- done by gen_build_files.
+	${MAKE} -C ${DIR} gen_build_files \
+	  SKIP_STRIP=y \
+	  BB_EXTRA_VERSION="${DEB_VENDOR} ${DEB_VERSION}" \
+	  CONFIG_EXTRA_CFLAGS='${CFLAGS} ${CPPFLAGS}' \
+	  CONFIG_EXTRA_LDFLAGS='${CFLAGS} ${LDFLAGS}' \
+	  V=1
+ifneq (linux,${DEB_HOST_ARCH_OS})
+	find ${DIR} -name Config.in -exec \
+	  awk '$$1 == "config" { conf = $$2 } \
+	       $$1 == "select" && $$2 == "PLATFORM_LINUX" \
+	       { print "CONFIG_" conf "=n"; }' \
+	   {} + \
+        | sort -u >> ${DIR}/.config
+endif
+
+# 4, use the flavour-specific base config file.
+	cat debian/config/pkg/$* >> ${DIR}/.config
+
+# 5, sort out the resulting mess using oldconfig Kbuild machinery
+	yes "" | ${MAKE} -C ${DIR} oldconfig
+
+# 6, on linux platform only, compare the re-generated config to the shipped
+# config in the package in order to catch new/changed upstream options.
+ifeq (linux,${DEB_HOST_ARCH_OS})
+	cmp debian/config/pkg/$* ${DIR}/.config
+endif
+
+	ln -s .config $@
+
+##############################################################################
+
+override_dh_auto_build: $(patsubst %,${b}/%/.stamp-build, ${flavours})
+
+${b}/%/.stamp-build: DIR = ${b}/$*
+${b}/%/.stamp-build:
+	dh_auto_build -- -C ${DIR} all \
+	  SKIP_STRIP=y \
+	  BB_EXTRA_VERSION="${DEB_VENDOR} ${DEB_VERSION}" \
+	  CONFIG_EXTRA_CFLAGS='${CFLAGS} ${CPPFLAGS}' \
+	  CONFIG_EXTRA_LDFLAGS='${CFLAGS} ${LDFLAGS}' \
+	  V=1
+
+	ln -sf busybox $@
+
+##############################################################################
+
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+# we run testsuite only for main flavour
+test-dep := ${b}/deb/.stamp-test
+else
+test-dep :=
+endif
+
+override_dh_auto_test: ${test-dep}
+
+${b}/%/.stamp-test: DIR = ${b}/$*
+${b}/%/.stamp-test:
+	@echo ======== running testsuite in ${DIR} ========
+# mdev testsuite requires chroot which does not work as non-root user
+	rm -f ${DIR}/testsuite/mdev.tests
+# disable or fix some failing tests
+	if [ -f debian/testsuite-${DEB_HOST_ARCH_OS}.diff ] && \
+	   ! [ -f ${DIR}/.tests-fixed ]; then \
+		( cd ${DIR} && patch -p1 && touch .tests-fixed; ) \
+		  < debian/testsuite-${DEB_HOST_ARCH_OS}.diff ; \
+	fi
+	cd ${DIR}/testsuite && ${TESTSUITE_ENV} ./runtest -v
+	touch $@
+
+##############################################################################
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -rf ${b}
+
+##############################################################################
+
+override_dh_auto_install: $(patsubst %,${b}/%/.stamp-install, ${flavours})
+
+${b}/%/.stamp-install: DIR = ${b}/$*
+${b}/%/.stamp-install:
+	$(MAKE) -C ${DIR} install \
+	  SKIP_STRIP=y \
+	  BB_EXTRA_VERSION="${DEB_VENDOR} ${DEB_VERSION}" \
+	  CONFIG_EXTRA_CFLAGS='${CFLAGS} ${CPPFLAGS}' \
+	  CONFIG_EXTRA_LDFLAGS='${CFLAGS} ${LDFLAGS}' \
+	  V=1
+	touch $@
+
+##############################################################################
+
+override_dh_installman:
+	dh_installman -pbusybox ${b}/deb/docs/busybox.1
+	dh_installman -pbusybox-static ${b}/static/docs/busybox.1
+
+override_dh_install:
+	rm -f ${b}/udeb/_install/sbin/init
+
+	dh_install
+	dh_install -pbusybox ${b}/deb/busybox /bin
+	dh_install -pbusybox debian/tree/busybox/* /
+	dh_install -pbusybox-static ${b}/static/busybox /bin
+	dh_install -pbusybox-udeb ${b}/udeb/_install/* /
+
+override_dh_installdocs:
+	dh_installdocs
+	dh_installdocs -pbusybox docs/syslog.conf.txt docs/mdev.txt
+	dh_installdocs -pbusybox-static docs/syslog.conf.txt docs/mdev.txt
+
+override_dh_installexamples:
+	dh_installexamples -pbusybox-static examples/mdev* examples/udhcp
+
+override_dh_installinit:
+	dh_installinit -pbusybox-syslogd
+	dh_installinit -pbusybox-syslogd --name=busybox-klogd
+
+ifeq (linux,$(DEB_HOST_ARCH_OS))
+# udhcpc
+# udhcpd
+	dh_installinit -pudhcpd --onlyscripts
+endif
+
+override_dh_gencontrol:
+# after shlibdeps finished, grab ${shlibs:Depends} from busybox package
+# and transform it into Built-Using field (also dpkg-query bug #588505)
+	if [ -f debian/busybox.substvars ]; then \
+	  pkgs=$$(sed -n -e's/([^)]*)//g' -e's/,//g' -e's/^shlibs:Depends=//p' debian/busybox.substvars); \
+	  srcs=; for p in $$pkgs; do \
+	    srcs="$$srcs $$(dpkg-query -f '$${source:Package} (= $${source:Version}),' -W $$p)"; \
+	  done ; \
+	  echo "built-using=$$srcs" >> debian/busybox-static.substvars ; \
+	fi
+	dh_gencontrol

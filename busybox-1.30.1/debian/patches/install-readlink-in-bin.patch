@@ -1,0 +1,11 @@
+--- a/coreutils/readlink.c
++++ b/coreutils/readlink.c
+@@ -20,7 +20,7 @@
+ //config:	help
+ //config:	Enable the readlink option (-f).
+ 
+-//applet:IF_READLINK(APPLET_NOFORK(readlink, readlink, BB_DIR_USR_BIN, BB_SUID_DROP, readlink))
++//applet:IF_READLINK(APPLET_NOFORK(readlink, readlink, BB_DIR_BIN, BB_SUID_DROP, readlink))
+ 
+ //kbuild:lib-$(CONFIG_READLINK) += readlink.o
+ 

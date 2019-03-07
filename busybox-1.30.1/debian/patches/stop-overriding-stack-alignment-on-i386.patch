@@ -1,0 +1,39 @@
+From: Ben Hutchings <ben@decadent.org.uk>
+Date: Fri, 13 Jul 2018 01:33:58 +0100
+Subject: Stop overriding stack alignment on i386
+Bug-Debian: https://bugs.debian.org/886506
+
+gcc has changed the i386-linux-gnu ABI so that by default the
+generated code will assume the stack pointer is 16-byte aligned on
+entry (same as on x86_64) and ensures the same before calling any
+other function.  I believe it previously followed the System V psABI
+for i386, which required only 4-byte alignment.
+
+busybox overrides the stack alignment settings to assume and ensure
+only 4-byte alignment, as this can result in slightly smaller code.
+It mostly gets away with this, but this recently resulted in a crash
+in the strspn() function, as reported in bug #886506.  That specific
+crash is now avoided due to a change in gcc's optimisations, but the
+underlying problem remains.
+
+From the discussion in that bug:
+
+- This could be reverted in gcc, but might have significant performance
+  cost.  This probably won't happen, either upstream or in Debian.
+- It would be possible to fix it for specific libraries in Debian by
+  building them with the compiler option -mincoming-stack-boundary=2.
+  Doing this for glibc would solve most of the problem, but Aurelien
+  seems resistant to doing it.
+
+For now, make busybox comply to the new ABI by removing the override.
+
+---
+--- a/arch/i386/Makefile
++++ b/arch/i386/Makefile
+@@ -9,5 +9,5 @@
+ ifeq ($(CONFIG_STACK_OPTIMIZATION_386),y)
+ # -mpreferred-stack-boundary=2 is essential in preventing gcc 4.2.x
+ # from aligning stack to 16 bytes. (Which is gcc's way of supporting SSE).
+-CFLAGS += $(call cc-option,-mpreferred-stack-boundary=2,)
++CFLAGS += -march=i386
+ endif

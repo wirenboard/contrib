@@ -1,0 +1,56 @@
+
+# Flavour policies
+
+At the moment, busybox comes with three different configuration sets,
+called "flavours"
+
+* deb: For use in regular installations/testing
+* static: For use in initramfs
+* udeb: For use in the installer
+
+The deb flavour may omit a few apps you can expect to find in any
+decent installations (e.g. dpkg, ed, passwd, fdisk, cron, tc, telnet).
+
+The static flavour should be usable as a standalone system.
+
+The udeb flavour should be kept as small as possible as some
+architectures still have space contraints. Enabling new features
+possibly should be discussed on debian-boot first.
+
+
+# Upgrade configurations to a new kernel version
+
+Syptom: Build breaks at something like
+
+| cmp debian/config/pkg/$FLAVOUR debian/build/$FLAVOUR/.config
+| debian/config/pkg/$FLAVOUR debian/build/$FLAVOUR/.config differ: byte 74, line 3
+
+where $FLAVOUR is one of the flavours (deb static udeb).
+
+Instructions:
+
+* Build manually
+
+    debian/rules override_dh_auto_configure
+
+* Restore the previous version
+
+    mv debian/build/$FLAVOUR/.config.old debian/build/$FLAVOUR/.config
+
+* Run oldconfig manually
+
+    make -C debian/build/$FLAVOUR oldconfig
+
+  Document changes to the feature set in the commit message later.
+  As stated above, for the udeb flavour is virtually always "no".
+
+* Apply the changes to debian/config
+
+    cp debian/build/$FLAVOUR/.config debian/config/pkg/$FLAVOUR
+
+* Finishing work
+  * Edit debian/config/pkg/$FLAVOUR and strip the time time in the
+    first lines before.
+  * Check the diff for surprising changes
+
+* This needs to be done for all three flavours
