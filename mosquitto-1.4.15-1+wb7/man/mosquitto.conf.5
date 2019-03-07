@@ -2,12 +2,12 @@
 .\"     Title: mosquitto.conf
 .\"    Author: [see the "Author" section]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 02/28/2018
+.\"      Date: 02/01/2019
 .\"    Manual: File formats and conventions
 .\"    Source: Mosquitto Project
 .\"  Language: English
 .\"
-.TH "MOSQUITTO\&.CONF" "5" "02/28/2018" "Mosquitto Project" "File formats and conventions"
+.TH "MOSQUITTO\&.CONF" "5" "02/01/2019" "Mosquitto Project" "File formats and conventions"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -638,6 +638,8 @@ set to
 \fBkeyfile\fR \fIfile path\fR
 .RS 4
 Path to the PEM encoded keyfile\&.
+.sp
+If the path has the form "engine:name:id", then the key with the identifier "id" is loaded from the device with the name "name"\&.
 .RE
 .PP
 \fBrequire_certificate\fR [ true | false ]
@@ -1117,6 +1119,8 @@ in production environments\&.
 \fBbridge_keyfile\fR \fIfile path\fR
 .RS 4
 Path to the PEM encoded private key for this bridge, if required by the remote broker\&.
+.sp
+If the path has the form "engine:name:id", then the key with the identifier "id" is loaded from the device with the name "name"\&.
 .RE
 .PP
 \fBbridge_psk\fR \fIkey\fR

@@ -822,6 +822,9 @@
 					<term><option>keyfile</option> <replaceable>file path</replaceable></term>
 					<listitem>
 						<para>Path to the PEM encoded keyfile.</para>
+						<para>If the path has the form "engine:name:id", then the
+							key with the identifier "id" is loaded from the
+							device with the name "name".</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
@@ -1367,6 +1370,9 @@ topic clients/total in 0 test/mosquitto/org $SYS/broker/
 					<listitem>
 						<para>Path to the PEM encoded private key for this
 							bridge, if required by the remote broker.</para>
+						<para>If the path has the form "engine:name:id", then the
+							key with the identifier "id" is loaded from the
+							device with the name "name".</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
