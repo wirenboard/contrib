@@ -21,7 +21,6 @@ Provides: linux-kernel-log-daemon, system-log-daemon
 Conflicts: linux-kernel-log-daemon, system-log-daemon
 Breaks: busybox-syslogd (<< 2:1.22.0-19)
 Replaces: busybox-syslogd (<< 2:1.22.0-19)
-
 Description: Provides syslogd and klogd using busybox
  The system log daemon is responsible for providing logging of
  messages received from programs and facilities on the local host as
