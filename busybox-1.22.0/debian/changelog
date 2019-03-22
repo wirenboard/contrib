@@ -1,3 +1,9 @@
+busybox (2:1.22.0-19) stable; urgency=medium
+
+  * Rename package
+
+ -- Pavel Poglazov <poglazov@contactless.ru>  Fri, 22 Mar 2019 21:10:33 +0300
+
 busybox (1:1.22.0-19) unstable; urgency=medium
 
   * busybox-udeb, udhcpc: Remove /udhcpc/usr/share/udhcpc/default.script,

@@ -14,11 +14,14 @@ Vcs-Git: https://anonscm.debian.org/git/d-i/busybox.git
 Vcs-Browser: https://anonscm.debian.org/cgit/d-i/busybox.git
 Homepage: http://www.busybox.net
 
-Package: busybox-syslogd
+Package: busybox-syslogd-wb
 Architecture: all
 Depends: busybox (>> ${source:Upstream-Version}) | busybox-static (>> ${source:Upstream-Version}), ${misc:Depends}
 Provides: linux-kernel-log-daemon, system-log-daemon
 Conflicts: linux-kernel-log-daemon, system-log-daemon
+Breaks: busybox-syslogd (<< 2:1.22.0-19)
+Replaces: busybox-syslogd (<< 2:1.22.0-19)
+
 Description: Provides syslogd and klogd using busybox
  The system log daemon is responsible for providing logging of
  messages received from programs and facilities on the local host as
@@ -37,3 +40,11 @@ Description: Provides syslogd and klogd using busybox
  This package provides the glue to the busybox syslogd and klogd to be
  used in the system by providing the appropriate symbolic links and
  scripts.
+
+Package: busybox-syslogd
+Depends: busybox-syslogd-wb, ${misc:Depends}
+Architecture: all
+Priority: optional
+Section: oldlibs
+Description: transitional package - busybox-syslogd-wb instead
+ This is a transitional package. It can safely be removed.
