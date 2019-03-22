@@ -25,7 +25,7 @@ endif
 b = build
 
 # which flavours to build
-flavours = deb static udeb
+flavours = deb
 
 ifneq (${DEB_HOST_GNU_TYPE},${DEB_BUILD_GNU_TYPE})
 export CROSS_COMPILE = ${DEB_HOST_GNU_TYPE}-
@@ -161,17 +161,6 @@ install: ${b}/stamp-build
 	dh_installman -pbusybox ${b}/deb/docs/busybox.1
 	dh_installdocs -pbusybox docs/syslog.conf.txt docs/mdev.txt
 	dh_install -pbusybox debian/tree/busybox/* /
-
-# busybox-static
-	dh_install -pbusybox-static ${b}/static/busybox /bin
-	dh_installman -pbusybox-static ${b}/static/docs/busybox.1
-	dh_installdocs -pbusybox-static docs/syslog.conf.txt docs/mdev.txt
-	dh_installexamples -pbusybox-static examples/mdev* examples/udhcp
-
-# busybox-udeb
-	# Remove init link, but init support is still compiled in to be used.
-	rm -f ${b}/udeb/_install/sbin/init
-	dh_install -pbusybox-udeb ${b}/udeb/_install/* /
 
 # busybox-syslogd
 	dh_installinit -pbusybox-syslogd 
