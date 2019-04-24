@@ -57,28 +57,3 @@ Description: Provides syslogd and klogd using busybox
  This package provides the glue to the busybox syslogd and klogd to be
  used in the system by providing the appropriate symbolic links and
  scripts.
-
-Package: udhcpc
-Section: net
-Architecture: linux-any
-Depends: busybox (>> ${source:Upstream-Version}) | busybox-static (>> ${source:Upstream-Version}), ${misc:Depends}
-Description: Provides the busybox DHCP client implementation
- Busybox contains a very small yet fully functional RFC compliant DHCP
- client formerly known as udhcpc.
- .
- This package contains the glue to use the busybox udhcpc as DHCP
- client in the system by providing the appropriate symbolic links and
- scripts.
-
-Package: udhcpd
-Section: net
-Architecture: linux-any
-Depends: busybox (>> ${source:Upstream-Version}) | busybox-static (>> ${source:Upstream-Version}), ${misc:Depends}
-Provides: dhcpd
-Description: Provides the busybox DHCP server implementation
- Busybox contains a very small yet fully function RFC compliant DHCP
- server formerly known as udhcpd.
- .
- This package contains the glue to use the busybox udhcpd as DHCP
- server in the system by providing the appropriate symbolic links and
- scripts.

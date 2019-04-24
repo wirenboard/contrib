@@ -166,12 +166,6 @@ install: ${b}/stamp-build
 	dh_installinit -pbusybox-syslogd 
 	dh_installinit -pbusybox-syslogd --name=busybox-klogd
 
-ifeq (linux,$(DEB_HOST_ARCH_OS))
-# udhcpc
-# udhcpd
-	dh_installinit -pudhcpd --onlyscripts
-endif
-
 # common actions
 
 	dh_strip $a
