@@ -14,12 +14,12 @@ Vcs-Git: https://anonscm.debian.org/git/d-i/busybox.git
 Vcs-Browser: https://anonscm.debian.org/cgit/d-i/busybox.git
 Homepage: http://www.busybox.net
 
-Package: busybox
+Package: busybox-wb
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: busybox-static
-Replaces: busybox-static
-Breaks: initramfs-tools (<<0.99)
+Replaces: busybox-static, busybox (<< 2:1.22.0-19)
+Breaks: initramfs-tools (<<0.99), busybox (<< 2:1.22.0-19)
 Description: Tiny utilities for small and embedded systems
  BusyBox combines tiny versions of many common UNIX utilities into a single
  small executable. It provides minimalist replacements for the most common
@@ -34,11 +34,13 @@ Description: Tiny utilities for small and embedded systems
  can be used in the system by installing the busybox-syslogd,
  busybox-udhcpc or busybox-udhcpd packages.
 
-Package: busybox-syslogd
+Package: busybox-syslogd-wb
 Architecture: all
-Depends: busybox (>> ${source:Upstream-Version}) | busybox-static (>> ${source:Upstream-Version}), ${misc:Depends}
+Depends: busybox-wb (>> ${source:Upstream-Version}), ${misc:Depends}
 Provides: linux-kernel-log-daemon, system-log-daemon
 Conflicts: linux-kernel-log-daemon, system-log-daemon
+Breaks: busybox-syslogd (<< 2:1.22.0-19)
+Replaces: busybox-syslogd (<< 2:1.22.0-19)
 Description: Provides syslogd and klogd using busybox
  The system log daemon is responsible for providing logging of
  messages received from programs and facilities on the local host as
@@ -57,3 +59,19 @@ Description: Provides syslogd and klogd using busybox
  This package provides the glue to the busybox syslogd and klogd to be
  used in the system by providing the appropriate symbolic links and
  scripts.
+
+Package: busybox
+Depends: busybox-wb, ${misc:Depends}
+Architecture: all
+Priority: optional
+Section: oldlibs
+Description: transitional package - busybox-wb instead
+ This is a transitional package. It can safely be removed.
+
+Package: busybox-syslogd
+Depends: busybox-syslogd-wb, ${misc:Depends}
+Architecture: all
+Priority: optional
+Section: oldlibs
+Description: transitional package - busybox-syslogd-wb instead
+ This is a transitional package. It can safely be removed.
