@@ -1,0 +1,14 @@
+/var/log/mosquitto/mosquitto.log {
+	rotate 7
+	daily
+	compress
+	size 100k
+	nocreate
+	missingok
+	postrotate
+		if invoke-rc.d mosquitto status > /dev/null 2>&1; then \
+			invoke-rc.d mosquitto reload > /dev/null 2>&1; \
+		fi;
+	endscript
+}
+

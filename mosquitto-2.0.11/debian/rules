@@ -1,0 +1,37 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --buildsystem=cmake
+
+override_dh_installchangelogs:
+	dh_installchangelogs ChangeLog.txt
+
+ifeq ($(DEB_BUILD_ARCH_OS), linux)
+SYSTEMD=ON
+else
+SYSTEMD=OFF
+endif
+
+override_dh_auto_configure:
+	dh_auto_configure -- -DWITH_BUNDLED_DEPS=OFF -DWITH_ADNS=ON -DUSE_LIBWRAP=ON -DWITH_WEBSOCKETS=ON -DWITH_DLT=ON -DWITH_SYSTEMD=${SYSTEMD}
+
+override_dh_strip:
+	dh_strip -p mosquitto --dbgsym-migration='mosquitto-dbg (<< 1.5)' -Xlibmosquitto
+	dh_strip -p libmosquitto1 --dbgsym-migration='libmosquitto1-dbg (<< 1.5)' -Xlibmosquittopp -Xsbin/mosquitto
+	dh_strip -p libmosquittopp1 --dbgsym-migration='libmosquittopp1-dbg (<< 1.5)' -Xlibmosquitto.so -Xsbin/mosquitto
+	dh_strip --remaining-packages
+
+override_dh_auto_install:
+	dh_auto_install
+	install -d debian/tmp/etc/mosquitto/conf.d/
+	install -m 644 debian/README-conf-d debian/tmp/etc/mosquitto/conf.d/README
+	install -d debian/tmp/etc/mosquitto/ca_certificates/
+	install -m 644 debian/README-ca_certificates debian/tmp/etc/mosquitto/ca_certificates/README
+	install -d debian/tmp/etc/mosquitto/certs/
+	install -m 644 debian/README-certs debian/tmp/etc/mosquitto/certs/README
+	install -m 644 debian/mosquitto.conf debian/tmp/etc/mosquitto/mosquitto.conf
+	install -d debian/tmp/lib/systemd/system/
+	install -m 644 ./service/systemd/mosquitto.service.notify debian/tmp/lib/systemd/system/mosquitto.service
+
+override_dh_makeshlibs:
+	dh_makeshlibs -- -c4

@@ -1,0 +1,4 @@
+usr/include/mosquitto.h
+usr/include/mqtt_protocol.h
+usr/lib/*/libmosquitto.so
+usr/lib/*/pkgconfig/libmosquitto.pc

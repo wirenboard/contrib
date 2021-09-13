@@ -1,0 +1,5 @@
+Tests: broker, library, client
+Depends: @, gcc, g++, libc6-dev, python3
+# rw-build-tree: tests generate and cleanup config files as they run, plus the
+# broker saves persistence data and cleans it up.
+Restrictions: rw-build-tree

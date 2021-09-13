@@ -1,0 +1,14 @@
+Description: Fix missing upstream test.
+Author: Roger Light <roger@atchoo.org>
+Forwarded: not-needed
+--- a/test/broker/Makefile
++++ b/test/broker/Makefile
+@@ -135,7 +135,7 @@
+ 	./06-bridge-reconnect-local-out.py
+ 
+ 07 :
+-	./07-will-delay-invalid-573191.py
++	#./07-will-delay-invalid-573191.py
+ 	./07-will-delay-reconnect.py
+ 	./07-will-delay-recover.py
+ 	./07-will-delay-session-expiry.py

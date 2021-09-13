@@ -1,0 +1,524 @@
+mosquitto (2.0.11-1) unstable; urgency=medium
+
+  * SECURITY UPDATE: In Eclipse Mosquitto 1.6 to 2.0.10, if an authenticated
+    client that had connected with MQTT v5 sent a crafted CONNECT message to
+    the broker, a memory leak would occur.
+  * New upstream release.
+  * Removed systemd-run.patch, applied upstream.
+  * Removed signed-unsigned.patch, applied upstream.
+  * missing-test.patch: Fix missing upstream test.
+  * Update copyright years and paths
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 09 Jun 2021 13:54:36 +0100
+
+mosquitto (2.0.10-6) unstable; urgency=medium
+
+  * Don't chown /run/mosquitto in mosquitto.postinst, this is done in the
+    systemd unit file at run time. (closes: #983429).
+  * systemd-run.patch: use /run/mosquitto instead of /var/run/mosquitto in
+    systemd unit file.
+
+ -- Roger A. Light <roger@atchoo.org>  Mon, 26 Apr 2021 22:07:57 +0100
+
+mosquitto (2.0.10-5) unstable; urgency=medium
+
+  * Don't use `pkill` in tests. (closes: #987467)
+  * Lintian fixes:
+    - dir-or-file-in-run
+    - extended-description-line-too-long
+    - lacks-ldconfig-trigger
+    - package-contains-empty-directory
+    - renamed-tag
+    - shared-library-is-multi-arch-foreign
+    - spelling-in-override-comment
+    - typo-in-manual-page
+
+ -- Roger A. Light <roger@atchoo.org>  Thu, 22 Apr 2021 14:38:23 +0100
+
+mosquitto (2.0.10-4) unstable; urgency=medium
+
+  * Fix autopkgtest test build dependencies.
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 21 Apr 2021 12:10:45 +0100
+
+mosquitto (2.0.10-3) unstable; urgency=medium
+
+  * signed-unsigned.patch: Fix signed/unsigned conversion warnings.
+
+ -- Roger A. Light <roger@atchoo.org>  Mon, 19 Apr 2021 09:41:00 +0100
+
+mosquitto (2.0.10-2) unstable; urgency=medium
+
+  * Fix autopkgtests.
+  * deb-test.patch: Fix paths to allow autopkgtest to work in the Debian
+    environment.
+
+ -- Roger A. Light <roger@atchoo.org>  Sun, 18 Apr 2021 21:42:48 +0100
+
+mosquitto (2.0.10-1) unstable; urgency=high
+
+  * SECURITY UPDATE: In Eclipse Mosquitto version 2.0.0 to 2.0.9, if an
+    authenticated client that had connected with MQTT v5 sent a crafted
+    CONNACK message to the broker, a NULL pointer dereference would occur.
+    (Closes: #986701)
+    - CVE-2021-28166
+  * New upstream release.
+
+ -- Roger A. Light <roger@atchoo.org>  Sat, 10 Apr 2021 00:41:35 +0100
+
+mosquitto (2.0.9-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Roger A. Light <roger@atchoo.org>  Thu, 11 Mar 2021 22:53:34 +0000
+
+mosquitto (2.0.8-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Roger A. Light <roger@atchoo.org>  Thu, 25 Feb 2021 18:56:57 +0000
+
+mosquitto (2.0.7-3) unstable; urgency=medium
+
+  * Change all paths `/var/run` to `/run` to avoid installing through a
+    symlink.
+
+ -- Roger A. Light <roger@atchoo.org>  Tue, 09 Feb 2021 09:31:09 +0000
+
+mosquitto (2.0.7-2) unstable; urgency=medium
+
+  * Add new xsltproc and docbook-xsl dependencies needed to build manpages.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 08 Feb 2021 21:55:11 +0100
+
+mosquitto (2.0.7-1) unstable; urgency=medium
+
+  * New upstream release.
+  * License has changed from EPL-1.0 OR EDL-1.0 to EPL-2.0 OR EDL-1.0.
+  * New dependency, libcjson
+  * Remove install-protocol.patch, this has been fixed upstreamed.
+  * pid file moved to /var/run/mosquitto/mosquitto.pid because mosquitto is no
+    longer root when it tries to create that file.
+
+ -- Roger A. Light <roger@atchoo.org>  Thu, 4 Feb 2021 23:27:31 +0000
+
+mosquitto (1.6.12-1) unstable; urgency=medium
+
+    * New upstream release.
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 19 Aug 2020 15:24:26 +0100
+
+mosquitto (1.6.11-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Roger A. Light <roger@atchoo.org>  Tue, 11 Aug 2020 16:53:20 +0100
+
+mosquitto (1.6.9-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Revert change enabling SRV functionality, it is disabled by default
+    upstream and of little benefit to any end user, but adds reasonable
+    complexity to the code.
+  * Remove patches 1568, 1569, 1570 - applied upstream.
+
+ -- Roger A. Light <roger@atchoo.org>  Tue, 03 Mar 2020 15:16:15 +0000
+
+mosquitto (1.6.8-2) unstable; urgency=medium
+
+  * Also install mqtt_protocol.h in libmosquitto-dev package.
+    (Closes: #951116)
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 15 Feb 2020 19:51:49 +0100
+
+mosquitto (1.6.8-1) unstable; urgency=medium
+
+  * Upload to unstable
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 08 Feb 2020 09:35:50 +0100
+
+mosquitto (1.6.8-1~exp3) experimental; urgency=medium
+
+  * Tweak patch 1570 to fix a build failure with non-libc libraries
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 25 Jan 2020 10:47:39 +0100
+
+mosquitto (1.6.8-1~exp2) experimental; urgency=medium
+
+  * Add libcares-dev dependency, to enable SRV functionality
+  * Bump std-version to 4.5.0, no changes required
+  * Simplify rules file, avoding the systemd hack in configure script
+  * Rename patches with the upstream PR number on github.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Fri, 24 Jan 2020 14:19:46 +0100
+
+mosquitto (1.6.8-1~exp1) experimental; urgency=medium
+
+  * New upstream version 1.6.8 (Closes: #949585)
+  * Also install examples into etc directory
+  * Install missing mosquitto_broker.h header file
+  * Add mosquitto_rr to tools
+  * Install manpages into debian/*.manpages files
+  * Fix installation of libraries in case soname is added to the so file
+  * Bump std-version to 4.4.1, no changes required
+  * Require uthash at least 2.1.0, previously the embedded version was used during build process
+  * Bump compat level to 12
+  * Switch build system to cmake
+  * Do not override dh_auto_test anymore
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Wed, 22 Jan 2020 12:23:22 +0100
+
+mosquitto (1.6.7-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 25 Sep 2019 13:31:51 +0100
+
+mosquitto (1.6.6-1) unstable; urgency=high
+
+  * SECURITY UPDATE: If an MQTT v5 client connects to Mosquitto, sets a last
+    will and testament, sets a will delay interval, sets a session expiry
+    interval, and the will delay interval is set longer than the session
+    expiry interval, then a use after free error occurs, which has the
+    potential to cause a crash in some situations.
+    - CVE awaiting assignment
+  * SECURITY UPDATE: If a malicious MQTT client sends a SUBSCRIBE packet
+    containing a topic that consists of approximately 65400 or more '/'
+    characters, i.e. the topic hierarchy separator, then a stack overflow will
+    occur.
+    - CVE awaiting assignment
+  * New upstream release.
+  * Remove bug-1367.patch.
+  * Don't use killall in mosquitto.logrotate. Closes: #940229.
+
+ -- Roger A. Light <roger@atchoo.org>  Tue, 17 Sep 2019 18:41:36 +0100
+
+mosquitto (1.6.4-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Bump standards version to 4.4.0, no changes needed.
+  * bug-1367.patch: fix bug with v5 DISCONNECT packets with remaining_length =
+    2 being treated as a protocol error. Fixed upstream for 1.6.5 or 1.7.
+  * Added override_dh_makeshlibs for catching symbol errors.
+  * Add --retry to init file as per
+    https://github.com/eclipse/mosquitto/issues/1117
+
+ -- Roger A. Light <roger@atchoo.org>  Thu, 01 Aug 2019 22:51:08 +0100
+
+mosquitto (1.5.7-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Remove fix-step3.patch, fixed upstream.
+  * bug-1162.patch: fix bug with clients being disconnected in some situations
+    when ACLs are in use.
+
+ -- Roger A. Light <roger@atchoo.org>  Mon, 18 Feb 2019 09:28:40 +0000
+
+mosquitto (1.5.6-1) unstable; urgency=medium
+
+  * SECURITY UPDATE: If Mosquitto is configured to use a password file for
+    authentication, any malformed data in the password file will be treated as
+    valid. This typically means that the malformed data becomes a username and
+    no password. If this occurs, clients can circumvent authentication and get
+    access to the broker by using the malformed username. In particular, a blank
+    line will be treated as a valid empty username. Other security measures are
+    unaffected. Users who have only used the mosquitto_passwd utility to create
+    and modify their password files are unaffected by this vulnerability.
+    - debian/patches/mosquitto-1.4.x-cve-2018-12551.patch: this fix introduces
+      more stringent parsing tests on the password file data.
+    - CVE-2018-12551
+  * SECURITY UPDATE: If an ACL file is empty, or has only blank lines or
+    comments, then mosquitto treats the ACL file as not being defined, which
+    means that no topic access is denied. Although denying access to all
+    topics is not a useful configuration, this behaviour is unexpected and
+    could lead to access being incorrectly granted in some circumstances.
+    - debian/patches/mosquitto-1.4.x-cve-2018-12550.patch: this fix ensures
+      that if an ACL file is defined but no rules are defined, then access will
+      be denied.
+    - CVE-2018-12550
+  * SECURITY UPDATE: If a client publishes a retained message to a topic that
+    they have access to, and then their access to that topic is revoked, the
+    retained message will still be delivered to future subscribers. This
+    behaviour may be undesirable in some applications, so a configuration
+    option `check_retain_source` has been introduced to enforce checking of
+    the retained message source on publish.
+    - debian/patches/mosquitto-1.4.8-cve-2018-12546.patch: this patch stores
+      the originator of the retained message, so security checking can be
+      carried out before re-publishing. The complexity of the patch is due to
+      the need to save this information across broker restarts.
+    - CVE-2018-12546
+  * New upstream release.
+  * Bump standards version to 4.3.0, no changes needed.
+  * fix-step3.patch: fix compilation error.
+
+ -- Roger A. Light <roger@atchoo.org>  Thu, 07 Feb 2019 16:00:52 +0000
+
+mosquitto (1.5.5-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Only chown mosquitto.log if it exists. (Closes: #916558)
+
+ -- Andreas Henriksson <andreas@fatal.se>  Sat, 22 Dec 2018 16:54:06 +0100
+
+mosquitto (1.5.5-1) unstable; urgency=medium
+
+  * SECURITY UPDATE: If the option `per_listener_settings` was set to true,
+    and the default listener was in use, and the default listener specified an
+    `acl_file`, then the acl file was being ignored. This affects version 1.5
+    to 1.5.4 inclusive.
+  * New upstream release.
+
+ -- Roger A. Light <roger@atchoo.org>  Tue, 11 Dec 2018 16:37:32 +0000
+
+mosquitto (1.5.4-2) unstable; urgency=medium
+
+  * debian/patches/914525.patch : Use pkg-config to get systemd libs
+    (Closes: #914525)
+    - This is needed to allow compilation on non-Linux systems.
+  * Fix FTCBFS: Let dh_auto_build pass cross tools to make. Thanks to Helmut
+    Grohne. (Closes: #914593)
+  * Ensure log files are owned by mosquitto. (Closes: #877346)
+
+ -- Roger A. Light <roger@atchoo.org>  Sun, 25 Nov 2018 13:52:16 +0000
+
+mosquitto (1.5.4-1) unstable; urgency=medium
+
+  * New upstream release (Closes: #911104).
+    - Fixes CVE-2017-7654 (Closes: #911265)
+    - Fixes CVE-2017-7653 (Closes: #911266)
+  * Remove no longer needed patches. Some are integrated into upstream, others
+    have been replaced with changes in rules.
+    - async_dns.patch
+    - build-timestamp.patch
+    - disable-in-tree-uthash.patch
+    - enable-libwrap.patch
+    - enable-websockets.patch
+    - fix-prefix.patch
+    - hurd-errno.patch
+    - libdir.patch
+    - nostrip.patch
+  * Copyright fix - src/uthash.h -> src/deps/uthash.h
+  * Update symbols files with new additions.
+  * Remove debian/mosquitto.prerm
+    - Calls to invoke-rc.d to stop mosquitto will be inserted automagically by
+      debhelper.
+  * Stop removing the mosquitto user in postrm.
+    - This is not safe since there might still be logs (and other files?)
+      around owned by the uid, so we don't want it reused for a new user.
+  * Add build dependency on libsystemd-dev.
+  * Enable systemd build support.
+  * Ship the mosquitto.service file (with sd-notify support)
+  * Drop -dbg packages and do -dbgsym migration.
+  * libmosquito{,pp}-dev: ship libmosquitto{,pp}.pc respectively.
+  * Remove unused build dependency on python-all. (Closes: #901424).
+  * Bump standards version to 4.2.1, no changes needed.
+  * Bumped dh compat level to 11.
+  * Add upstream/metadata.
+
+ -- Roger A. Light <roger@atchoo.org>  Thu, 08 Nov 2018 13:34:59 +0000
+
+mosquitto (1.4.15-2) unstable; urgency=low
+
+  * Replace mentions of 'c_rehash' with 'openssl rehash'. (Closes: #895084).
+
+ -- Roger A. Light <roger@atchoo.org>  Sat, 07 Apr 2018 11:16:43 +0100
+
+mosquitto (1.4.15-1) unstable; urgency=high
+
+  * SECURITY UPDATE: If a SIGHUP is sent to the broker when there are no more
+    file descriptors, then opening the configuration file will fail and
+    security settings will be set back to their default values.
+    - debian/patches/mosquitto-1.4.10_cve-2017-7652.patch: When reloading
+      configuration, do this into a separate config struct. If nothing fails,
+      then copy the new config over the old config.
+    - CVE-2017-7652
+  * SECURITY UPDATE: Unauthenticated clients can cause excessive memory usage.
+    This has the potential to lead to an OOM situation and the broker being
+    killed by the system.
+    - debian/patches/mosquitto-1.4.10_cve-2017-7652.patch: Limit the maximum
+      size of CONNECT packet to a reasonable value, and add "memory_limit"
+      option to set the maximum memory the broker will use.
+    - CVE-2017-7651
+  * New upstream release.
+  * Remove upstart support, which had accidently been reinstated in 1.4.14-2.
+  * Bumped standards version to 4.1.3, no changes required.
+  * Fix global-files-wildcard-not-first-paragraph-in-dep5-copyright.
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 28 Feb 2018 11:29:47 +0000
+
+mosquitto (1.4.14-2) unstable; urgency=low
+
+  * Fix lintian error "build-depends-on-obsolete-package"
+  * Fix lintian warning "extended-description-line-too-long"
+  * The 1.4.14 release relaxes the restrictions on client ids, which means
+    that the mosquitto_pub/sub autogenerated ids are no longer a problem.
+    (closes: #870165).
+
+ -- Roger A. Light <roger@atchoo.org>  Tue, 26 Dec 2017 22:03:57 +0000
+
+mosquitto (1.4.14-1) unstable; urgency=medium
+
+  * SECURITY UPDATE: Persistence file is world readable, which may expose
+    sensitive data. Fixed by upstream release 1.4.13.
+    - CVE-2017-9868
+  * New upstream release.
+  * Remove upstart support.
+  * Bumped standards version to 4.1.2.
+    - Removed invoke-rc.d conditionals.
+    - Changed "extra" priorities to "optional".
+  * Build-Depends: Add dh-systemd, bump libwebsockets to >=2.0.
+  * no-man-clean.patch - don't clean man pages from source directory.
+  * async_dns.patch - enable bridge async DNS lookups.
+
+ -- Roger A. Light <roger@atchoo.org>  Fri, 22 Dec 2017 07:14:19 +0000
+
+mosquitto (1.4.12-1) experimental; urgency=low
+
+  * New upstream release.
+
+ -- Roger A. Light <roger@atchoo.org>  Mon, 29 May 2017 14:56:32 +0100
+
+mosquitto (1.4.10-3) unstable; urgency=high
+
+  * SECURITY UPDATE: Pattern ACL can be bypassed by using a username/client id
+    set to '+' or '#'.
+    - debian/patches/mosquitto-0.15_cve-2017-7650.patch: Reject send/receive
+      of messages to/from clients with a '+', '#' or '/' in their
+      username/client id.
+    - CVE-2017-7650
+  * New patch debian/patches/allow_ipv6_bridges.patch allows bridges to make
+    IPv6 connections when using TLS (closes: #857759).
+
+ -- Roger A. Light <roger@atchoo.org>  Mon, 29 May 2017 13:43:29 +0100
+
+mosquitto (1.4.10-2) unstable; urgency=medium
+
+  * Bumped standards version to 3.9.8. No changes needed.
+  * Bumped dh compat level to 10.
+  * Vcs-* links updated.
+
+ -- Roger A. Light <roger@atchoo.org>  Thu, 03 Nov 2016 22:37:33 +0000
+
+mosquitto (1.4.10-1) unstable; urgency=low
+
+  * New upstream release.
+  * Add support for openssl 1.1.0 (closes: #828442)
+  * Fix FTBFS on Hurd (closes: #824571)
+
+ -- Roger A. Light <roger@atchoo.org>  Thu, 27 Oct 2016 14:01:40 +0100
+
+mosquitto (1.4.8-1) unstable; urgency=high
+
+  * New upstream release.
+  * apparmor is now "suggests" instead of "depends".
+
+ -- Roger A. Light <roger@atchoo.org>  Sun, 14 Feb 2016 15:06:55 +0000
+
+mosquitto (1.4.7-1) unstable; urgency=low
+
+  * New upstream release. Includes support for libwebsockets 1.6.
+  * Add dependency link between libmosquittopp-dev and libmosquitto-dev
+    (closes: #805506).
+  * Dropped misc:Pre-Depends line for libmosquitto1. See #783898.
+  * libc-ares2 Depends is handled by shlib:Depends for libmosquitto1.
+
+ -- Roger A. Light <roger@atchoo.org>  Mon, 21 Dec 2015 10:59:31 +0000
+
+mosquitto (1.4.4-1) unstable; urgency=low
+
+  * New upstream release.
+  * Fix Vcs link.
+  * Note that libs & clients also support MQTT v3.1.1.
+
+ -- Roger A. Light <roger@atchoo.org>  Mon, 21 Sep 2015 09:56:28 +0100
+
+mosquitto (1.4.3-1) unstable; urgency=low
+
+  * New upstream release.
+  * New binary package mosquitto-dev.
+  * python3-mosquitto and python-mosquitto packages removed because the python
+    module is no longer part of upstream.
+  * Remove unused patches (pynomake.patch and disable-bad-test.patch)
+  * Added dependency on libwebsockets3, uuid. Note that the source package
+    will build (and actually prefers) using libwebsockets4 when it becomes
+    available. This adds the patch enable-websockets.patch.
+  * Upstream license has changed from BSD-3 to EPL-1.0 or EDL-1.0.
+  * Fix log directory permissions.
+  * Port to multiarch (closes: #763385) - adds libdir.patch
+  * Symbols update
+  * Patch refresh
+  * Add build-timestamp.patch to create reproducable builds.
+  * Add support for apparmor.
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 19 Aug 2015 10:31:10 +0100
+
+mosquitto (1.3.4-2) unstable; urgency=low
+
+  * Disable bad "fake ca" test.
+
+ -- Roger A. Light <roger@atchoo.org>  Sat, 16 Aug 2014 10:52:12 +0100
+
+mosquitto (1.3.4-1) unstable; urgency=medium
+
+  * New upstream release: http://mosquitto.org/2014/08/version-1-3-4-released/
+   (closes: #725014, #754787)
+  * Add dependency on libuuid, c-ares.
+  * Bumped standards version to 3.9.5. No changes needed.
+  * Example config files are now installed to
+    /usr/share/doc/mosquitto/examples/
+  * debian/copyright year updated.
+  * compiling.txt is no longer distributed.
+  * Updated debian/copyright with new dates.
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 06 Aug 2014 00:43:39 +0100
+
+mosquitto (1.2.1-1) unstable; urgency=low
+
+  * New upstream release: http://mosquitto.org/2013/09/version-1-2-1-released/
+  * Add Replaces/Break for libmosquitto-dev and libmosquittopp-dev
+    (closes: #720637, #720638).
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 18 Sep 2013 21:36:01 +0100
+
+mosquitto (1.2-1) unstable; urgency=low
+
+  * New upstream release: http://mosquitto.org/2013/08/version-1-2-released/
+    (closes: #685119).
+  * Bumped standards release to 3.9.4. No changes needed.
+  * Added mosquitto-dbg package for binary debug information.
+  * Added python3-mosquitto binary package.
+  * Use dh_python2 (and dh_python3) instead of python-support.
+  * mosquitto now logs to /var/log/mosquitto/ using logrotate.
+  * mosquitto local config should now be placed in /etc/mosquitto/conf.d/
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 07 Aug 2013 23:26:19 +0100
+
+mosquitto (0.15-1) unstable; urgency=low
+
+  * New upstream release: http://mosquitto.org/2012/02/version-0-15-released/
+  * Updated debian/copyright to latest DEP-5.
+  * Removed now unnecessary man-hyphen-minus.patch.
+
+ -- Roger A. Light <roger@atchoo.org>  Sun, 05 Feb 2012 09:30:22 +0000
+
+mosquitto (0.12-1) unstable; urgency=low
+
+  * New upstream release: http://mosquitto.org/2011/07/version-0-12-released/
+
+ -- Roger A. Light <roger@atchoo.org>  Mon, 25 Jul 2011 22:24:52 +0100
+
+mosquitto (0.11.3-1) unstable; urgency=low
+
+  * New upstream release: http://mosquitto.org/2011/07/version-0-11-3-released/
+  * Fix init script start action to create pidfile so stop works correctly.
+    (thanks to Mark Hindess, closes: #632589)
+  * Fix section for client libraries in debian/control.
+  * Remove disable-cmake.patch, this is handled in debian/rules now.
+
+ -- Roger A. Light <roger@atchoo.org>  Wed, 6 July 2011 15:07:04 +0100
+
+mosquitto (0.10-1) unstable; urgency=low
+
+  * Initial release. (Closes: #605319)
+
+ -- Roger A. Light <roger@atchoo.org>  Sun, 1 May 2011 20:12:51 +0100
