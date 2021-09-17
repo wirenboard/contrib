@@ -35,3 +35,6 @@ override_dh_auto_install:
 
 override_dh_makeshlibs:
 	dh_makeshlibs -- -c4
+
+override_dh_shlibdeps:
+	LD_LIBRARY_PATH=/usr/${DEB_HOST_MULTIARCH}/lib:$(LD_LIBRARY_PATH) dh_shlibdeps

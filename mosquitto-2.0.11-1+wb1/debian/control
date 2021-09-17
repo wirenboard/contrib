@@ -2,8 +2,7 @@ Source: mosquitto
 Section: net
 Priority: optional
 Maintainer: Roger A. Light <roger@atchoo.org>
-Build-Depends: debhelper-compat (= 12),
-               cmake,
+Build-Depends: cmake,
                libcjson-dev,
                libdlt-dev,
                libssl-dev (>=1.0.0),
