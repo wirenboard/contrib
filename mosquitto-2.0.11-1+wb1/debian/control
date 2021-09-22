@@ -27,6 +27,7 @@ Depends: adduser (>= 3.10),
          lsb-base (>=4.1+Debian3),
          ${misc:Depends},
          ${shlibs:Depends}
+Breaks: wb-configs (<< 3.0.0~~)
 Suggests: apparmor
 Description: MQTT version 5.0/3.1.1/3.1 compatible message broker
  This is a message broker that supports version 3.1 and 3.1.1 of the MQTT
@@ -87,6 +88,7 @@ Pre-Depends: ${misc:Pre-Depends}
 Depends: libmosquitto1 (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
+Breaks: libwbmqtt1, libwbmqtt1-2, libwbmqtt1-3 (<< 3.1.0)
 Description: MQTT version 5.0/3.1.1/3.1 client C++ library
  This is a C++ library for implementing MQTT version 5.0/3.1.1/3.1 clients.
  .

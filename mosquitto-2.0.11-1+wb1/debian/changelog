@@ -1,3 +1,9 @@
+mosquitto (2.0.11-1+wb1) unstable; urgency=medium
+
+  * add deps on Wiren Board specific packages
+
+ -- Nikita Maslov <webconn@WB-buildserver>  Wed, 22 Sep 2021 13:14:29 +0300
+
 mosquitto (2.0.11-1) unstable; urgency=medium
 
   * SECURITY UPDATE: In Eclipse Mosquitto 1.6 to 2.0.10, if an authenticated
