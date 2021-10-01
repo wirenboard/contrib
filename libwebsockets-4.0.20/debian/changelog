@@ -1,3 +1,9 @@
+libwebsockets (4.0.20-2+wb1) unstable; urgency=medium
+
+  * backport for Wiren Board debian stretch
+
+ -- Nikita Maslov <webconn@WB-buildserver>  Fri, 01 Oct 2021 13:00:18 +0300
+
 libwebsockets (4.0.20-2) unstable; urgency=medium
 
   * Enable LWS_WITH_EXTERNAL_POLL support (closes: #977637).
