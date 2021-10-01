@@ -10,7 +10,7 @@ Build-Depends: cmake,
                libwebsockets-dev,
                libwrap0-dev,
                pkg-config,
-               uthash-dev,
+               uthash-dev (>=2.1.0-1),
                xsltproc,
                docbook-xsl
 Standards-Version: 4.5.0
