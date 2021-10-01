@@ -1,0 +1,16 @@
+Description: The "echo" test should exit if --times is specified.
+Forwarded: https://libwebsockets.org/pipermail/libwebsockets/2018-March/003652.html
+Author: Peter Pentchev <roam@ringlet.net>
+Last-Update: 2018-03-12
+
+--- a/test-apps/test-echo.c
++++ b/test-apps/test-echo.c
+@@ -143,6 +143,8 @@
+ 			goto do_rx;
+ #endif
+ 		lwsl_notice("Client RX: %s", (char *)in);
++		if (times == 0)
++			force_exit = 1;
+ 		break;
+ 
+ 	case LWS_CALLBACK_CLIENT_WRITEABLE:

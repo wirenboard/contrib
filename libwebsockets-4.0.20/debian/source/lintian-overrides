@@ -1,0 +1,5 @@
+# long lines or unused, uninstalled file
+source-is-missing test-apps/test.js line length is 1767 characters (>512)
+source-is-missing minimal-examples/http-server/minimal-http-server-eventlib-demos/mount-origin/test.js line length is 1767 characters (>512)
+source-is-missing minimal-examples/http-server/minimal-http-server-generic-sessions/mount-origin/lwsgs.js line length is 3836 characters (>512)
+source-is-missing minimal-examples/http-server/minimal-http-server-generic-sessions/mount-origin/md5.min.js

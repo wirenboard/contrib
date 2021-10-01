@@ -1,0 +1,16 @@
+Description: Fix an off-by-one error in the "echo" client's --times handling.
+Forwarded: https://libwebsockets.org/pipermail/libwebsockets/2018-March/003652.html
+Author: Peter Pentchev <roam@ringlet.net>
+Last-Update: 2018-03-12
+
+--- a/test-apps/test-echo.c
++++ b/test-apps/test-echo.c
+@@ -352,7 +352,7 @@
+ 			_interface = interface_name;
+ 			break;
+ 		case 'n':
+-			times = atoi(optarg);
++			times = atoi(optarg) + 1;
+ 			break;
+ 		case '?':
+ 		case 'h':

@@ -1,0 +1,417 @@
+#!/usr/bin/perl
+
+use v5.014;
+use strict;
+use warnings;
+
+use Fcntl qw(F_GETFD F_SETFD FD_CLOEXEC);
+use POSIX qw(WNOHANG);
+use Test::More;
+
+use AnyEvent;
+use AnyEvent::Handle;
+use AnyEvent::Socket qw(tcp_server);
+use AnyEvent::Util qw(portable_socketpair);
+
+my ($lws_version, @lws_cflags, @lws_libs);
+
+my %children;
+my $child_reaper_w;
+
+sub reap_leftover_children();
+sub child_reaper();
+
+sub find_listening_port($ $ $ $ $)
+{
+	my ($address, $port_start, $step, $count, $cb) = @_;
+
+	my $res;
+	my $port = $port_start;
+	for (1..$count) {
+		eval {
+			$res = tcp_server $address, $port, $cb;
+		};
+		last if $res;
+		diag "Could not listen on $address:$port: $@";
+		$port += $step;
+	}
+	if (!defined $res) {
+		BAIL_OUT "Could not find a listening port on $address\n";
+	}
+	return ($port, $res);
+}
+
+sub anyevent_socketpair($)
+{
+	my ($name) = @_;
+	my ($fh1, $fh2) = portable_socketpair;
+	if (!defined $fh1) {
+		die "Could not create the $name socketpair: $!\n";
+	}
+	$fh1->autoflush(1);
+	$fh2->autoflush(1);
+	return (AnyEvent::Handle->new(fh => $fh1), AnyEvent::Handle->new(fh => $fh2));
+}
+
+sub register_child_reaper()
+{
+	$child_reaper_w = AnyEvent->signal(
+		signal => 'CHLD',
+		cb => \&child_reaper,
+	);
+	$SIG{__DIE__} = sub {
+		my ($msg) = @_;
+		warn "__DIE__ handler invoked: ".($msg =~ s/[\r\n]*$//sr)."\n";
+		reap_leftover_children;
+	};
+}
+
+sub unregister_child_reaper()
+{
+	undef $child_reaper_w;
+}
+
+sub child_reaper()
+{
+	while (1) {
+		my $pid = waitpid -1, WNOHANG; 
+		my $status = $?;
+
+		if (!defined $pid) {
+			die "Could not waitpid() in a SIGCHLD handler: $!\n";
+		} elsif ($pid == 0 || $pid == -1) {
+			last;
+		} else {
+			$children{$pid}{cv} //= AnyEvent->condvar;
+			$children{$pid}{cv}->send($status);
+		}
+	}
+}
+
+sub register_child($ $)
+{
+	my ($pid, $desc) = @_;
+
+	# Weird, but we want it to be at least reasonably atomic-like
+	$children{$pid}{cv} //= AnyEvent->condvar;
+
+	my $ch = $children{$pid};
+	$ch->{pid} = $pid;
+	$ch->{desc} = $desc;
+}
+
+sub dump_children()
+{
+	join '', map {
+		my $ch = $children{$_};
+
+		"\t$ch->{pid}\t".
+			($ch->{cv}->ready
+				? $ch->{cv}->recv
+				: '(none)'
+			).
+			"\t$ch->{desc}\n"
+	} sort { $a <=> $b } keys %children
+}
+
+sub wait_for_child($)
+{
+	my ($pid) = @_;
+
+	if (!defined $children{$pid}) {
+		die "Internal error: wait_for_child() invoked for ".
+		    "unregistered pid $pid\n".dump_children;
+	}
+	my $status = $children{$pid}{cv}->recv;
+	delete $children{$pid};
+	return $status;
+}
+
+sub reap_leftover_children()
+{
+	return unless %children;
+
+	for my $pid (keys %children) {
+		my $ch = $children{$pid};
+		if ($ch->{cv}->ready) {
+			my $status = wait_for_child $pid;
+		}
+	}
+	return unless %children;
+
+	for my $pid (keys %children) {
+		diag "Pffth, sending a SIGKILL to $pid";
+		kill 'KILL', $pid;
+	}
+	for my $pid (keys %children) {
+		my $ch = $children{$pid};
+		if ($ch->{cv}->ready) {
+			wait_for_child $pid;
+			diag "OK, $pid done";
+		}
+	}
+	# Bah, figure out some way to let the loop run even if we're within the loop...
+	if (%children) {
+		diag 'Some children remaining, laying low for a second...';
+		sleep 1;
+		for my $pid (keys %children) {
+			diag "- waiting for $pid ($children{$pid}{desc})";
+			wait_for_child $pid;
+			diag "- OK, $pid done";
+		}
+	}
+	if (%children) {
+		diag 'Something really weird happened, why are there still children around?';
+		diag dump_children;
+	}
+}
+
+sub close_on_exec($ $)
+{
+	my ($fh, $close) = @_;
+
+	my $flags = fcntl $fh, F_GETFD, 0 or
+	    die "Could not obtain a file descriptor's flags: $!\n";
+	my $nflags = $close
+		? ($flags | FD_CLOEXEC)
+		: ($flags & ~FD_CLOEXEC);
+	fcntl $fh, F_SETFD, $nflags or
+	    die "Could not set a file descriptor's flags: $!\n";
+}
+
+plan tests => 6;
+
+my $port;
+subtest 'Find a port to listen on' => sub {
+	plan tests => 1;
+
+	my ($lport, $dummy) = find_listening_port '127.0.0.1', 6502, 3, 529, sub {
+		my ($fh) = @_;
+		diag "Eh, we really didn't expect a connection here, did we now...";
+		$fh->close;
+	};
+	ok defined $lport, 'found a port to listen on';
+	$port = $lport;
+	undef $dummy;
+};
+
+register_child_reaper;
+
+my ($s_in, $s_pid);
+
+subtest 'Start the server process' => sub {
+	plan tests => 4;
+
+	my $s_out;
+	($s_in, $s_out) = anyevent_socketpair 'server';
+	ok defined $s_in, 'anyevent_socketpair returned a first descriptor';
+	ok defined $s_out, 'anyevent_socketpair returned a second descriptor';
+
+	$s_pid = fork;
+	if (!defined $s_pid) {
+		BAIL_OUT "Could not fork for the test server: $!";
+	} elsif ($s_pid == 0) {
+		undef $SIG{__DIE__};
+		close_on_exec $s_out->fh, 0;
+
+		undef $s_in;
+		close STDIN or
+		    die "Could not close stdin in the child process: $!\n";
+		open STDOUT, '>&', $s_out->fh or
+		    die "Could not reopen stdout in the child process: $!\n";
+		open STDERR, '>&', $s_out->fh or
+		    die "Could not reopen stderr in the child process: $!\n";
+
+		exec { 'libwebsockets-test-server' } (
+			'libwebsockets-test-server',
+			'--port', $port,
+		) or die "Could not start the echo test server: $!\n";
+	}
+	undef $s_out;
+	register_child $s_pid, 'server';
+	ok 1, 'spawned a child process for the test server';
+
+	$s_in->on_error(sub { BAIL_OUT 'Could not read from the server pipe' });
+	$s_in->on_eof(sub { BAIL_OUT 'The test server closed the pipe' });
+
+	my $cv = AnyEvent->condvar;
+	my $read_handler;
+	$read_handler = sub {
+		my ($fh, $line, $eol) = @_;
+		if ($line =~ /
+			libwebsockets test server
+		/x) {
+			$cv->send($+{port});
+		} else {
+			$fh->push_read(line => $read_handler);
+		}
+	};
+	$s_in->push_read(line => $read_handler);
+
+	my $w = AnyEvent->timer(after => 10, cb => sub {
+		$cv->send('timeout');
+	});
+
+	my $res = $cv->recv;
+	isnt $res, 'timeout', 'The server created the vhost on time';
+#	is $res, $port, 'The server is listening on the correct port';
+};
+
+my ($c_in, $c_pid);
+
+subtest 'Start the client process' => sub {
+	plan tests => 5;
+
+	my $c_out;
+	($c_in, $c_out) = anyevent_socketpair 'server';
+	ok defined $c_in, 'anyevent_socketpair returned a first descriptor';
+	ok defined $c_out, 'anyevent_socketpair returned a second descriptor';
+
+	$c_pid = fork;
+	if (!defined $c_pid) {
+		BAIL_OUT "Could not fork for the test client: $!";
+	} elsif ($c_pid == 0) {
+		undef $SIG{__DIE__};
+		close_on_exec $c_out->fh, 0;
+
+		undef $c_in;
+		close STDIN or
+		    die "Could not close stdin in the child process: $!\n";
+		open STDOUT, '>&', $c_out->fh or
+		    die "Could not reopen stdout in the child process: $!\n";
+		open STDERR, '>&', $c_out->fh or
+		    die "Could not reopen stderr in the child process: $!\n";
+
+		exec { 'libwebsockets-test-client' } (
+			'libwebsockets-test-client',
+			'127.0.0.1',
+			'--port', $port,
+		) or die "Could not start the echo test client: $!\n";
+	}
+	undef $c_out;
+	register_child $c_pid, 'client';
+	ok 1, 'spawned a child process for the test client';
+
+	$c_in->on_error(sub { BAIL_OUT 'Could not read from the client pipe' });
+	$c_in->on_eof(sub { BAIL_OUT 'The test client closed the pipe' });
+
+	my $cv = AnyEvent->condvar;
+	my $read_handler;
+	$read_handler = sub {
+		my ($fh, $line, $eol) = @_;
+		if ($line =~ /
+			Creating \s+ Vhost \s+
+			' (?<vhost> [^']+ ) ' \s+
+			port \s+ (?<port> [\d-]+ )
+		/x) {
+			$cv->send($+{port});
+		} else {
+			$fh->push_read(line => $read_handler);
+		}
+	};
+	$c_in->push_read(line => $read_handler);
+
+	my $w = AnyEvent->timer(after => 10, cb => sub {
+		$cv->send('timeout');
+	});
+
+	my $res = $cv->recv;
+	isnt $res, 'timeout', 'The client created the vhost on time';
+	is $res, -1, 'The client is not listening on any port';
+};
+
+subtest 'Wait for the client to send a couple of pings' => sub {
+	plan tests => 11;
+
+	my $cv = AnyEvent->condvar;
+	my $expected = 0;
+	my $read_handler;
+	$read_handler = sub {
+		my ($fh, $line, $eol) = @_;
+		my $more = 1;
+		if ($line =~ /
+			Client \s+ RX: \s+
+			.*
+			index \s+ (?<seq> \d+ )
+		/x) {
+			my $seq = $+{seq};
+			is $seq, $expected, "Got reply $expected";
+			$expected++;
+			if ($expected == 10) {
+				$cv->send('ok');
+				$more = 0;
+			}
+		}
+		if ($more) {
+			$fh->push_read(line => $read_handler);
+		}
+	};
+	$c_in->push_read(line => $read_handler);
+
+	my $w = AnyEvent->timer(after => 3 * 10, cb => sub {
+		$cv->send('timeout');
+	});
+
+	my $res = $cv->recv;
+	is $res, 'ok', 'The client sent and received all the pings';
+};
+
+subtest 'Stop the client process' => sub {
+	plan tests => 3;
+
+	my $cv = AnyEvent->condvar;
+	$c_in->on_error(sub { $cv->send('error') });
+	$c_in->on_eof(sub { $cv->send('eof') });
+
+	# Ignore anything read from the server
+	my $read_handler;
+	$read_handler = sub {
+		my ($fh, $line, $eol) = @_;
+		$fh->push_read(line => $read_handler);
+	};
+	$c_in->push_read(line => $read_handler);
+
+	# Set a ten-second timeout
+	my $w = AnyEvent->timer(after => 10, cb => sub { $cv->send('timeout') });
+
+	my $killed = kill 'INT', $c_pid;
+	is $killed, 1, 'Sent an interrupt signal to the client';
+
+	my $reason = $cv->recv;
+	ok $reason eq 'eof' || $reason eq 'error',
+	    'The client closed the pipe for a good reason';
+
+	my $status = wait_for_child $c_pid;
+	is $status, 0, 'The client shut down successfully';
+};
+
+subtest 'Stop the server process' => sub {
+	plan tests => 3;
+
+	my $cv = AnyEvent->condvar;
+	$s_in->on_error(sub { $cv->send('error') });
+	$s_in->on_eof(sub { $cv->send('eof') });
+
+	# Ignore anything read from the server
+	my $read_handler;
+	$read_handler = sub {
+		my ($fh, $line, $eol) = @_;
+		$fh->push_read(line => $read_handler);
+	};
+	$s_in->push_read(line => $read_handler);
+
+	# Set a ten-second timeout
+	my $w = AnyEvent->timer(after => 10, cb => sub { $cv->send('timeout') });
+
+	my $killed = kill 'INT', $s_pid;
+	is $killed, 1, 'Sent an interrupt signal to the server';
+
+	my $reason = $cv->recv;
+	ok $reason eq 'eof' || $reason eq 'error',
+	    'The server closed the pipe for a good reason';
+
+	my $status = wait_for_child $s_pid;
+	is $status, 0, 'The server shut down successfully';
+};
+
+reap_leftover_children;

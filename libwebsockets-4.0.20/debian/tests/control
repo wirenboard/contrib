@@ -1,0 +1,3 @@
+Test-Command: cd debian/tests && prove -v t
+Depends: @, build-essential, libanyevent-perl, libpath-tiny-perl,
+         libtest-command-perl, perl, pkg-config
