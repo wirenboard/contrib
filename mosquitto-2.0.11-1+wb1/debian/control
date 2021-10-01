@@ -25,6 +25,7 @@ Depends: adduser (>= 3.10),
          libcjson1,
          libmosquitto1 (= ${binary:Version}),
          lsb-base (>=4.1+Debian3),
+         wb-configs (>= 3.0.0~~)
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: wb-configs (<< 3.0.0~~)
