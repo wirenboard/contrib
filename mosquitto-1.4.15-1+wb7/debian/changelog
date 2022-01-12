@@ -1,3 +1,9 @@
+mosquitto (1.4.15-1+wb7-5) stable; urgency=medium
+
+  * Fixed appearance of dead.letter in /root directory
+
+ -- Roman Kochkin <roman.kochkin@wirenboard.ru>  Tue, 28 Dec 2021 12:21:00 +0300
+
 mosquitto (1.4.15-1+wb7-4) stable; urgency=medium
 
   * Add support openssl engine for private key storage
