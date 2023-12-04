@@ -1,0 +1,186 @@
+From ec1d0ed1c14d1b2ed06d8914c19b3df2da575005 Mon Sep 17 00:00:00 2001
+From: Jay Satiro <raysatiro@yahoo.com>
+Date: Sat, 11 Mar 2017 18:21:31 -0500
+Subject: [PATCH] http_proxy: Ignore TE and CL in CONNECT 2xx responses
+
+A client MUST ignore any Content-Length or Transfer-Encoding header
+fields received in a successful response to CONNECT.
+"Successful" described as: 2xx (Successful). RFC 7231 4.3.6
+
+Prior to this change such a case would cause an error.
+
+In some ways this bug appears to be a regression since c50b878. Prior to
+that libcurl may have appeared to function correctly in such cases by
+acting on those headers instead of causing an error. But that behavior
+was also incorrect.
+
+Bug: https://github.com/curl/curl/issues/1317
+Reported-by: mkzero@users.noreply.github.com
+---
+ lib/http_proxy.c        | 41 +++++++++++-----------
+ tests/data/Makefile.inc |  2 +-
+ tests/data/test1287     | 90 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 112 insertions(+), 21 deletions(-)
+ create mode 100644 tests/data/test1287
+
+--- a/lib/http_proxy.c
++++ b/lib/http_proxy.c
+@@ -510,33 +510,34 @@
+         }
+         else if(checkprefix("Content-Length:", line_start)) {
+           if(k->httpcode/100 == 2) {
+-            /* A server MUST NOT send any Transfer-Encoding or
+-               Content-Length header fields in a 2xx (Successful)
+-               response to CONNECT. (RFC 7231 section 4.3.6) */
+-            failf(data, "Content-Length: in %03d response",
++            /* A client MUST ignore any Content-Length or Transfer-Encoding
++               header fields received in a successful response to CONNECT.
++               "Successful" described as: 2xx (Successful). RFC 7231 4.3.6 */
++            infof(data, "Ignoring Content-Length in CONNECT %03d response\n",
+                   k->httpcode);
+-            return CURLE_RECV_ERROR;
+           }
+-
+-          cl = curlx_strtoofft(line_start +
+-                               strlen("Content-Length:"), NULL, 10);
++          else {
++            cl = curlx_strtoofft(line_start +
++                                 strlen("Content-Length:"), NULL, 10);
++          }
+         }
+         else if(Curl_compareheader(line_start, "Connection:", "close"))
+           closeConnection = TRUE;
+-        else if(Curl_compareheader(line_start,
+-                                   "Transfer-Encoding:",
+-                                   "chunked")) {
++        else if(checkprefix("Transfer-Encoding:", line_start)) {
+           if(k->httpcode/100 == 2) {
+-            /* A server MUST NOT send any Transfer-Encoding or
+-               Content-Length header fields in a 2xx (Successful)
+-               response to CONNECT. (RFC 7231 section 4.3.6) */
+-            failf(data, "Transfer-Encoding: in %03d response", k->httpcode);
+-            return CURLE_RECV_ERROR;
++            /* A client MUST ignore any Content-Length or Transfer-Encoding
++               header fields received in a successful response to CONNECT.
++               "Successful" described as: 2xx (Successful). RFC 7231 4.3.6 */
++            infof(data, "Ignoring Transfer-Encoding in "
++                  "CONNECT %03d response\n", k->httpcode);
++          }
++          else if(Curl_compareheader(line_start,
++                                     "Transfer-Encoding:", "chunked")) {
++            infof(data, "CONNECT responded chunked\n");
++            chunked_encoding = TRUE;
++            /* init our chunky engine */
++            Curl_httpchunk_init(conn);
+           }
+-          infof(data, "CONNECT responded chunked\n");
+-          chunked_encoding = TRUE;
+-          /* init our chunky engine */
+-          Curl_httpchunk_init(conn);
+         }
+         else if(Curl_compareheader(line_start, "Proxy-Connection:", "close"))
+           closeConnection = TRUE;
+--- /dev/null
++++ b/tests/data/test1287
+@@ -0,0 +1,90 @@
++<testcase>
++<info>
++<keywords>
++HTTP
++HTTP GET
++HTTP CONNECT
++proxytunnel
++</keywords>
++</info>
++#
++# Server-side
++<reply>
++<data>
++HTTP/1.1 200 OK
++Date: Thu, 09 Nov 2010 14:49:00 GMT
++Server: test-server/fake swsclose
++Content-Type: text/html
++Funny-head: yesyes
++Content-Length: 9
++
++contents
++</data>
++
++# The purpose of this test is to make sure curl ignores headers
++# Content-Length and Transfer-Encoding in a successful CONNECT 2xx reply.
++<connect>
++HTTP/1.1 200 Mighty fine indeed
++Content-Length: 123
++Transfer-Encoding: chunked
++
++</connect>
++
++<datacheck>
++HTTP/1.1 200 Mighty fine indeed
++Content-Length: 123
++Transfer-Encoding: chunked
++
++HTTP/1.1 200 OK
++Date: Thu, 09 Nov 2010 14:49:00 GMT
++Server: test-server/fake swsclose
++Content-Type: text/html
++Funny-head: yesyes
++Content-Length: 9
++
++contents
++</datacheck>
++</reply>
++
++#
++# Client-side
++<client>
++<server>
++http
++http-proxy
++</server>
++<name>
++HTTP over proxy-tunnel ignore TE and CL in CONNECT 2xx responses
++</name>
++<command>
++-v --proxytunnel -x %HOSTIP:%PROXYPORT http://test.1287:%HTTPPORT/we/want/that/page/1287
++</command>
++</client>
++
++#
++# Verify data after the test has been "shot"
++<verify>
++<strip>
++^User-Agent:.*
++</strip>
++<proxy>
++CONNECT test.1287:%HTTPPORT HTTP/1.1
++Host: test.1287:%HTTPPORT
++Proxy-Connection: Keep-Alive
++
++</proxy>
++<protocol>
++GET /we/want/that/page/1287 HTTP/1.1
++Host: test.1287:%HTTPPORT
++Accept: */*
++
++</protocol>
++<file name="log/stderr1287" mode="text">
++* Ignoring Content-Length in CONNECT 200 response
++* Ignoring Transfer-Encoding in CONNECT 200 response
++</file>
++<stripfile>
++s/^.*(?=\* Ignoring (?:Content-Length|Transfer-Encoding) )// or $_ = ''
++</stripfile>
++</verify>
++</testcase>
+--- a/tests/data/Makefile.inc
++++ b/tests/data/Makefile.inc
+@@ -129,7 +129,7 @@
+ test1236 test1237 test1238 test1239 test1240 test1241 test1242 test1243 \
+ test1244 test1245 test1246 test1247 \
+ \
+-test1280 test1281 \
++test1280 test1281 test1287 \
+ \
+ test1300 test1301 test1302 test1303 test1304 test1305 test1306 test1307 \
+ test1308 test1309 test1310 test1311 test1312 test1313 test1314 test1315 \

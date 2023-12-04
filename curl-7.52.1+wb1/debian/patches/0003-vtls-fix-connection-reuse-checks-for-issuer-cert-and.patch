@@ -1,0 +1,220 @@
+From fc6c301b87808b7b2fa797e5e5f01ba05b42e9d0 Mon Sep 17 00:00:00 2001
+From: Daniel Stenberg <daniel@haxx.se>
+Date: Sat, 19 Jun 2021 00:42:28 +0200
+Subject: vtls: fix connection reuse checks for issuer cert and case
+ sensitivity
+
+CVE-2021-22924
+
+Reported-by: Harry Sintonen
+Bug: https://curl.se/docs/CVE-2021-22924.html
+---
+ lib/url.c          |  5 +++--
+ lib/urldata.h      |  2 +-
+ lib/vtls/gtls.c    | 10 +++++-----
+ lib/vtls/nss.c     |  4 ++--
+ lib/vtls/openssl.c | 12 ++++++------
+ lib/vtls/vtls.c    | 21 +++++++++++++++++----
+ 6 files changed, 34 insertions(+), 20 deletions(-)
+
+diff --git a/lib/url.c b/lib/url.c
+index 7944d7b0c..2fb1018ee 100644
+--- a/lib/url.c
++++ b/lib/url.c
+@@ -6436,6 +6436,9 @@ static CURLcode create_conn(struct Curl_easy *data,
+   data->set.proxy_ssl.primary.CApath = data->set.str[STRING_SSL_CAPATH_PROXY];
+   data->set.ssl.primary.CAfile = data->set.str[STRING_SSL_CAFILE_ORIG];
+   data->set.proxy_ssl.primary.CAfile = data->set.str[STRING_SSL_CAFILE_PROXY];
++  data->set.ssl.primary.issuercert = data->set.str[STRING_SSL_ISSUERCERT_ORIG];
++  data->set.proxy_ssl.primary.issuercert =
++    data->set.str[STRING_SSL_ISSUERCERT_PROXY];
+   data->set.ssl.primary.random_file = data->set.str[STRING_SSL_RANDOM_FILE];
+   data->set.proxy_ssl.primary.random_file =
+     data->set.str[STRING_SSL_RANDOM_FILE];
+@@ -6448,8 +6451,6 @@ static CURLcode create_conn(struct Curl_easy *data,
+ 
+   data->set.ssl.CRLfile = data->set.str[STRING_SSL_CRLFILE_ORIG];
+   data->set.proxy_ssl.CRLfile = data->set.str[STRING_SSL_CRLFILE_PROXY];
+-  data->set.ssl.issuercert = data->set.str[STRING_SSL_ISSUERCERT_ORIG];
+-  data->set.proxy_ssl.issuercert = data->set.str[STRING_SSL_ISSUERCERT_PROXY];
+   data->set.ssl.cert = data->set.str[STRING_CERT_ORIG];
+   data->set.proxy_ssl.cert = data->set.str[STRING_CERT_PROXY];
+   data->set.ssl.cert_type = data->set.str[STRING_CERT_TYPE_ORIG];
+diff --git a/lib/urldata.h b/lib/urldata.h
+index 0271d266b..386d9fb5d 100644
+--- a/lib/urldata.h
++++ b/lib/urldata.h
+@@ -350,6 +350,7 @@ struct ssl_primary_config {
+   bool verifystatus;     /* set TRUE if certificate status must be checked */
+   char *CApath;          /* certificate dir (doesn't work on windows) */
+   char *CAfile;          /* certificate to verify peer against */
++  char *issuercert;      /* optional issuer certificate filename */
+   char *clientcert;
+   char *random_file;     /* path to file containing "random" data */
+   char *egdsocket;       /* path to file containing the EGD daemon socket */
+@@ -363,7 +364,6 @@ struct ssl_config_data {
+   bool no_revoke;    /* disable SSL certificate revocation checks */
+   long certverifyresult; /* result from the certificate verification */
+   char *CRLfile;   /* CRL to check certificate revocation */
+-  char *issuercert;/* optional issuer certificate filename */
+   curl_ssl_ctx_callback fsslctx; /* function to initialize ssl ctx */
+   void *fsslctxp;        /* parameter for call back */
+   bool certinfo;         /* gather lots of certificate info */
+diff --git a/lib/vtls/gtls.c b/lib/vtls/gtls.c
+index 0e308cb79..3fac1ff90 100644
+--- a/lib/vtls/gtls.c
++++ b/lib/vtls/gtls.c
+@@ -904,7 +904,7 @@ gtls_connect_step3(struct connectdata *conn,
+   if(!chainp) {
+     if(SSL_CONN_CONFIG(verifypeer) ||
+        SSL_CONN_CONFIG(verifyhost) ||
+-       SSL_SET_OPTION(issuercert)) {
++       SSL_CONN_CONFIG(issuercert)) {
+ #ifdef USE_TLS_SRP
+       if(SSL_SET_OPTION(authtype) == CURL_TLSAUTH_SRP
+          && SSL_SET_OPTION(username) != NULL
+@@ -1086,21 +1086,21 @@ gtls_connect_step3(struct connectdata *conn,
+        gnutls_x509_crt_t format */
+     gnutls_x509_crt_import(x509_cert, chainp, GNUTLS_X509_FMT_DER);
+ 
+-  if(SSL_SET_OPTION(issuercert)) {
++  if(SSL_CONN_CONFIG(issuercert)) {
+     gnutls_x509_crt_init(&x509_issuer);
+-    issuerp = load_file(SSL_SET_OPTION(issuercert));
++    issuerp = load_file(SSL_CONN_CONFIG(issuercert));
+     gnutls_x509_crt_import(x509_issuer, &issuerp, GNUTLS_X509_FMT_PEM);
+     rc = gnutls_x509_crt_check_issuer(x509_cert, x509_issuer);
+     gnutls_x509_crt_deinit(x509_issuer);
+     unload_file(issuerp);
+     if(rc <= 0) {
+       failf(data, "server certificate issuer check failed (IssuerCert: %s)",
+-            SSL_SET_OPTION(issuercert)?SSL_SET_OPTION(issuercert):"none");
++            SSL_CONN_CONFIG(issuercert)?SSL_CONN_CONFIG(issuercert):"none");
+       gnutls_x509_crt_deinit(x509_cert);
+       return CURLE_SSL_ISSUER_ERROR;
+     }
+     infof(data, "\t server certificate issuer check OK (Issuer Cert: %s)\n",
+-          SSL_SET_OPTION(issuercert)?SSL_SET_OPTION(issuercert):"none");
++          SSL_CONN_CONFIG(issuercert)?SSL_CONN_CONFIG(issuercert):"none");
+   }
+ 
+   size=sizeof(certbuf);
+diff --git a/lib/vtls/nss.c b/lib/vtls/nss.c
+index ba8d58260..36802a2e1 100644
+--- a/lib/vtls/nss.c
++++ b/lib/vtls/nss.c
+@@ -1957,9 +1957,9 @@ static CURLcode nss_do_connect(struct connectdata *conn, int sockindex)
+   if(result)
+     goto error;
+ 
+-  if(SSL_SET_OPTION(issuercert)) {
++  if(SSL_CONN_CONFIG(issuercert)) {
+     SECStatus ret = SECFailure;
+-    char *nickname = dup_nickname(data, SSL_SET_OPTION(issuercert));
++    char *nickname = dup_nickname(data, SSL_CONN_CONFIG(issuercert));
+     if(nickname) {
+       /* we support only nicknames in case of issuercert for now */
+       ret = check_issuer_cert(connssl->handle, nickname);
+diff --git a/lib/vtls/openssl.c b/lib/vtls/openssl.c
+index d92e71365..c12268362 100644
+--- a/lib/vtls/openssl.c
++++ b/lib/vtls/openssl.c
+@@ -2817,12 +2817,12 @@ static CURLcode servercert(struct connectdata *conn,
+        deallocating the certificate. */
+ 
+     /* e.g. match issuer name with provided issuer certificate */
+-    if(SSL_SET_OPTION(issuercert)) {
+-      fp = fopen(SSL_SET_OPTION(issuercert), FOPEN_READTEXT);
++    if(SSL_CONN_CONFIG(issuercert)) {
++      fp = fopen(SSL_CONN_CONFIG(issuercert), FOPEN_READTEXT);
+       if(!fp) {
+         if(strict)
+           failf(data, "SSL: Unable to open issuer cert (%s)",
+-                SSL_SET_OPTION(issuercert));
++                SSL_CONN_CONFIG(issuercert));
+         X509_free(connssl->server_cert);
+         connssl->server_cert = NULL;
+         return CURLE_SSL_ISSUER_ERROR;
+@@ -2832,7 +2832,7 @@ static CURLcode servercert(struct connectdata *conn,
+       if(!issuer) {
+         if(strict)
+           failf(data, "SSL: Unable to read issuer cert (%s)",
+-                SSL_SET_OPTION(issuercert));
++                SSL_CONN_CONFIG(issuercert));
+         X509_free(connssl->server_cert);
+         X509_free(issuer);
+         fclose(fp);
+@@ -2844,7 +2844,7 @@ static CURLcode servercert(struct connectdata *conn,
+       if(X509_check_issued(issuer, connssl->server_cert) != X509_V_OK) {
+         if(strict)
+           failf(data, "SSL: Certificate issuer check failed (%s)",
+-                SSL_SET_OPTION(issuercert));
++                SSL_CONN_CONFIG(issuercert));
+         X509_free(connssl->server_cert);
+         X509_free(issuer);
+         connssl->server_cert = NULL;
+@@ -2852,7 +2852,7 @@ static CURLcode servercert(struct connectdata *conn,
+       }
+ 
+       infof(data, " SSL certificate issuer check ok (%s)\n",
+-            SSL_SET_OPTION(issuercert));
++            SSL_CONN_CONFIG(issuercert));
+       X509_free(issuer);
+     }
+ 
+diff --git a/lib/vtls/vtls.c b/lib/vtls/vtls.c
+index b808e1c5f..8216cb984 100644
+--- a/lib/vtls/vtls.c
++++ b/lib/vtls/vtls.c
+@@ -90,6 +90,16 @@
+   else                                       \
+     dest->var = NULL;
+ 
++static bool safecmp(char *a, char *b)
++{
++  if(a && b)
++    return !strcmp(a, b);
++  else if(!a && !b)
++    return TRUE; /* match */
++  return FALSE; /* no match */
++}
++
++
+ bool
+ Curl_ssl_config_matches(struct ssl_primary_config* data,
+                         struct ssl_primary_config* needle)
+@@ -97,10 +107,11 @@ Curl_ssl_config_matches(struct ssl_primary_config* data,
+   if((data->version == needle->version) &&
+      (data->verifypeer == needle->verifypeer) &&
+      (data->verifyhost == needle->verifyhost) &&
+-     Curl_safe_strcasecompare(data->CApath, needle->CApath) &&
+-     Curl_safe_strcasecompare(data->CAfile, needle->CAfile) &&
+-     Curl_safe_strcasecompare(data->clientcert, needle->clientcert) &&
+-     Curl_safe_strcasecompare(data->cipher_list, needle->cipher_list))
++     safecmp(data->CApath, needle->CApath) &&
++     safecmp(data->CAfile, needle->CAfile) &&
++     safecmp(data->issuercert, needle->issuercert) &&
++     safecmp(data->clientcert, needle->clientcert) &&
++     safecmp(data->cipher_list, needle->cipher_list))
+     return TRUE;
+ 
+   return FALSE;
+@@ -116,6 +127,7 @@ Curl_clone_primary_ssl_config(struct ssl_primary_config *source,
+ 
+   CLONE_STRING(CAfile);
+   CLONE_STRING(CApath);
++  CLONE_STRING(issuercert);
+   CLONE_STRING(cipher_list);
+   CLONE_STRING(egdsocket);
+   CLONE_STRING(random_file);
+@@ -127,6 +139,7 @@ void Curl_free_primary_ssl_config(struct ssl_primary_config* sslc)
+ {
+   Curl_safefree(sslc->CAfile);
+   Curl_safefree(sslc->CApath);
++  Curl_safefree(sslc->issuercert);
+   Curl_safefree(sslc->cipher_list);
+   Curl_safefree(sslc->egdsocket);
+   Curl_safefree(sslc->random_file);
+-- 
+2.20.1
+
