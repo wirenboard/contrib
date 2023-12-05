@@ -1,0 +1,44 @@
+From f9f9905de21f05ad87f32a16a9d34d1ddc1c73c3 Mon Sep 17 00:00:00 2001
+From: Daniel Stenberg <daniel@haxx.se>
+Date: Sat, 12 Jun 2021 18:25:15 +0200
+Subject: telnet: fix option parser to not send uninitialized contents
+
+CVS-2021-22925
+
+Reported-by: Red Hat Product Security
+Bug: https://curl.se/docs/CVE-2021-22925.html
+---
+ lib/telnet.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/lib/telnet.c b/lib/telnet.c
+index f14cf1872..72ceb39e0 100644
+--- a/lib/telnet.c
++++ b/lib/telnet.c
+@@ -970,12 +970,17 @@ static void suboption(struct connectdata *conn)
+         tmplen = (strlen(v->data) + 1);
+         /* Add the variable only if it fits */
+         if(len + tmplen < (int)sizeof(temp)-6) {
+-          if(sscanf(v->data, "%127[^,],%127s", varname, varval) == 2) {
+-            snprintf((char *)&temp[len], sizeof(temp) - len,
+-                     "%c%s%c%s", CURL_NEW_ENV_VAR, varname,
+-                     CURL_NEW_ENV_VALUE, varval);
+-            len += tmplen;
+-          }
++          int rv;
++          char sep[2] = "";
++          varval[0] = 0;
++          rv = sscanf(v->data, "%127[^,]%1[,]%127s", varname, sep, varval);
++          if(rv == 1)
++            len += snprintf((char *)&temp[len], sizeof(temp) - len,
++                            "%c%s", CURL_NEW_ENV_VAR, varname);
++          else if(rv >= 2)
++            len += snprintf((char *)&temp[len], sizeof(temp) - len,
++                            "%c%s%c%s", CURL_NEW_ENV_VAR, varname,
++                            CURL_NEW_ENV_VALUE, varval);
+         }
+       }
+       snprintf((char *)&temp[len], sizeof(temp) - len,
+-- 
+2.20.1
+

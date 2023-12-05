@@ -1,0 +1,28 @@
+From 21740580992c0469e3506279f22369f8f656d93b Mon Sep 17 00:00:00 2001
+From: Harry Sintonen <sintonen@iki.fi>
+Date: Fri, 7 May 2021 13:09:57 +0200
+Subject: telnet: check sscanf() for correct number of matches
+
+CVE-2021-22898
+
+Bug: https://curl.se/docs/CVE-2021-22898.html
+---
+ lib/telnet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/telnet.c b/lib/telnet.c
+index 551af60f2..f14cf1872 100644
+--- a/lib/telnet.c
++++ b/lib/telnet.c
+@@ -970,7 +970,7 @@ static void suboption(struct connectdata *conn)
+         tmplen = (strlen(v->data) + 1);
+         /* Add the variable only if it fits */
+         if(len + tmplen < (int)sizeof(temp)-6) {
+-          if(sscanf(v->data, "%127[^,],%127s", varname, varval)) {
++          if(sscanf(v->data, "%127[^,],%127s", varname, varval) == 2) {
+             snprintf((char *)&temp[len], sizeof(temp) - len,
+                      "%c%s%c%s", CURL_NEW_ENV_VAR, varname,
+                      CURL_NEW_ENV_VALUE, varval);
+-- 
+2.20.1
+
